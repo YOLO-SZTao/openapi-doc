@@ -1,8 +1,8 @@
-openapi: '3.0.0'
+openapi: 3.0.0
 info:
-  title: 'Moongate'
-  version: '1.0.0'
-tags: 
+  title: Moongate
+  version: 1.0.0-oas3
+tags:
   - name: discounts
   - name: events
   - name: jobs
@@ -16,11 +16,10 @@ tags:
   - name: nfts
   - name: factories
   - name: webhook
-  
 paths:
   /:
-    get: 
-      security: 
+    get:
+      security:
         - BearerAuth: []
       summary: Check API health
       responses:
@@ -42,13 +41,13 @@ paths:
         required: true
         content:
           application/json:
-            schema: 
+            schema:
               $ref: '#/components/schemas/DiscountParam'
       responses:
         '201':
-          description: 'Discount created successfully'
+          description: Discount created successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 $ref: '#/components/schemas/Discount'
     get:
@@ -72,15 +71,15 @@ paths:
             type: string
       responses:
         '200':
-          description: 'Get discount by code successfully'
+          description: Get discount by code successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 $ref: '#/components/schemas/Discount'
     delete:
       security:
         - BearerAuth: []
-      tags: 
+      tags:
         - discounts
       summary: Delete discount by code and eventId
       parameters:
@@ -96,7 +95,7 @@ paths:
           description: code of event
           schema:
             type: string
-      responses:  
+      responses:
         '200':
           description: Discount deleted successfully
           content:
@@ -104,7 +103,7 @@ paths:
   /discounts/{eventId}:
     get:
       tags:
-       - discounts
+        - discounts
       security:
         - BearerAuth: []
       parameters:
@@ -117,34 +116,34 @@ paths:
       summary: Get discounts by eventId
       responses:
         '200':
-          description: 'Get discounts successfully'
+          description: Get discounts successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 type: array
-                items:  
+                items:
                   $ref: '#/components/schemas/Discount'
   /discounts/used:
     patch:
-      tags: 
+      tags:
         - discounts
       security:
         - BearerAuth: []
       summary: Mark discount code usage
-      requestBody:  
+      requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              properties: 
+              properties:
                 eventId:
                   type: string
                 code:
                   type: string
                 quantity:
                   type: number
-              required: 
+              required:
                 - eventId
                 - code
       responses:
@@ -159,20 +158,20 @@ paths:
       security:
         - BearerAuth: []
       summary: Mark discount code usage
-      requestBody:  
+      requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              properties: 
+              properties:
                 eventId:
                   type: string
                 code:
                   type: string
                 quantity:
                   type: number
-              required: 
+              required:
                 - eventId
                 - code
       responses:
@@ -194,7 +193,7 @@ paths:
           schema:
             type: string
       requestBody:
-        required: true 
+        required: true
         content:
           application/json:
             schema:
@@ -205,7 +204,7 @@ paths:
           content:
             application/json: {}
     delete:
-      tags: 
+      tags:
         - discounts
       security:
         - BearerAuth: []
@@ -232,7 +231,7 @@ paths:
         - name: productId
           required: true
           in: path
-          schema: 
+          schema:
             type: string
       responses:
         '200':
@@ -251,14 +250,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/JobParam"
+              $ref: '#/components/schemas/JobParam'
       responses:
         '200':
           description: Created a new job successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Job"
+                $ref: '#/components/schemas/Job'
     get:
       tags:
         - jobs
@@ -272,7 +271,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items: 
+                items:
                   $ref: '#/components/schemas/Job'
   /jobs/failed:
     get:
@@ -285,10 +284,10 @@ paths:
         '200':
           description: Get all failed jobs successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 type: array
-                items: 
+                items:
                   $ref: '#/components/schemas/Job'
   /jobs/airdrop:
     post:
@@ -302,7 +301,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/JobParam"
+              $ref: '#/components/schemas/JobParam'
       responses:
         '200':
           description: Created airdropJob successfully
@@ -317,7 +316,9 @@ paths:
       security:
         - BearerAuth: []
       summary: get moonpasses
-      description: Retrieve a list of moonpasses optionally filtered by user, edition or status
+      description: >-
+        Retrieve a list of moonpasses optionally filtered by user, edition or
+        status
       parameters:
         - name: user
           in: query
@@ -332,14 +333,14 @@ paths:
         - name: status
           in: query
           required: false
-          schema: 
+          schema:
             type: string
       responses:
         '200':
           description: Get moonpasses successfully
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Moonpass'
@@ -352,8 +353,8 @@ paths:
       parameters:
         - name: moonpassId
           in: path
-          required: true 
-          schema: 
+          required: true
+          schema:
             type: string
       summary: get moonpasses by id
       responses:
@@ -373,12 +374,12 @@ paths:
       parameters:
         - name: moonpassId
           in: path
-          required: true 
-          schema:  
+          required: true
+          schema:
             type: string
         - name: userId
           in: path
-          required: true 
+          required: true
           schema:
             type: string
       responses:
@@ -395,12 +396,12 @@ paths:
       parameters:
         - name: moonpassId
           in: path
-          required: true 
-          schema:  
+          required: true
+          schema:
             type: string
         - name: userId
           in: path
-          required: true 
+          required: true
           schema:
             type: string
       responses:
@@ -430,7 +431,7 @@ paths:
                 $ref: '#/components/schemas/Organizer'
   /organizers/{organizerId}:
     get:
-      tags: 
+      tags:
         - organizers
       security:
         - BearerAuth: []
@@ -468,7 +469,7 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:  
+      requestBody:
         required: true
         content:
           application/json:
@@ -485,7 +486,7 @@ paths:
           description: Missing parameters
           content:
             application/json: {}
-        '404': 
+        '404':
           description: Organizer not found
           content:
             application/json: {}
@@ -654,7 +655,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     delete:
-      tags: 
+      tags:
         - organizers
       security:
         - BearerAuth: []
@@ -733,7 +734,7 @@ paths:
         '400':
           description: MISSING_PARAMETERS
         '401':
-          description: UNAUTHORIZED        
+          description: UNAUTHORIZED
   /users/:
     post:
       security:
@@ -753,24 +754,27 @@ paths:
     post:
       security:
         - BearerAuth: []
-      summary: Authenticate user by wallet address / email, create new user if not exists
+      summary: >-
+        Authenticate user by wallet address / email, create new user if not
+        exists
       parameters:
         - name: address
           in: query
           description: key
           required: true
           schema:
-            type: string      
+            type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               $ref: '#/components/schemas/AuthParam'
-
         required: true
       responses:
         '200':
-          description: Authenticated / Created new user user by wallet address/email successfully. 
+          description: >-
+            Authenticated / Created new user user by wallet address/email
+            successfully.
           content:
             application/json:
               schema:
@@ -792,7 +796,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthResult'              
+                $ref: '#/components/schemas/AuthResult'
   /users/{userId}:
     get:
       security:
@@ -1013,7 +1017,7 @@ paths:
         - verification
       security:
         - BearerAuth: []
-      summary: Verify NFT ownership 
+      summary: Verify NFT ownership
       parameters:
         - name: userId
           in: path
@@ -1023,7 +1027,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Verified NFT ownership successfully 
+          description: Verified NFT ownership successfully
           content:
             application/json:
               schema:
@@ -1041,7 +1045,7 @@ paths:
         '200':
           description: Returned a list of discounts successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 $ref: '#/components/schemas/Discount'
   /admin/{wallet}/token:
@@ -1062,7 +1066,7 @@ paths:
         '200':
           description: Generate token for wallet successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 type: object
                 properties:
@@ -1080,32 +1084,36 @@ paths:
         - BearerAuth: []
       summary: Batch generate moonpasses
       requestBody:
-              content:
-                application/json: 
-                  schema:
-                    type: object
-                    properties:
-                      quantity:
-                        type: number
-                      edition:
-                        type: string
-                      config:
-                        $ref: '#/components/schemas/Moonpass'
-                      prefix:
-                        type: string
-
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                edition:
+                  type: string
+                config:
+                  $ref: '#/components/schemas/Moonpass'
+                prefix:
+                  type: string
       responses:
         '200':
           description: Batch generate moonpasses successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 type: object
                 properties:
                   moonpasses:
                     type: array
-                    items: 
+                    items:
                       type: string
+  /events/draft:
+    post: null
+  /events/publish:
+    post: null
+    patch: null
   /events/:
     post:
       tags:
@@ -1115,9 +1123,9 @@ paths:
       summary: Create new event
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
-              $ref : '#/components/schemas/NFTEventParam'
+              $ref: '#/components/schemas/NFTEventParam'
         required: true
       responses:
         '201':
@@ -1148,7 +1156,19 @@ paths:
       summary: Delete event
       responses:
         '201':
-          description: Delete event       
+          description: Delete event
+  /events/domain/{domain}:
+    get: null
+  /events/code/{code}:
+    get: null
+  /events/{eventId}:
+    get: null
+    patch: null
+    delete: null
+  /events/token-gated:
+    post: null
+  /events/ticketing/ongoing:
+    get: null
   /events/{eventId}/user/{userId}/eligibility:
     get:
       tags:
@@ -1192,7 +1212,7 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
@@ -1220,7 +1240,7 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
@@ -1250,7 +1270,7 @@ paths:
         '200':
           description: Event reminder emails sent successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 type: object
                 properties:
@@ -1259,7 +1279,9 @@ paths:
                   tickets:
                     type: number
                   redeem:
-                    type: number              
+                    type: number
+  /events/{eventId}/tiers/{tierId}/transactions/wallet:
+    post: null
   /events/{eventId}/tiers/{tierId}/transactions:
     post:
       security:
@@ -1280,7 +1302,7 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
@@ -1297,7 +1319,7 @@ paths:
         '200':
           description: Create event transactions by wallets successfully
           content:
-            application/json: 
+            application/json:
               schema:
                 type: object
                 properties:
@@ -1352,11 +1374,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTEventWhitelistParam'
-                
+  /events/{eventId}/whitelists/count:
+    get: null
+  /events/{eventId}/whitelists/{tierId}:
+    get: null
   /events/{eventId}/whitelists/count/{tierId}:
     get:
       tags:
-        - events    
+        - events
       security:
         - BearerAuth: []
       summary: Get whitelists count of event for specific tier
@@ -1375,7 +1400,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 'Get whitelists count of event for specific tier successfully'
+          description: Get whitelists count of event for specific tier successfully
           content:
             application/json:
               schema:
@@ -1402,7 +1427,7 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
@@ -1412,7 +1437,109 @@ paths:
       responses:
         '201':
           description: Update whitelist quantity
-  /nfts/airdrop/asset/metadata:
+  /events/{eventId}/usages:
+    get:
+      tags:
+        - events
+      summary: Get all usages of an event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: An array of usage objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTEventUsage'
+    post:
+      tags:
+        - events
+      summary: Create a usage for an event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NFTEventUsageParam'
+      responses:
+        '200':
+          description: Usage created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEventUsage'
+    delete:
+      tags:
+        - events
+      summary: Delete usage for an event by userId
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: user
+          in: query
+          description: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usage delete successfully
+          content:
+            application/json: {}
+  /events/v1/{eventId}/usages:
+    get:
+      tags:
+        - events
+      summary: Get all usages of event
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get usages successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTEventUsage'          
+
+  /nfts/airdrop/ipfs/metadata:
     post:
       tags:
         - nfts
@@ -1421,7 +1548,7 @@ paths:
       summary: Upload metadata to IPFS
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
@@ -1432,7 +1559,7 @@ paths:
         required: true
       responses:
         '200':
-          description: 'Metadata has been uploaded successfully'
+          description: Metadata has been uploaded successfully
           content:
             application/json:
               schema:
@@ -1450,15 +1577,15 @@ paths:
         - nfts
       security:
         - BearerAuth: []
-      summary: Create NFT metadata template 
+      summary: Create NFT metadata template
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
                 body:
-                    $ref: '#/components/schemas/INFTMetadataTemplate'
+                  $ref: '#/components/schemas/INFTMetadataTemplate'
         required: true
       responses:
         '200':
@@ -1476,16 +1603,16 @@ paths:
       summary: Create Smart Contract
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
                 body:
-                    $ref: '#/components/schemas/ISmartContract'
+                  $ref: '#/components/schemas/ISmartContract'
         required: true
       responses:
         '200':
-          description: 'Smart contract created successfully'
+          description: Smart contract created successfully
           content:
             application/json:
               schema:
@@ -1496,7 +1623,7 @@ paths:
         - nfts
       security:
         - BearerAuth: []
-      summary: Add NFT metadata template 
+      summary: Add NFT metadata template
       parameters:
         - name: contractId
           in: path
@@ -1515,12 +1642,12 @@ paths:
                   $ref: '#/components/schemas/NFTStandard'
                 metadata:
                   type: array
-                  items: 
+                  items:
                     $ref: '#/components/schemas/NFTMetadataParam'
         required: true
       responses:
         '200':
-          description: 'Add NFT metadata template successfully'
+          description: Add NFT metadata template successfully
           content:
             application/json:
               schema:
@@ -1545,7 +1672,7 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
@@ -1554,12 +1681,12 @@ paths:
         required: true
       responses:
         '200':
-          description: 'Generate NFT metadata template successfully'
+          description: Generate NFT metadata template successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTMetadataTemplate'
-  /nfts/airdrop/contracts/{contractId}/airdrop:
+  /nfts/airdrop/contracts/{contractId}/airdrop/batch:
     post:
       tags:
         - nfts
@@ -1574,28 +1701,28 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
-                tokenId: 
+                tokenId:
                   type: string
                 metadataTemplateId:
                   type: string
-                template: 
+                template:
                   type: string
                 metadataTemplateName:
                   type: string
                 recipient:
-                  type: string          
+                  type: string
         required: true
       responses:
         '200':
-          description: 'Airdrop NFT by template successfully'
+          description: Airdrop NFT by template successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AirdropResult'           
+                $ref: '#/components/schemas/AirdropResult'
   /nfts/airdrop/contract/{contractId}/airdrop/batch:
     post:
       tags:
@@ -1611,17 +1738,17 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
                 jobs:
                   type: array
-                  items: 
+                  items:
                     type: string
       responses:
         '200':
-          description: 'Batch airdrop NFT by template successfully'
+          description: Batch airdrop NFT by template successfully
           content:
             application/json:
               schema:
@@ -1655,7 +1782,7 @@ paths:
             type: string
       responses:
         '200':
-          description: 'Get incomplete transactions for NFT transfers'
+          description: Get incomplete transactions for NFT transfers
           content:
             application/json:
               schema:
@@ -1677,26 +1804,24 @@ paths:
             type: string
       responses:
         '200':
-          description:  Get failed to airdrop NFTs successfully
+          description: Get failed to airdrop NFTs successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AirdropJob'
-                
   /nfts/airdrop/events/{eventId}/retry:
     post:
       tags:
         - nfts
       security:
         - BearerAuth: []
-      summary: Retry airdrop NFT 
+      summary: Retry airdrop NFT
       parameters:
         - name: eventId
           in: path
           schema:
             type: string
           required: true
-          
       responses:
         '200':
           description: Retry airdrop NFT successfully
@@ -1714,8 +1839,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTCollection'
-                
+  /nfts/collections:
+    get: null
+    post: null
   /nfts/contracts/{contractId}/metadata/{tokenId}:
+    post: null
     get:
       tags:
         - nfts
@@ -1803,73 +1931,75 @@ paths:
         - nfts
       security:
         - BearerAuth: []
-
       summary: get NFT transfers of contract
       responses:
         '200':
           description: Get contract's NFT transfers successfully
-  /nfts/factories/{factoryName}/deploy:
+  /nfts/factories/{factory}:
+    get: null
+  /nfts/factories/{factory}/add:
+    patch: null
+  /nfts/factories/{factory}/deploy:
     post:
       tags:
         - nfts
       security:
         - BearerAuth: []
       parameters:
-        - name: factoryName
+        - name: factory
           in: path
           description: Factory Name
           required: true
           schema:
             type: string
       summary: Deploy Collection by Factory Contract
-      
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
               type: object
               properties:
                 network:
-                  $ref : '#/components/schemas/Network'
+                  $ref: '#/components/schemas/Network'
                 name:
                   type: string
-                symbol: 
+                symbol:
                   type: string
-                royaltyReceiver: 
+                royaltyReceiver:
                   type: string
                 royaltyFee:
                   type: number
-                baseURI: 
+                baseURI:
                   type: string
         required: true
       responses:
         '200':
-          description: 'Deploy collection successfully'
+          description: Deploy collection successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ContractFactoryDeployment'
-  /nfts/minting/asset/image:
+  /nfts/airdrop/asset/image:
     post:
       tags:
         - nfts
       security:
         - BearerAuth: []
       summary: Upload image asset to IPFS
-      requestBody:            
+      requestBody:
         required: true
         content:
           application/json:
-              schema:
-                type: object
-                properties:
-                  bucket:
-                    type: string
-                  key:
-                    type: string
+            schema:
+              type: object
+              properties:
+                bucket:
+                  type: string
+                key:
+                  type: string
       responses:
-          '200':
-            description: 'Uploaded image successfully!'
+        '200':
+          description: Uploaded image successfully!
   /nfts/{userId}:
     get:
       tags:
@@ -1943,7 +2073,6 @@ paths:
           required: true
           schema:
             type: string
-
       summary: Get wallet's NFTs
       responses:
         '200':
@@ -1954,7 +2083,7 @@ paths:
                 $ref: '#/components/schemas/NFT'
   /nfts/networks/{network}/wallets/{wallet}:
     get:
-      tags: 
+      tags:
         - nfts
       security:
         - BearerAuth: []
@@ -1978,7 +2107,7 @@ paths:
           content:
             application/json:
               schema:
-                  $ref : '#/components/schemas/NFT'      
+                $ref: '#/components/schemas/NFT'
   /nfts/redeem/{code}:
     get:
       tags:
@@ -1988,7 +2117,7 @@ paths:
       parameters:
         - name: code
           in: path
-          description: For code verification before NFT redemption 
+          description: For code verification before NFT redemption
           required: true
           schema:
             type: string
@@ -2058,80 +2187,9 @@ paths:
       responses:
         '200':
           description: Payment service selected successfully
-  /events/{eventId}/usages:
-    get:
-      tags:
-        - events
-      summary: Get all usages of an event
-      parameters:
-        - name: eventId
-          in: path
-          description: Event ID
-          required: true
-          schema: 
-            type: string
-        - name: projectId
-          in: query
-          description: Project ID
-          required: false
-          schema: 
-            type: number
-      security:
-        - BearerAuth: []
-      responses:
-        '200':
-          description: An array of usage objects
-          content:
-            application/json:
-                schema:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      eventId: 
-                        type: string
-                      projectId:
-                        type: string
-    post:
-      tags:  
-        - events
-      summary: Create a usage for an event
-      parameters:
-        - name: eventId
-          in: path
-          description: Event ID
-          required: true
-          schema:
-            type: string
-      security:
-        - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-              schema:
-                type: object
-                properties:
-                  tierId:
-                    type: string
-                  identifiers:
-                    type: array
-                    items:
-                      type: string
-      responses:
-        '201':
-          description: The newly created usage object
-          content:
-            application/json:
-                schema:
-                    items:
-                      type: object
-                      properties:
-                        eventId: 
-                          type: string
-                        projectId:
-                          type: string
 
+          
+          
 components:
   securitySchemes:
     BearerAuth:
@@ -2141,38 +2199,38 @@ components:
     SimplehashTransfer:
       type: object
       properties:
-        nft_id: 
+        nft_id:
           type: string
-        chain: 
+        chain:
           type: string
-        contract_address: 
+        contract_address:
           type: string
-        token_id:           
+        token_id:
           type: string
-        from_address: 
+        from_address:
           type: string
-        to_address: 
+        to_address:
           type: string
-        quantity: 
+        quantity:
           type: number
-        timestamp: 
+        timestamp:
           type: string
-        block_number: 
+        block_number:
           type: number
-        block_hash: 
+        block_hash:
           type: string
-        transaction: 
+        transaction:
           type: string
-        transaction_initiator: 
+        transaction_initiator:
           type: string
-        log_index: 
+        log_index:
           type: number
-        batch_transfer_index: 
+        batch_transfer_index:
           type: number
         sales_details:
           $ref: '#/components/schemas/SimplehashSaleDetails'
         nft_details:
-          $ref : '#/components/schemas/SimplehashNFT'
+          $ref: '#/components/schemas/SimplehashNFT'
     SimplehashSaleDetails:
       type: object
       properties:
@@ -2183,34 +2241,34 @@ components:
         payment_token:
           $ref: '#/components/schemas/SimplehashPaymentToken'
         unit_price:
-          type: number 
-        total_price: 
-          type: number    
+          type: number
+        total_price:
+          type: number
     SimplehashSale:
-          type: object
-          properties:
-            from_address:
-              type: string
-              nullable: true
-            to_address:
-              type: string
-              nullable: true
-            quantity:
-              type: integer
-            timestamp:
-              type: string
-            transaction:
-              type: string
-            marketplace_name:
-              type: string
-            is_bundle_sale:
-              type: boolean
-            payment_token:
-              $ref: '#/components/schemas/SimplehashPaymentToken'
-            unit_price:
-              type: number
-            total_price:
-              type: number
+      type: object
+      properties:
+        from_address:
+          type: string
+          nullable: true
+        to_address:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+        timestamp:
+          type: string
+        transaction:
+          type: string
+        marketplace_name:
+          type: string
+        is_bundle_sale:
+          type: boolean
+        payment_token:
+          $ref: '#/components/schemas/SimplehashPaymentToken'
+        unit_price:
+          type: number
+        total_price:
+          type: number
     SimplehashPaymentToken:
       type: object
       properties:
@@ -2475,8 +2533,7 @@ components:
         owners:
           type: array
           items:
-            $ref: '#/components/schemas/SimplehashNFTOwnerResponse'  
-
+            $ref: '#/components/schemas/SimplehashNFTOwnerResponse'
     NFTStandard:
       type: string
       enum:
@@ -2489,11 +2546,11 @@ components:
     missingMintRecords:
       type: object
       properties:
-        network : 
+        network:
           $ref: '#/components/schemas/Network'
         contractId:
           type: string
-        contractAddress: 
+        contractAddress:
           type: string
         missingWallet:
           type: array
@@ -2556,7 +2613,7 @@ components:
         - SOLANA
         - EHTEREUM-GOERLI
         - POLYGON-MUMBAI
-        - AVALANCHE-FUJI     
+        - AVALANCHE-FUJI
     SUPPORTED_NETWORKS:
       type: array
       items:
@@ -2634,7 +2691,41 @@ components:
           type: string
         quantity:
           type: number
-          
+    NFTEventUsageParam:
+      type: object
+      properties:
+        eventId:
+          type: string
+        tierId:
+          type: string
+        identifiers:
+          type: array
+          items:
+            type: string
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/INFTOwnership'
+      required:
+        - eventId
+        - tierId
+        - identifiers
+    INFTOwnership:
+      type: object
+      properties:
+        owner:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        collectionId:
+          type: string
+        tokenId:
+          type: string
+      required:
+        - owner
+        - network
+        - collectionId
+        - tokenId
     NFTCollectionInfo:
       type: object
       properties:
@@ -2708,7 +2799,6 @@ components:
         initial:
           type: boolean
           nullable: true
-
     toJSON:
       type: string
     NFT:
@@ -2806,7 +2896,7 @@ components:
             - boost_number
             - date
         max_value:
-          type: number   
+          type: number
     SmartContract:
       type: object
       properties:
@@ -2841,7 +2931,7 @@ components:
       enum:
         - erc721-airdrop
         - erc721-soulbound-airdrop
-        - erc1155-airdrop   
+        - erc1155-airdrop
     ContractFactoryDeployment:
       type: object
       properties:
@@ -2926,7 +3016,7 @@ components:
         description:
           type: string
         factory:
-          $ref: '#/components/schemas/ContractFactoryName'   
+          $ref: '#/components/schemas/ContractFactoryName'
     NFTMetadataTemplate:
       type: object
       properties:
@@ -2949,7 +3039,7 @@ components:
         tokenURIOptions:
           type: array
           items:
-            type: string       
+            type: string
     NFTEventWhitelistParam:
       type: object
       properties:
@@ -3027,7 +3117,7 @@ components:
       type: object
       properties:
         redirect:
-          type: string 
+          type: string
     Moonpass:
       type: object
       properties:
@@ -3071,24 +3161,88 @@ components:
       properties:
         organizerId:
           type: string
-        id:
-          type: string
-        name:
-          type: string
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-        timeZone:
-          type: string
         info:
           $ref: '#/components/schemas/NFTEventInfoParam'
         tiers:
           type: array
           items:
             $ref: '#/components/schemas/NFTEventTierParam'
+        type: 
+          $ref: '#/components/schemas/EventTypeEnum'
+        editors:
+          type: array
+          items:
+            type: string
+        projectId:
+          type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Network'
+        collections:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        start:
+          type: number
+        end:
+          type: number
+        timeZone:
+          $ref: '#/components/schemas/Timezone'
+        tags:
+          type: array
+          items:
+            type: string
+        hidden:
+          type: boolean
+        version:
+          type: number
+        slug:
+          type: string
+        domain: 
+          type: string
+        code:
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        paymentMethods: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/PaymentMethod'
+        transactionFee:
+          type: number
+        allowCrossTierPurchase:
+          type: boolean
+        pubished:
+          type: boolean
+        status: 
+          $ref: '#/components/schemas/EventStatus'
+        customization:
+          $ref: '#/components/schemas/NFTEventCustomization'
+    
+
+        
+      required:
+        - organizerId
+    NFTEventCustomization:
+      type: object
+      properties:
+        showCountdown:
+          type: boolean
+    EventStatus:
+      type: string
+      enum:
+        - draft
+        - published
+        - deleted
+    PaymentMethod:
+      type: string
+      enum:
+        - paypal
+        - stripe
+        - coingate
     NFTEventInfoParam:
       type: object
       properties:
@@ -3163,14 +3317,68 @@ components:
     NFTEventOrganizer:
       type: object
       properties:
-        name: 
+        name:
           type: string
         url:
           type: string
         logo:
           type: string
         description:
-          type: string    
+          type: string
+    NFTEventUsage:
+      type: object
+      properties:
+        eventId:
+          type: string
+        tierId:
+          type: string
+        tierName:
+          type: string
+        identifiers:
+          type: array
+          items:
+            type: string
+        validCount:
+          type: integer
+        id:
+          type: string
+        timestamp:
+          type: integer
+        wallets:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+        userId:
+          type: string
+        nftIds:
+          type: array
+          items:
+            type: string
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTOwnership'
+        whitelist:
+          type: object
+          properties:
+            id:
+              type: string
+            identifier:
+              type: string
+            quantity:
+              type: integer
+            order:
+              type: integer
+      required:
+        - eventId
+        - tierId
+        - tierName
+        - identifiers
+        - validCount
+        - id
+        - timestamp
     NFTEventTierParam:
       type: object
       properties:
@@ -3193,7 +3401,6 @@ components:
         runnerConfig:
           $ref: '#/components/schemas/RunnerConfigParam'
     NFTEventTierWhitelistConstraintParam:
-
       type: object
       properties:
         start:
@@ -3228,6 +3435,12 @@ components:
                 type: array
                 items:
                   type: string
+    EventTypeEnum:
+      type: string
+      enum:
+        - ticket
+        - benefit
+        - membership
     NFTConstraintParam:
       type: object
       properties:
@@ -3350,11 +3563,11 @@ components:
       type: object
       properties:
         network:
-          $ref: 'components/schemas/Network'
+          $ref: '#/components/schemas/Network'
         contractId:
           type: string
         standard:
-          $ref: 'components/schemas/NFTStandard'
+          $ref: '#/components/schemas/NFTStandard'
     NFTEventTierEmailConfig:
       type: object
       properties:
@@ -3551,835 +3764,834 @@ components:
     Language:
       type: string
       enum:
-        - "aa"
-        - "aa-DJ"
-        - "aa-ER"
-        - "aa-ET"
-        - "af"
-        - "af-NA"
-        - "af-ZA"
-        - "agq"
-        - "agq-CM"
-        - "ak"
-        - "ak-GH"
-        - "sq"
-        - "sq-AL"
-        - "sq-MK"
-        - "gsw"
-        - "gsw-FR"
-        - "gsw-LI"
-        - "gsw-CH"
-        - "am"
-        - "am-ET"
-        - "ar"
-        - "ar-DZ"
-        - "ar-BH"
-        - "ar-TD"
-        - "ar-KM"
-        - "ar-DJ"
-        - "ar-EG"
-        - "ar-ER"
-        - "ar-IQ"
-        - "ar-IL"
-        - "ar-JO"
-        - "ar-KW"
-        - "ar-LB"
-        - "ar-LY"
-        - "ar-MR"
-        - "ar-MA"
-        - "ar-OM"
-        - "ar-PS"
-        - "ar-QA"
-        - "ar-SA"
-        - "ar-SO"
-        - "ar-SS"
-        - "ar-SD"
-        - "ar-SY"
-        - "ar-TN"
-        - "ar-AE"
-        - "ar-001"
-        - "ar-YE"
-        - "hy"
-        - "hy-AM"
-        - "as"
-        - "as-IN"
-        - "ast"
-        - "ast-ES"
-        - "asa"
-        - "asa-TZ"
-        - "az-Cyrl"
-        - "az-Cyrl-AZ"
-        - "az"
-        - "az-Latn"
-        - "az-Latn-AZ"
-        - "ksf"
-        - "ksf-CM"
-        - "bm"
-        - "bm-Latn-ML"
-        - "bn"
-        - "bn-BD"
-        - "bn-IN"
-        - "bas"
-        - "bas-CM"
-        - "ba"
-        - "ba-RU"
-        - "eu"
-        - "eu-ES"
-        - "be"
-        - "be-BY"
-        - "bem"
-        - "bem-ZM"
-        - "bez"
-        - "bez-TZ"
-        - "byn"
-        - "byn-ER"
-        - "brx"
-        - "brx-IN"
-        - "bs-Cyrl"
-        - "bs-Cyrl-BA"
-        - "bs-Latn"
-        - "bs"
-        - "bs-Latn-BA"
-        - "br"
-        - "br-FR"
-        - "bg"
-        - "bg-BG"
-        - "my"
-        - "my-MM"
-        - "ca"
-        - "ca-AD"
-        - "ca-FR"
-        - "ca-IT"
-        - "ca-ES"
-        - "ceb"
-        - "ceb-Latn"
-        - "ceb-Latn-PH"
-        - "tzm-Latn-"
-        - "ku"
-        - "ku-Arab"
-        - "ku-Arab-IQ"
-        - "ccp"
-        - "ccp-Cakm"
-        - "ccp-Cakm-"
-        - "cd-RU"
-        - "chr"
-        - "chr-Cher"
-        - "chr-Cher-US"
-        - "cgg"
-        - "cgg-UG"
-        - "zh-Hans"
-        - "zh"
-        - "zh-CN"
-        - "zh-SG"
-        - "zh-Hant"
-        - "zh-HK"
-        - "zh-MO"
-        - "zh-TW"
-        - "cu-RU"
-        - "swc"
-        - "swc-CD"
-        - "kw"
-        - "kw-GB"
-        - "co"
-        - "co-FR"
-        - "hr"
-        - "hr-HR"
-        - "hr-BA"
-        - "cs"
-        - "cs-CZ"
-        - "da"
-        - "da-DK"
-        - "da-GL"
-        - "prs"
-        - "prs-AF"
-        - "dv"
-        - "dv-MV"
-        - "dua"
-        - "dua-CM"
-        - "nl"
-        - "nl-AW"
-        - "nl-BE"
-        - "nl-BQ"
-        - "nl-CW"
-        - "nl-NL"
-        - "nl-SX"
-        - "nl-SR"
-        - "dz"
-        - "dz-BT"
-        - "ebu"
-        - "ebu-KE"
-        - "en"
-        - "en-AS"
-        - "en-AI"
-        - "en-AG"
-        - "en-AU"
-        - "en-AT"
-        - "en-BS"
-        - "en-BB"
-        - "en-BE"
-        - "en-BZ"
-        - "en-BM"
-        - "en-BW"
-        - "en-IO"
-        - "en-VG"
-        - "en-BI"
-        - "en-CM"
-        - "en-CA"
-        - "en-029"
-        - "en-KY"
-        - "en-CX"
-        - "en-CC"
-        - "en-CK"
-        - "en-CY"
-        - "en-DK"
-        - "en-DM"
-        - "en-ER"
-        - "en-150"
-        - "en-FK"
-        - "en-FI"
-        - "en-FJ"
-        - "en-GM"
-        - "en-DE"
-        - "en-GH"
-        - "en-GI"
-        - "en-GD"
-        - "en-GU"
-        - "en-GG"
-        - "en-GY"
-        - "en-HK"
-        - "en-IN"
-        - "en-IE"
-        - "en-IM"
-        - "en-IL"
-        - "en-JM"
-        - "en-JE"
-        - "en-KE"
-        - "en-KI"
-        - "en-LS"
-        - "en-LR"
-        - "en-MO"
-        - "en-MG"
-        - "en-MW"
-        - "en-MY"
-        - "en-MT"
-        - "en-MH"
-        - "en-MU"
-        - "en-FM"
-        - "en-MS"
-        - "en-NA"
-        - "en-NR"
-        - "en-NL"
-        - "en-NZ"
-        - "en-NG"
-        - "en-NU"
-        - "en-NF"
-        - "en-MP"
-        - "en-PK"
-        - "en-PW"
-        - "en-PG"
-        - "en-PN"
-        - "en-PR"
-        - "en-PH"
-        - "en-RW"
-        - "en-KN"
-        - "en-LC"
-        - "en-VC"
-        - "en-WS"
-        - "en-SC"
-        - "en-SL"
-        - "en-SG"
-        - "en-SX"
-        - "en-SI"
-        - "en-SB"
-        - "en-ZA"
-        - "en-SS"
-        - "en-SH"
-        - "en-SD"
-        - "en-SZ"
-        - "en-SE"
-        - "en-CH"
-        - "en-TZ"
-        - "en-TK"
-        - "en-TO"
-        - "en-TT"
-        - "en-TC"
-        - "en-TV"
-        - "en-UG"
-        - "en-AE"
-        - "en-GB"
-        - "en-US"
-        - "en-UM"
-        - "en-VI"
-        - "en-VU"
-        - "en-001"
-        - "en-ZM"
-        - "en-ZW"
-        - "eo"
-        - "eo-001"
-        - "et"
-        - "et-EE"
-        - "ee"
-        - "ee-GH"
-        - "ee-TG"
-        - "ewo"
-        - "ewo-CM"
-        - "fo"
-        - "fo-DK"
-        - "fo-FO"
-        - "fil"
-        - "fil-PH"
-        - "fi"
-        - "fi-FI"
-        - "fr"
-        - "fr-DZ"
-        - "fr-BE"
-        - "fr-BJ"
-        - "fr-BF"
-        - "fr-BI"
-        - "fr-CM"
-        - "fr-CA"
-        - "fr-CF"
-        - "fr-TD"
-        - "fr-KM"
-        - "fr-CG"
-        - "fr-CD"
-        - "fr-CI"
-        - "fr-DJ"
-        - "fr-GQ"
-        - "fr-FR"
-        - "fr-GF"
-        - "fr-PF"
-        - "fr-GA"
-        - "fr-GP"
-        - "fr-GN"
-        - "fr-HT"
-        - "fr-LU"
-        - "fr-MG"
-        - "fr-ML"
-        - "fr-MQ"
-        - "fr-MR"
-        - "fr-MU"
-        - "fr-YT"
-        - "fr-MA"
-        - "fr-NC"
-        - "fr-NE"
-        - "fr-MC"
-        - "fr-RE"
-        - "fr-RW"
-        - "fr-BL"
-        - "fr-MF"
-        - "fr-PM"
-        - "fr-SN"
-        - "fr-SC"
-        - "fr-CH"
-        - "fr-SY"
-        - "fr-TG"
-        - "fr-TN"
-        - "fr-VU"
-        - "fr-WF"
-        - "fy"
-        - "fy-NL"
-        - "fur"
-        - "fur-IT"
-        - "ff"
-        - "ff-Latn"
-        - "ff-Latn-BF"
-        - "ff-CM"
-        - "ff-Latn-CM"
-        - "ff-Latn-GM"
-        - "ff-Latn-GH"
-        - "ff-GN"
-        - "ff-Latn-GN"
-        - "ff-Latn-GW"
-        - "ff-Latn-LR"
-        - "ff-MR"
-        - "ff-Latn-MR"
-        - "ff-Latn-NE"
-        - "ff-NG"
-        - "ff-Latn-NG"
-        - "ff-Latn-SN"
-        - "ff-Latn-SL"
-        - "gl"
-        - "gl-ES"
-        - "lg"
-        - "lg-UG"
-        - "ka"
-        - "ka-GE"
-        - "de"
-        - "de-AT"
-        - "de-BE"
-        - "de-DE"
-        - "de-IT"
-        - "de-LI"
-        - "de-LU"
-        - "de-CH"
-        - "el"
-        - "el-CY"
-        - "el-GR"
-        - "kl"
-        - "kl-GL"
-        - "gn"
-        - "gn-PY"
-        - "gu"
-        - "gu-IN"
-        - "guz"
-        - "guz-KE"
-        - "ha"
-        - "ha-Latn"
-        - "ha-Latn-GH"
-        - "ha-Latn-NE"
-        - "ha-Latn-NG"
-        - "haw"
-        - "haw-US"
-        - "he"
-        - "he-IL"
-        - "hi"
-        - "hi-IN"
-        - "hu"
-        - "hu-HU"
-        - "is"
-        - "is-IS"
-        - "ig"
-        - "ig-NG"
-        - "id"
-        - "id-ID"
-        - "ia"
-        - "ia-FR"
-        - "ia-001"
-        - "iu"
-        - "iu-Latn"
-        - "iu-Latn-CA"
-        - "iu-Cans"
-        - "iu-Cans-CA"
-        - "ga"
-        - "ga-IE"
-        - "it"
-        - "it-IT"
-        - "it-SM"
-        - "it-CH"
-        - "it-VA"
-        - "ja"
-        - "ja-JP"
-        - "jv"
-        - "jv-Latn"
-        - "jv-Latn-ID"
-        - "dyo"
-        - "dyo-SN"
-        - "kea"
-        - "kea-CV"
-        - "kab"
-        - "kab-DZ"
-        - "kkj"
-        - "kkj-CM"
-        - "kln"
-        - "kln-KE"
-        - "kam"
-        - "kam-KE"
-        - "kn"
-        - "kn-IN"
-        - "ks"
-        - "ks-Arab"
-        - "ks-Arab-IN"
-        - "kk"
-        - "kk-KZ"
-        - "km"
-        - "km-KH"
-        - "quc"
-        - "quc-Latn-GT"
-        - "ki"
-        - "ki-KE"
-        - "rw"
-        - "rw-RW"
-        - "sw"
-        - "sw-KE"
-        - "sw-TZ"
-        - "sw-UG"
-        - "kok"
-        - "kok-IN"
-        - "ko"
-        - "ko-KR"
-        - "ko-KP"
-        - "khq"
-        - "khq-ML"
-        - "ses"
-        - "ses-ML"
-        - "nmg"
-        - "nmg-CM"
-        - "ky"
-        - "ky-KG"
-        - "ku-Arab-IR"
-        - "lkt"
-        - "lkt-US"
-        - "lag"
-        - "lag-TZ"
-        - "lo"
-        - "lo-LA"
-        - "lv"
-        - "lv-LV"
-        - "ln"
-        - "ln-AO"
-        - "ln-CF"
-        - "ln-CG"
-        - "ln-CD"
-        - "lt"
-        - "lt-LT"
-        - "nds"
-        - "nds-DE"
-        - "nds-NL"
-        - "dsb"
-        - "dsb-DE"
-        - "lu"
-        - "lu-CD"
-        - "luo"
-        - "luo-KE"
-        - "lb"
-        - "lb-LU"
-        - "luy"
-        - "luy-KE"
-        - "mk"
-        - "mk-MK"
-        - "jmc"
-        - "jmc-TZ"
-        - "mgh"
-        - "mgh-MZ"
-        - "kde"
-        - "kde-TZ"
-        - "mg"
-        - "mg-MG"
-        - "ms"
-        - "ms-BN"
-        - "ms-MY"
-        - "ml"
-        - "ml-IN"
-        - "mt"
-        - "mt-MT"
-        - "gv"
-        - "gv-IM"
-        - "mi"
-        - "mi-NZ"
-        - "arn"
-        - "arn-CL"
-        - "mr"
-        - "mr-IN"
-        - "mas"
-        - "mas-KE"
-        - "mas-TZ"
-        - "mzn-IR"
-        - "mer"
-        - "mer-KE"
-        - "mgo"
-        - "mgo-CM"
-        - "moh"
-        - "moh-CA"
-        - "mn"
-        - "mn-Cyrl"
-        - "mn-MN"
-        - "mn-Mong"
-        - "mn-Mong-CN"
-        - "mn-Mong-MN"
-        - "mfe"
-        - "mfe-MU"
-        - "mua"
-        - "mua-CM"
-        - "nqo"
-        - "nqo-GN"
-        - "naq"
-        - "naq-NA"
-        - "ne"
-        - "ne-IN"
-        - "ne-NP"
-        - "nnh"
-        - "nnh-CM"
-        - "jgo"
-        - "jgo-CM"
-        - "lrc-IQ"
-        - "lrc-IR"
-        - "nd"
-        - "nd-ZW"
-        - "no"
-        - "nb"
-        - "nb-NO"
-        - "nn"
-        - "nn-NO"
-        - "nb-SJ"
-        - "nus"
-        - "nus-SD"
-        - "nus-SS"
-        - "nyn"
-        - "nyn-UG"
-        - "oc"
-        - "oc-FR"
-        - "or"
-        - "or-IN"
-        - "om"
-        - "om-ET"
-        - "om-KE"
-        - "os"
-        - "os-GE"
-        - "os-RU"
-        - "ps"
-        - "ps-AF"
-        - "ps-PK"
-        - "fa"
-        - "fa-AF"
-        - "fa-IR"
-        - "pl"
-        - "pl-PL"
-        - "pt"
-        - "pt-AO"
-        - "pt-BR"
-        - "pt-CV"
-        - "pt-GQ"
-        - "pt-GW"
-        - "pt-LU"
-        - "pt-MO"
-        - "pt-MZ"
-        - "pt-PT"
-        - "pt-ST"
-        - "pt-CH"
-        - "pt-TL"
-        - "prg-001"
-        - "qps-ploca"
-        - "qps-ploc"
-        - "qps-plocm"
-        - "pa"
-        - "pa-Arab"
-        - "pa-IN"
-        - "pa-Arab-PK"
-        - "quz"
-        - "quz-BO"
-        - "quz-EC"
-        - "quz-PE"
-        - "ksh"
-        - "ksh-DE"
-        - "ro"
-        - "ro-MD"
-        - "ro-RO"
-        - "rm"
-        - "rm-CH"
-        - "rof"
-        - "rof-TZ"
-        - "rn"
-        - "rn-BI"
-        - "ru"
-        - "ru-BY"
-        - "ru-KZ"
-        - "ru-KG"
-        - "ru-MD"
-        - "ru-RU"
-        - "ru-UA"
-        - "rwk"
-        - "rwk-TZ"
-        - "ssy"
-        - "ssy-ER"
-        - "sah"
-        - "sah-RU"
-        - "saq"
-        - "saq-KE"
-        - "smn"
-        - "smn-FI"
-        - "smj"
-        - "smj-NO"
-        - "smj-SE"
-        - "se"
-        - "se-FI"
-        - "se-NO"
-        - "se-SE"
-        - "sms"
-        - "sms-FI"
-        - "sma"
-        - "sma-NO"
-        - "sma-SE"
-        - "sg"
-        - "sg-CF"
-        - "sbp"
-        - "sbp-TZ"
-        - "sa"
-        - "sa-IN"
-        - "gd"
-        - "gd-GB"
-        - "seh"
-        - "seh-MZ"
-        - "sr-Cyrl"
-        - "sr-Cyrl-BA"
-        - "sr-Cyrl-ME"
-        - "sr-Cyrl-RS"
-        - "sr-Cyrl-CS"
-        - "sr-Latn"
-        - "sr"
-        - "sr-Latn-BA"
-        - "sr-Latn-ME"
-        - "sr-Latn-RS"
-        - "sr-Latn-CS"
-        - "nso"
-        - "nso-ZA"
-        - "tn"
-        - "tn-BW"
-        - "tn-ZA"
-        - "ksb"
-        - "ksb-TZ"
-        - "sn"
-        - "sn-Latn"
-        - "sn-Latn-ZW"
-        - "sd"
-        - "sd-Arab"
-        - "sd-Arab-PK"
-        - "si"
-        - "si-LK"
-        - "sk"
-        - "sk-SK"
-        - "sl"
-        - "sl-SI"
-        - "xog"
-        - "xog-UG"
-        - "so"
-        - "so-DJ"
-        - "so-ET"
-        - "so-KE"
-        - "so-SO"
-        - "st"
-        - "st-ZA"
-        - "nr"
-        - "nr-ZA"
-        - "st-LS"
-        - "es"
-        - "es-AR"
-        - "es-BZ"
-        - "es-VE"
-        - "es-BO"
-        - "es-BR"
-        - "es-CL"
-        - "es-CO"
-        - "es-CR"
-        - "es-CU"
-        - "es-DO"
-        - "es-EC"
-        - "es-SV"
-        - "es-GQ"
-        - "es-GT"
-        - "es-HN"
-        - "es-419"
-        - "es-MX"
-        - "es-NI"
-        - "es-PA"
-        - "es-PY"
-        - "es-PE"
-        - "es-PH"
-        - "es-PR"
-        - "es-ES_tradnl"
-        - "es-ES"
-        - "es-US"
-        - "es-UY"
-        - "zgh"
-        - "zgh-Tfng-MA"
-        - "zgh-Tfng"
-        - "ss"
-        - "ss-ZA"
-        - "ss-SZ"
-        - "sv"
-        - "sv-AX"
-        - "sv-FI"
-        - "sv-SE"
-        - "syr"
-        - "syr-SY"
-        - "shi"
-        - "shi-Tfng"
-        - "shi-Tfng-MA"
-        - "shi-Latn"
-        - "shi-Latn-MA"
-        - "dav"
-        - "dav-KE"
-        - "tg"
-        - "tg-Cyrl"
-        - "tg-Cyrl-TJ"
-        - "tzm"
-        - "tzm-Latn"
-        - "tzm-Latn-DZ"
-        - "ta"
-        - "ta-IN"
-        - "ta-MY"
-        - "ta-SG"
-        - "ta-LK"
-        - "twq"
-        - "twq-NE"
-        - "tt"
-        - "tt-RU"
-        - "te"
-        - "te-IN"
-        - "teo"
-        - "teo-KE"
-        - "teo-UG"
-        - "th"
-        - "th-TH"
-        - "bo"
-        - "bo-IN"
-        - "bo-CN"
-        - "tig"
-        - "tig-ER"
-        - "ti"
-        - "ti-ER"
-        - "ti-ET"
-        - "to"
-        - "to-TO"
-        - "ts"
-        - "ts-ZA"
-        - "tr"
-        - "tr-CY"
-        - "tr-TR"
-        - "tk"
-        - "tk-TM"
-        - "uk"
-        - "uk-UA"
-        - "hsb"
-        - "hsb-DE"
-        - "ur"
-        - "ur-IN"
-        - "ur-PK"
-        - "ug"
-        - "ug-CN"
-        - "uz-Arab"
-        - "uz-Arab-AF"
-        - "uz-Cyrl"
-        - "uz-Cyrl-UZ"
-        - "uz"
-        - "uz-Latn"
-        - "uz-Latn-UZ"
-        - "vai"
-        - "vai-Vaii"
-        - "vai-Vaii-LR"
-        - "vai-Latn-LR"
-        - "vai-Latn"
-        - "ca-ES-"
-        - "ve"
-        - "ve-ZA"
-        - "vi"
-        - "vi-VN"
-        - "vo"
-        - "vo-001"
-        - "vun"
-        - "vun-TZ"
-        - "wae"
-        - "wae-CH"
-        - "cy"
-        - "cy-GB"
-        - "wal"
-        - "wal-ET"
-        - "wo"
-        - "wo-SN"
-        - "xh"
-        - "xh-ZA"
-        - "yav"
-        - "yav-CM"
-        - "ii"
-        - "ii-CN"
-        - "yo"
-        - "yo-BJ"
-        - "yo-NG"
-        - "dje"
-        - "dje-NE"
-        - "zu"
-        - "zu-ZA"
-        
+        - aa
+        - aa-DJ
+        - aa-ER
+        - aa-ET
+        - af
+        - af-NA
+        - af-ZA
+        - agq
+        - agq-CM
+        - ak
+        - ak-GH
+        - sq
+        - sq-AL
+        - sq-MK
+        - gsw
+        - gsw-FR
+        - gsw-LI
+        - gsw-CH
+        - am
+        - am-ET
+        - ar
+        - ar-DZ
+        - ar-BH
+        - ar-TD
+        - ar-KM
+        - ar-DJ
+        - ar-EG
+        - ar-ER
+        - ar-IQ
+        - ar-IL
+        - ar-JO
+        - ar-KW
+        - ar-LB
+        - ar-LY
+        - ar-MR
+        - ar-MA
+        - ar-OM
+        - ar-PS
+        - ar-QA
+        - ar-SA
+        - ar-SO
+        - ar-SS
+        - ar-SD
+        - ar-SY
+        - ar-TN
+        - ar-AE
+        - ar-001
+        - ar-YE
+        - hy
+        - hy-AM
+        - as
+        - as-IN
+        - ast
+        - ast-ES
+        - asa
+        - asa-TZ
+        - az-Cyrl
+        - az-Cyrl-AZ
+        - az
+        - az-Latn
+        - az-Latn-AZ
+        - ksf
+        - ksf-CM
+        - bm
+        - bm-Latn-ML
+        - bn
+        - bn-BD
+        - bn-IN
+        - bas
+        - bas-CM
+        - ba
+        - ba-RU
+        - eu
+        - eu-ES
+        - be
+        - be-BY
+        - bem
+        - bem-ZM
+        - bez
+        - bez-TZ
+        - byn
+        - byn-ER
+        - brx
+        - brx-IN
+        - bs-Cyrl
+        - bs-Cyrl-BA
+        - bs-Latn
+        - bs
+        - bs-Latn-BA
+        - br
+        - br-FR
+        - bg
+        - bg-BG
+        - my
+        - my-MM
+        - ca
+        - ca-AD
+        - ca-FR
+        - ca-IT
+        - ca-ES
+        - ceb
+        - ceb-Latn
+        - ceb-Latn-PH
+        - tzm-Latn-
+        - ku
+        - ku-Arab
+        - ku-Arab-IQ
+        - ccp
+        - ccp-Cakm
+        - ccp-Cakm-
+        - cd-RU
+        - chr
+        - chr-Cher
+        - chr-Cher-US
+        - cgg
+        - cgg-UG
+        - zh-Hans
+        - zh
+        - zh-CN
+        - zh-SG
+        - zh-Hant
+        - zh-HK
+        - zh-MO
+        - zh-TW
+        - cu-RU
+        - swc
+        - swc-CD
+        - kw
+        - kw-GB
+        - co
+        - co-FR
+        - hr
+        - hr-HR
+        - hr-BA
+        - cs
+        - cs-CZ
+        - da
+        - da-DK
+        - da-GL
+        - prs
+        - prs-AF
+        - dv
+        - dv-MV
+        - dua
+        - dua-CM
+        - nl
+        - nl-AW
+        - nl-BE
+        - nl-BQ
+        - nl-CW
+        - nl-NL
+        - nl-SX
+        - nl-SR
+        - dz
+        - dz-BT
+        - ebu
+        - ebu-KE
+        - en
+        - en-AS
+        - en-AI
+        - en-AG
+        - en-AU
+        - en-AT
+        - en-BS
+        - en-BB
+        - en-BE
+        - en-BZ
+        - en-BM
+        - en-BW
+        - en-IO
+        - en-VG
+        - en-BI
+        - en-CM
+        - en-CA
+        - en-029
+        - en-KY
+        - en-CX
+        - en-CC
+        - en-CK
+        - en-CY
+        - en-DK
+        - en-DM
+        - en-ER
+        - en-150
+        - en-FK
+        - en-FI
+        - en-FJ
+        - en-GM
+        - en-DE
+        - en-GH
+        - en-GI
+        - en-GD
+        - en-GU
+        - en-GG
+        - en-GY
+        - en-HK
+        - en-IN
+        - en-IE
+        - en-IM
+        - en-IL
+        - en-JM
+        - en-JE
+        - en-KE
+        - en-KI
+        - en-LS
+        - en-LR
+        - en-MO
+        - en-MG
+        - en-MW
+        - en-MY
+        - en-MT
+        - en-MH
+        - en-MU
+        - en-FM
+        - en-MS
+        - en-NA
+        - en-NR
+        - en-NL
+        - en-NZ
+        - en-NG
+        - en-NU
+        - en-NF
+        - en-MP
+        - en-PK
+        - en-PW
+        - en-PG
+        - en-PN
+        - en-PR
+        - en-PH
+        - en-RW
+        - en-KN
+        - en-LC
+        - en-VC
+        - en-WS
+        - en-SC
+        - en-SL
+        - en-SG
+        - en-SX
+        - en-SI
+        - en-SB
+        - en-ZA
+        - en-SS
+        - en-SH
+        - en-SD
+        - en-SZ
+        - en-SE
+        - en-CH
+        - en-TZ
+        - en-TK
+        - en-TO
+        - en-TT
+        - en-TC
+        - en-TV
+        - en-UG
+        - en-AE
+        - en-GB
+        - en-US
+        - en-UM
+        - en-VI
+        - en-VU
+        - en-001
+        - en-ZM
+        - en-ZW
+        - eo
+        - eo-001
+        - et
+        - et-EE
+        - ee
+        - ee-GH
+        - ee-TG
+        - ewo
+        - ewo-CM
+        - fo
+        - fo-DK
+        - fo-FO
+        - fil
+        - fil-PH
+        - fi
+        - fi-FI
+        - fr
+        - fr-DZ
+        - fr-BE
+        - fr-BJ
+        - fr-BF
+        - fr-BI
+        - fr-CM
+        - fr-CA
+        - fr-CF
+        - fr-TD
+        - fr-KM
+        - fr-CG
+        - fr-CD
+        - fr-CI
+        - fr-DJ
+        - fr-GQ
+        - fr-FR
+        - fr-GF
+        - fr-PF
+        - fr-GA
+        - fr-GP
+        - fr-GN
+        - fr-HT
+        - fr-LU
+        - fr-MG
+        - fr-ML
+        - fr-MQ
+        - fr-MR
+        - fr-MU
+        - fr-YT
+        - fr-MA
+        - fr-NC
+        - fr-NE
+        - fr-MC
+        - fr-RE
+        - fr-RW
+        - fr-BL
+        - fr-MF
+        - fr-PM
+        - fr-SN
+        - fr-SC
+        - fr-CH
+        - fr-SY
+        - fr-TG
+        - fr-TN
+        - fr-VU
+        - fr-WF
+        - fy
+        - fy-NL
+        - fur
+        - fur-IT
+        - ff
+        - ff-Latn
+        - ff-Latn-BF
+        - ff-CM
+        - ff-Latn-CM
+        - ff-Latn-GM
+        - ff-Latn-GH
+        - ff-GN
+        - ff-Latn-GN
+        - ff-Latn-GW
+        - ff-Latn-LR
+        - ff-MR
+        - ff-Latn-MR
+        - ff-Latn-NE
+        - ff-NG
+        - ff-Latn-NG
+        - ff-Latn-SN
+        - ff-Latn-SL
+        - gl
+        - gl-ES
+        - lg
+        - lg-UG
+        - ka
+        - ka-GE
+        - de
+        - de-AT
+        - de-BE
+        - de-DE
+        - de-IT
+        - de-LI
+        - de-LU
+        - de-CH
+        - el
+        - el-CY
+        - el-GR
+        - kl
+        - kl-GL
+        - gn
+        - gn-PY
+        - gu
+        - gu-IN
+        - guz
+        - guz-KE
+        - ha
+        - ha-Latn
+        - ha-Latn-GH
+        - ha-Latn-NE
+        - ha-Latn-NG
+        - haw
+        - haw-US
+        - he
+        - he-IL
+        - hi
+        - hi-IN
+        - hu
+        - hu-HU
+        - is
+        - is-IS
+        - ig
+        - ig-NG
+        - id
+        - id-ID
+        - ia
+        - ia-FR
+        - ia-001
+        - iu
+        - iu-Latn
+        - iu-Latn-CA
+        - iu-Cans
+        - iu-Cans-CA
+        - ga
+        - ga-IE
+        - it
+        - it-IT
+        - it-SM
+        - it-CH
+        - it-VA
+        - ja
+        - ja-JP
+        - jv
+        - jv-Latn
+        - jv-Latn-ID
+        - dyo
+        - dyo-SN
+        - kea
+        - kea-CV
+        - kab
+        - kab-DZ
+        - kkj
+        - kkj-CM
+        - kln
+        - kln-KE
+        - kam
+        - kam-KE
+        - kn
+        - kn-IN
+        - ks
+        - ks-Arab
+        - ks-Arab-IN
+        - kk
+        - kk-KZ
+        - km
+        - km-KH
+        - quc
+        - quc-Latn-GT
+        - ki
+        - ki-KE
+        - rw
+        - rw-RW
+        - sw
+        - sw-KE
+        - sw-TZ
+        - sw-UG
+        - kok
+        - kok-IN
+        - ko
+        - ko-KR
+        - ko-KP
+        - khq
+        - khq-ML
+        - ses
+        - ses-ML
+        - nmg
+        - nmg-CM
+        - ky
+        - ky-KG
+        - ku-Arab-IR
+        - lkt
+        - lkt-US
+        - lag
+        - lag-TZ
+        - lo
+        - lo-LA
+        - lv
+        - lv-LV
+        - ln
+        - ln-AO
+        - ln-CF
+        - ln-CG
+        - ln-CD
+        - lt
+        - lt-LT
+        - nds
+        - nds-DE
+        - nds-NL
+        - dsb
+        - dsb-DE
+        - lu
+        - lu-CD
+        - luo
+        - luo-KE
+        - lb
+        - lb-LU
+        - luy
+        - luy-KE
+        - mk
+        - mk-MK
+        - jmc
+        - jmc-TZ
+        - mgh
+        - mgh-MZ
+        - kde
+        - kde-TZ
+        - mg
+        - mg-MG
+        - ms
+        - ms-BN
+        - ms-MY
+        - ml
+        - ml-IN
+        - mt
+        - mt-MT
+        - gv
+        - gv-IM
+        - mi
+        - mi-NZ
+        - arn
+        - arn-CL
+        - mr
+        - mr-IN
+        - mas
+        - mas-KE
+        - mas-TZ
+        - mzn-IR
+        - mer
+        - mer-KE
+        - mgo
+        - mgo-CM
+        - moh
+        - moh-CA
+        - mn
+        - mn-Cyrl
+        - mn-MN
+        - mn-Mong
+        - mn-Mong-CN
+        - mn-Mong-MN
+        - mfe
+        - mfe-MU
+        - mua
+        - mua-CM
+        - nqo
+        - nqo-GN
+        - naq
+        - naq-NA
+        - ne
+        - ne-IN
+        - ne-NP
+        - nnh
+        - nnh-CM
+        - jgo
+        - jgo-CM
+        - lrc-IQ
+        - lrc-IR
+        - nd
+        - nd-ZW
+        - 'no'
+        - nb
+        - nb-NO
+        - nn
+        - nn-NO
+        - nb-SJ
+        - nus
+        - nus-SD
+        - nus-SS
+        - nyn
+        - nyn-UG
+        - oc
+        - oc-FR
+        - or
+        - or-IN
+        - om
+        - om-ET
+        - om-KE
+        - os
+        - os-GE
+        - os-RU
+        - ps
+        - ps-AF
+        - ps-PK
+        - fa
+        - fa-AF
+        - fa-IR
+        - pl
+        - pl-PL
+        - pt
+        - pt-AO
+        - pt-BR
+        - pt-CV
+        - pt-GQ
+        - pt-GW
+        - pt-LU
+        - pt-MO
+        - pt-MZ
+        - pt-PT
+        - pt-ST
+        - pt-CH
+        - pt-TL
+        - prg-001
+        - qps-ploca
+        - qps-ploc
+        - qps-plocm
+        - pa
+        - pa-Arab
+        - pa-IN
+        - pa-Arab-PK
+        - quz
+        - quz-BO
+        - quz-EC
+        - quz-PE
+        - ksh
+        - ksh-DE
+        - ro
+        - ro-MD
+        - ro-RO
+        - rm
+        - rm-CH
+        - rof
+        - rof-TZ
+        - rn
+        - rn-BI
+        - ru
+        - ru-BY
+        - ru-KZ
+        - ru-KG
+        - ru-MD
+        - ru-RU
+        - ru-UA
+        - rwk
+        - rwk-TZ
+        - ssy
+        - ssy-ER
+        - sah
+        - sah-RU
+        - saq
+        - saq-KE
+        - smn
+        - smn-FI
+        - smj
+        - smj-NO
+        - smj-SE
+        - se
+        - se-FI
+        - se-NO
+        - se-SE
+        - sms
+        - sms-FI
+        - sma
+        - sma-NO
+        - sma-SE
+        - sg
+        - sg-CF
+        - sbp
+        - sbp-TZ
+        - sa
+        - sa-IN
+        - gd
+        - gd-GB
+        - seh
+        - seh-MZ
+        - sr-Cyrl
+        - sr-Cyrl-BA
+        - sr-Cyrl-ME
+        - sr-Cyrl-RS
+        - sr-Cyrl-CS
+        - sr-Latn
+        - sr
+        - sr-Latn-BA
+        - sr-Latn-ME
+        - sr-Latn-RS
+        - sr-Latn-CS
+        - nso
+        - nso-ZA
+        - tn
+        - tn-BW
+        - tn-ZA
+        - ksb
+        - ksb-TZ
+        - sn
+        - sn-Latn
+        - sn-Latn-ZW
+        - sd
+        - sd-Arab
+        - sd-Arab-PK
+        - si
+        - si-LK
+        - sk
+        - sk-SK
+        - sl
+        - sl-SI
+        - xog
+        - xog-UG
+        - so
+        - so-DJ
+        - so-ET
+        - so-KE
+        - so-SO
+        - st
+        - st-ZA
+        - nr
+        - nr-ZA
+        - st-LS
+        - es
+        - es-AR
+        - es-BZ
+        - es-VE
+        - es-BO
+        - es-BR
+        - es-CL
+        - es-CO
+        - es-CR
+        - es-CU
+        - es-DO
+        - es-EC
+        - es-SV
+        - es-GQ
+        - es-GT
+        - es-HN
+        - es-419
+        - es-MX
+        - es-NI
+        - es-PA
+        - es-PY
+        - es-PE
+        - es-PH
+        - es-PR
+        - es-ES_tradnl
+        - es-ES
+        - es-US
+        - es-UY
+        - zgh
+        - zgh-Tfng-MA
+        - zgh-Tfng
+        - ss
+        - ss-ZA
+        - ss-SZ
+        - sv
+        - sv-AX
+        - sv-FI
+        - sv-SE
+        - syr
+        - syr-SY
+        - shi
+        - shi-Tfng
+        - shi-Tfng-MA
+        - shi-Latn
+        - shi-Latn-MA
+        - dav
+        - dav-KE
+        - tg
+        - tg-Cyrl
+        - tg-Cyrl-TJ
+        - tzm
+        - tzm-Latn
+        - tzm-Latn-DZ
+        - ta
+        - ta-IN
+        - ta-MY
+        - ta-SG
+        - ta-LK
+        - twq
+        - twq-NE
+        - tt
+        - tt-RU
+        - te
+        - te-IN
+        - teo
+        - teo-KE
+        - teo-UG
+        - th
+        - th-TH
+        - bo
+        - bo-IN
+        - bo-CN
+        - tig
+        - tig-ER
+        - ti
+        - ti-ER
+        - ti-ET
+        - to
+        - to-TO
+        - ts
+        - ts-ZA
+        - tr
+        - tr-CY
+        - tr-TR
+        - tk
+        - tk-TM
+        - uk
+        - uk-UA
+        - hsb
+        - hsb-DE
+        - ur
+        - ur-IN
+        - ur-PK
+        - ug
+        - ug-CN
+        - uz-Arab
+        - uz-Arab-AF
+        - uz-Cyrl
+        - uz-Cyrl-UZ
+        - uz
+        - uz-Latn
+        - uz-Latn-UZ
+        - vai
+        - vai-Vaii
+        - vai-Vaii-LR
+        - vai-Latn-LR
+        - vai-Latn
+        - ca-ES-
+        - ve
+        - ve-ZA
+        - vi
+        - vi-VN
+        - vo
+        - vo-001
+        - vun
+        - vun-TZ
+        - wae
+        - wae-CH
+        - cy
+        - cy-GB
+        - wal
+        - wal-ET
+        - wo
+        - wo-SN
+        - xh
+        - xh-ZA
+        - yav
+        - yav-CM
+        - ii
+        - ii-CN
+        - yo
+        - yo-BJ
+        - yo-NG
+        - dje
+        - dje-NE
+        - zu
+        - zu-ZA
     Discount:
       allOf:
         - $ref: '#/components/schemas/Base'
@@ -4431,7 +4643,6 @@ components:
               type: number
             updatedAt:
               type: number
-
     VerificationToken:
       type: object
       properties:
@@ -4456,7 +4667,7 @@ components:
                     userIds:
                       type: array
                       items:
-                        type: string    
+                        type: string
     AirdropJobData:
       type: object
       properties:
@@ -4490,7 +4701,6 @@ components:
           type: string
         template:
           type: string
-
     Job:
       type: object
       properties:
@@ -4498,11 +4708,11 @@ components:
           $ref: '#/components/schemas/AirdropJobData'
     AirdropJob:
       allOf:
-      - $ref: '#/components/schemas/Job'      
-      - type: object
-        properties:
-          data:
-            $ref: '#/components/schemas/AirdropJobData'
+        - $ref: '#/components/schemas/Job'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AirdropJobData'
     NFTMetadataUpdate:
       type: object
       properties:
@@ -4568,7 +4778,7 @@ components:
             type: string
         session:
           type: string
-        source: 
+        source:
           type: string
         lastActive:
           type: number
@@ -4587,10 +4797,10 @@ components:
               type: string
             verified:
               type: boolean
-            disconnected: 
+            disconnected:
               type: boolean
             provider:
-              $ref: '#/components/schemas/WalletProvider' 
+              $ref: '#/components/schemas/WalletProvider'
     IWallet:
       type: object
       properties:
@@ -4599,7 +4809,7 @@ components:
         address:
           type: string
         web3auth:
-          type: boolean  
+          type: boolean
     WalletProvider:
       type: string
       enum:
@@ -4615,7 +4825,7 @@ components:
           type: string
         authIdToken:
           type: string
-        address: 
+        address:
           type: string
         network:
           $ref: '#/components/schemas/Network'
@@ -4679,7 +4889,7 @@ components:
       properties:
         currency:
           type: string
-          enum: 
+          enum:
             - ETH
             - BTC
             - USDT
@@ -4760,7 +4970,7 @@ components:
           type: string
         currency:
           type: string
-          enum: 
+          enum:
             - ETH
             - BTC
             - USDT
@@ -4799,13 +5009,13 @@ components:
           type: string
     BankAccountRequest:
       type: object
-      properties: 
+      properties:
         bankAccount:
           $ref: '#/components/schemas/IBankAccount'
         isDefault:
           type: boolean
       required:
-          - bankAccount
+        - bankAccount
     BankAccount:
       type: object
       properties:
@@ -5237,8 +5447,609 @@ components:
         - XFO
         - XRE
         - XFU
+    Timezone:
+      type: string
+      enum:
+        - Africa/Algiers
+        - Atlantic/Cape_Verde
+        - Africa/Ndjamena
+        - Africa/Abidjan
+        - Africa/Bamako
+        - Africa/Banjul
+        - Africa/Conakry
+        - Africa/Dakar
+        - Africa/Freetown
+        - Africa/Lome
+        - Africa/Nouakchott
+        - Africa/Ouagadougou
+        - Atlantic/St_Helena
+        - Africa/Cairo
+        - Africa/Accra
+        - Africa/Bissau
+        - Africa/Nairobi
+        - Africa/Addis_Ababa
+        - Africa/Asmara
+        - Africa/Dar_es_Salaam
+        - Africa/Djibouti
+        - Africa/Kampala
+        - Africa/Mogadishu
+        - Indian/Antananarivo
+        - Indian/Comoro
+        - Indian/Mayotte
+        - Africa/Monrovia
+        - Africa/Tripoli
+        - Indian/Mauritius
+        - Africa/Casablanca
+        - Africa/El_Aaiun
+        - Africa/Maputo
+        - Africa/Blantyre
+        - Africa/Bujumbura
+        - Africa/Gaborone
+        - Africa/Harare
+        - Africa/Kigali
+        - Africa/Lubumbashi
+        - Africa/Lusaka
+        - Africa/Windhoek
+        - Africa/Lagos
+        - Africa/Bangui
+        - Africa/Brazzaville
+        - Africa/Douala
+        - Africa/Kinshasa
+        - Africa/Libreville
+        - Africa/Luanda
+        - Africa/Malabo
+        - Africa/Niamey
+        - Africa/Porto-Novo
+        - Indian/Reunion
+        - Africa/Sao_Tome
+        - Indian/Mahe
+        - Africa/Johannesburg
+        - Africa/Maseru
+        - Africa/Mbabane
+        - Africa/Khartoum
+        - Africa/Juba
+        - Africa/Tunis
+        - Antarctica/Casey
+        - Antarctica/Davis
+        - Antarctica/Mawson
+        - Indian/Kerguelen
+        - Antarctica/DumontDUrville
+        - Antarctica/Syowa
+        - Antarctica/Troll
+        - Antarctica/Vostok
+        - Antarctica/Rothera
+        - Asia/Kabul
+        - Asia/Yerevan
+        - Asia/Baku
+        - Asia/Dhaka
+        - Asia/Thimphu
+        - Indian/Chagos
+        - Asia/Brunei
+        - Asia/Yangon
+        - Asia/Shanghai
+        - Asia/Urumqi
+        - Asia/Hong_Kong
+        - Asia/Taipei
+        - Asia/Macau
+        - Asia/Nicosia
+        - Asia/Famagusta
+        - Europe/Nicosia
+        - Asia/Tbilisi
+        - Asia/Dili
+        - Asia/Kolkata
+        - Asia/Jakarta
+        - Asia/Pontianak
+        - Asia/Makassar
+        - Asia/Jayapura
+        - Asia/Tehran
+        - Asia/Baghdad
+        - Asia/Jerusalem
+        - Asia/Tokyo
+        - Asia/Amman
+        - Asia/Almaty
+        - Asia/Qyzylorda
+        - Asia/Qostanay
+        - Asia/Aqtobe
+        - Asia/Aqtau
+        - Asia/Atyrau
+        - Asia/Oral
+        - Asia/Bishkek
+        - Asia/Seoul
+        - Asia/Pyongyang
+        - Asia/Beirut
+        - Asia/Kuala_Lumpur
+        - Asia/Kuching
+        - Indian/Maldives
+        - Asia/Hovd
+        - Asia/Ulaanbaatar
+        - Asia/Choibalsan
+        - Asia/Kathmandu
+        - Asia/Karachi
+        - Asia/Gaza
+        - Asia/Hebron
+        - Asia/Manila
+        - Asia/Qatar
+        - Asia/Bahrain
+        - Asia/Riyadh
+        - Asia/Aden
+        - Asia/Kuwait
+        - Asia/Singapore
+        - Asia/Colombo
+        - Asia/Damascus
+        - Asia/Dushanbe
+        - Asia/Bangkok
+        - Asia/Phnom_Penh
+        - Asia/Vientiane
+        - Asia/Ashgabat
+        - Asia/Dubai
+        - Asia/Muscat
+        - Asia/Samarkand
+        - Asia/Tashkent
+        - Asia/Ho_Chi_Minh
+        - Australia/Darwin
+        - Australia/Perth
+        - Australia/Eucla
+        - Australia/Brisbane
+        - Australia/Lindeman
+        - Australia/Adelaide
+        - Australia/Hobart
+        - Australia/Currie
+        - Australia/Melbourne
+        - Australia/Sydney
+        - Australia/Broken_Hill
+        - Australia/Lord_Howe
+        - Antarctica/Macquarie
+        - Indian/Christmas
+        - Indian/Cocos
+        - Pacific/Fiji
+        - Pacific/Gambier
+        - Pacific/Marquesas
+        - Pacific/Tahiti
+        - Pacific/Guam
+        - Pacific/Saipan
+        - Pacific/Tarawa
+        - Pacific/Enderbury
+        - Pacific/Kiritimati
+        - Pacific/Majuro
+        - Pacific/Kwajalein
+        - Pacific/Chuuk
+        - Pacific/Pohnpei
+        - Pacific/Kosrae
+        - Pacific/Nauru
+        - Pacific/Noumea
+        - Pacific/Auckland
+        - Pacific/Chatham
+        - Antarctica/McMurdo
+        - Pacific/Rarotonga
+        - Pacific/Niue
+        - Pacific/Norfolk
+        - Pacific/Palau
+        - Pacific/Port_Moresby
+        - Pacific/Bougainville
+        - Pacific/Pitcairn
+        - Pacific/Pago_Pago
+        - Pacific/Midway
+        - Pacific/Apia
+        - Pacific/Guadalcanal
+        - Pacific/Fakaofo
+        - Pacific/Tongatapu
+        - Pacific/Funafuti
+        - Pacific/Wake
+        - Pacific/Efate
+        - Pacific/Wallis
+        - Africa/Asmera
+        - Africa/Timbuktu
+        - America/Argentina/ComodRivadavia
+        - America/Atka
+        - America/Buenos_Aires
+        - America/Catamarca
+        - America/Coral_Harbour
+        - America/Cordoba
+        - America/Ensenada
+        - America/Fort_Wayne
+        - America/Indianapolis
+        - America/Jujuy
+        - America/Knox_IN
+        - America/Louisville
+        - America/Mendoza
+        - America/Montreal
+        - America/Porto_Acre
+        - America/Rosario
+        - America/Santa_Isabel
+        - America/Shiprock
+        - America/Virgin
+        - Antarctica/South_Pole
+        - Asia/Ashkhabad
+        - Asia/Calcutta
+        - Asia/Chongqing
+        - Asia/Chungking
+        - Asia/Dacca
+        - Asia/Harbin
+        - Asia/Kashgar
+        - Asia/Katmandu
+        - Asia/Macao
+        - Asia/Rangoon
+        - Asia/Saigon
+        - Asia/Tel_Aviv
+        - Asia/Thimbu
+        - Asia/Ujung_Pandang
+        - Asia/Ulan_Bator
+        - Atlantic/Faeroe
+        - Atlantic/Jan_Mayen
+        - Australia/ACT
+        - Australia/Canberra
+        - Australia/LHI
+        - Australia/NSW
+        - Australia/North
+        - Australia/Queensland
+        - Australia/South
+        - Australia/Tasmania
+        - Australia/Victoria
+        - Australia/West
+        - Australia/Yancowinna
+        - Brazil/Acre
+        - Brazil/DeNoronha
+        - Brazil/East
+        - Brazil/West
+        - Canada/Atlantic
+        - Canada/Central
+        - Canada/Eastern
+        - Canada/Mountain
+        - Canada/Newfoundland
+        - Canada/Pacific
+        - Canada/Saskatchewan
+        - Canada/Yukon
+        - Chile/Continental
+        - Chile/EasterIsland
+        - Cuba
+        - Egypt
+        - Eire
+        - Etc/UCT
+        - Europe/Belfast
+        - Europe/Tiraspol
+        - GB
+        - GB-Eire
+        - GMT+0
+        - GMT-0
+        - GMT0
+        - Greenwich
+        - Hongkong
+        - Iceland
+        - Iran
+        - Israel
+        - Jamaica
+        - Japan
+        - Kwajalein
+        - Libya
+        - Mexico/BajaNorte
+        - Mexico/BajaSur
+        - Mexico/General
+        - NZ
+        - NZ-CHAT
+        - Navajo
+        - PRC
+        - Pacific/Johnston
+        - Pacific/Ponape
+        - Pacific/Samoa
+        - Pacific/Truk
+        - Pacific/Yap
+        - Poland
+        - Portugal
+        - ROC
+        - ROK
+        - Singapore
+        - Turkey
+        - UCT
+        - US/Alaska
+        - US/Aleutian
+        - US/Arizona
+        - US/Central
+        - US/East-Indiana
+        - US/Eastern
+        - US/Hawaii
+        - US/Indiana-Starke
+        - US/Michigan
+        - US/Mountain
+        - US/Pacific
+        - US/Samoa
+        - UTC
+        - Universal
+        - W-SU
+        - Zulu
+        - Etc/GMT
+        - Etc/UTC
+        - GMT
+        - Etc/Universal
+        - Etc/Zulu
+        - Etc/Greenwich
+        - Etc/GMT-0
+        - Etc/GMT+0
+        - Etc/GMT0
+        - Etc/GMT-14
+        - Etc/GMT-13
+        - Etc/GMT-12
+        - Etc/GMT-11
+        - Etc/GMT-10
+        - Etc/GMT-9
+        - Etc/GMT-8
+        - Etc/GMT-7
+        - Etc/GMT-6
+        - Etc/GMT-5
+        - Etc/GMT-4
+        - Etc/GMT-3
+        - Etc/GMT-2
+        - Etc/GMT-1
+        - Etc/GMT+1
+        - Etc/GMT+2
+        - Etc/GMT+3
+        - Etc/GMT+4
+        - Etc/GMT+5
+        - Etc/GMT+6
+        - Etc/GMT+7
+        - Etc/GMT+8
+        - Etc/GMT+9
+        - Etc/GMT+10
+        - Etc/GMT+11
+        - Etc/GMT+12
+        - Europe/London
+        - Europe/Jersey
+        - Europe/Guernsey
+        - Europe/Isle_of_Man
+        - Europe/Dublin
+        - WET
+        - CET
+        - MET
+        - EET
+        - Europe/Tirane
+        - Europe/Andorra
+        - Europe/Vienna
+        - Europe/Minsk
+        - Europe/Brussels
+        - Europe/Sofia
+        - Europe/Prague
+        - Europe/Copenhagen
+        - Atlantic/Faroe
+        - America/Danmarkshavn
+        - America/Scoresbysund
+        - America/Godthab
+        - America/Thule
+        - Europe/Tallinn
+        - Europe/Helsinki
+        - Europe/Mariehamn
+        - Europe/Paris
+        - Europe/Berlin
+        - Europe/Busingen
+        - Europe/Gibraltar
+        - Europe/Athens
+        - Europe/Budapest
+        - Atlantic/Reykjavik
+        - Europe/Rome
+        - Europe/Vatican
+        - Europe/San_Marino
+        - Europe/Riga
+        - Europe/Vaduz
+        - Europe/Vilnius
+        - Europe/Luxembourg
+        - Europe/Malta
+        - Europe/Chisinau
+        - Europe/Monaco
+        - Europe/Amsterdam
+        - Europe/Oslo
+        - Arctic/Longyearbyen
+        - Europe/Warsaw
+        - Europe/Lisbon
+        - Atlantic/Azores
+        - Atlantic/Madeira
+        - Europe/Bucharest
+        - Europe/Kaliningrad
+        - Europe/Moscow
+        - Europe/Simferopol
+        - Europe/Astrakhan
+        - Europe/Volgograd
+        - Europe/Saratov
+        - Europe/Kirov
+        - Europe/Samara
+        - Europe/Ulyanovsk
+        - Asia/Yekaterinburg
+        - Asia/Omsk
+        - Asia/Barnaul
+        - Asia/Novosibirsk
+        - Asia/Tomsk
+        - Asia/Novokuznetsk
+        - Asia/Krasnoyarsk
+        - Asia/Irkutsk
+        - Asia/Chita
+        - Asia/Yakutsk
+        - Asia/Vladivostok
+        - Asia/Khandyga
+        - Asia/Sakhalin
+        - Asia/Magadan
+        - Asia/Srednekolymsk
+        - Asia/Ust-Nera
+        - Asia/Kamchatka
+        - Asia/Anadyr
+        - Europe/Belgrade
+        - Europe/Ljubljana
+        - Europe/Podgorica
+        - Europe/Sarajevo
+        - Europe/Skopje
+        - Europe/Zagreb
+        - Europe/Bratislava
+        - Europe/Madrid
+        - Africa/Ceuta
+        - Atlantic/Canary
+        - Europe/Stockholm
+        - Europe/Zurich
+        - Europe/Istanbul
+        - Asia/Istanbul
+        - Europe/Kiev
+        - Europe/Uzhgorod
+        - Europe/Zaporozhye
+        - Factory
+        - EST
+        - MST
+        - HST
+        - EST5EDT
+        - CST6CDT
+        - MST7MDT
+        - PST8PDT
+        - America/New_York
+        - America/Chicago
+        - America/North_Dakota/Center
+        - America/North_Dakota/New_Salem
+        - America/North_Dakota/Beulah
+        - America/Denver
+        - America/Los_Angeles
+        - America/Juneau
+        - America/Sitka
+        - America/Metlakatla
+        - America/Yakutat
+        - America/Anchorage
+        - America/Nome
+        - America/Adak
+        - Pacific/Honolulu
+        - America/Phoenix
+        - America/Boise
+        - America/Indiana/Indianapolis
+        - America/Indiana/Marengo
+        - America/Indiana/Vincennes
+        - America/Indiana/Tell_City
+        - America/Indiana/Petersburg
+        - America/Indiana/Knox
+        - America/Indiana/Winamac
+        - America/Indiana/Vevay
+        - America/Kentucky/Louisville
+        - America/Kentucky/Monticello
+        - America/Detroit
+        - America/Menominee
+        - America/St_Johns
+        - America/Goose_Bay
+        - America/Halifax
+        - America/Glace_Bay
+        - America/Moncton
+        - America/Blanc-Sablon
+        - America/Toronto
+        - America/Thunder_Bay
+        - America/Nipigon
+        - America/Rainy_River
+        - America/Atikokan
+        - America/Winnipeg
+        - America/Regina
+        - America/Swift_Current
+        - America/Edmonton
+        - America/Vancouver
+        - America/Dawson_Creek
+        - America/Fort_Nelson
+        - America/Creston
+        - America/Pangnirtung
+        - America/Iqaluit
+        - America/Resolute
+        - America/Rankin_Inlet
+        - America/Cambridge_Bay
+        - America/Yellowknife
+        - America/Inuvik
+        - America/Whitehorse
+        - America/Dawson
+        - America/Cancun
+        - America/Merida
+        - America/Matamoros
+        - America/Monterrey
+        - America/Mexico_City
+        - America/Ojinaga
+        - America/Chihuahua
+        - America/Hermosillo
+        - America/Mazatlan
+        - America/Bahia_Banderas
+        - America/Tijuana
+        - America/Nassau
+        - America/Barbados
+        - America/Belize
+        - Atlantic/Bermuda
+        - America/Costa_Rica
+        - America/Havana
+        - America/Santo_Domingo
+        - America/El_Salvador
+        - America/Guatemala
+        - America/Port-au-Prince
+        - America/Tegucigalpa
+        - America/Jamaica
+        - America/Martinique
+        - America/Managua
+        - America/Panama
+        - America/Cayman
+        - America/Puerto_Rico
+        - America/Miquelon
+        - America/Grand_Turk
+        - US/Pacific-New
+        - America/Argentina/Buenos_Aires
+        - America/Argentina/Cordoba
+        - America/Argentina/Salta
+        - America/Argentina/Tucuman
+        - America/Argentina/La_Rioja
+        - America/Argentina/San_Juan
+        - America/Argentina/Jujuy
+        - America/Argentina/Catamarca
+        - America/Argentina/Mendoza
+        - America/Argentina/San_Luis
+        - America/Argentina/Rio_Gallegos
+        - America/Argentina/Ushuaia
+        - America/Aruba
+        - America/La_Paz
+        - America/Noronha
+        - America/Belem
+        - America/Santarem
+        - America/Fortaleza
+        - America/Recife
+        - America/Araguaina
+        - America/Maceio
+        - America/Bahia
+        - America/Sao_Paulo
+        - America/Campo_Grande
+        - America/Cuiaba
+        - America/Porto_Velho
+        - America/Boa_Vista
+        - America/Manaus
+        - America/Eirunepe
+        - America/Rio_Branco
+        - America/Santiago
+        - America/Punta_Arenas
+        - Pacific/Easter
+        - Antarctica/Palmer
+        - America/Bogota
+        - America/Curacao
+        - America/Lower_Princes
+        - America/Kralendijk
+        - America/Guayaquil
+        - Pacific/Galapagos
+        - Atlantic/Stanley
+        - America/Cayenne
+        - America/Guyana
+        - America/Asuncion
+        - America/Lima
+        - Atlantic/South_Georgia
+        - America/Paramaribo
+        - America/Port_of_Spain
+        - America/Anguilla
+        - America/Antigua
+        - America/Dominica
+        - America/Grenada
+        - America/Guadeloupe
+        - America/Marigot
+        - America/Montserrat
+        - America/St_Barthelemy
+        - America/St_Kitts
+        - America/St_Lucia
+        - America/St_Thomas
+        - America/St_Vincent
+        - America/Tortola
+        - America/Montevideo
+        - America/Caracas
+
     Error:
       type: object
       properties:
         error:
           type: string
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/TOMSUN/workspace2/1.0.0
