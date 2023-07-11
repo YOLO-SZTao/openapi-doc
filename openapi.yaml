@@ -1724,7 +1724,6 @@ paths:
                   type: string
                 image:
                   type: string
-              additionalProperties: true
         required: true
       responses:
         '200':
@@ -1740,14 +1739,6 @@ paths:
                     type: string
                   url:
                     type: string
-                  metadata:
-                    type: object
-                    properties: 
-                      name: 
-                        type: string
-                      image:
-                        type: string
-                    additionalProperties: true
   /nfts/airdrop/metadata/template:
     post:
       tags:
@@ -1849,24 +1840,57 @@ paths:
             type: string
       requestBody:
         content:
-          application/json:
-            $ref: '#/components/schemas/NFTMetadataUpdate'
+          application/json: 
+            schema:
+              type: object
+              properties:
+                template:
+                  type: string
         required: true
       responses:
         '200':
           description: 'Generate NFT metadata template successfully'
           content:
             application/json:
+              schema:
+                $ref: '#/components/schemas/NFTMetadataTemplate'
+  /nfts/airdrop/contracts/{contractId}/airdrop:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Airdrop NFT by template
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json: 
+            schema:
               type: object
               properties:
-                hash: 
+                tokenId: 
                   type: string
-                uri:
+                metadataTemplateId:
                   type: string
-                url: 
+                template: 
                   type: string
-                metadata: 
-                  $ref: '#/components/schemas/NFTMetadata'
+                metadataTemplateName:
+                  type: string
+                recipient:
+                  type: string          
+        required: true
+      responses:
+        '200':
+          description: 'Airdrop NFT by template successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirdropResult'           
   /nfts/airdrop/contract/{contractId}/airdrop/batch:
     post:
       tags:
@@ -1888,18 +1912,8 @@ paths:
               properties:
                 jobs:
                   type: array
-                  items:
-                    schema: 
-                      type: object
-                      properties:
-                        template:
-                          type: string
-                        metadataTemplateId:
-                          type: string
-                        metadataTemplateName:
-                          type: string
-                        recipient:  
-                          type: string
+                  items: 
+                    type: string
       responses:
         '200':
           description: 'Batch airdrop NFT by template successfully'
@@ -1911,18 +1925,7 @@ paths:
                   failed:
                     type: array
                     items:
-                      schema: 
-                        type: object
-                        properties:
-                          template:
-                            type: string
-                          metadataTemplateId:
-                            type: string
-                          metadataTemplateName:
-                            type: string
-                          recipient:  
-                            type: string
-
+                      type: object
                   results:
                     type: array
                     items:
@@ -2004,8 +2007,7 @@ paths:
           description: Get all NFT collection successfully
           content:
             application/json:
-              type: array
-              items:
+              schema:
                 $ref: '#/components/schemas/NFTCollection'
     post:
       tags:
@@ -2013,16 +2015,6 @@ paths:
       security:
         - BearerAuth: []
       summary: Post NFT collection to database
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                network:
-                  $ref: '#/components/schemas/Network'
-                contractAddress: 
-                  type: string
       responses:
         '200':
           description: Posted NFT collection to database
@@ -2192,6 +2184,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ContractFactoryDeployment'
+ 
   /nfts/factories/{factory}/add:
     post:
       tags:
@@ -3677,11 +3670,6 @@ components:
           type: string
         youtube_url:
           type: string
-      required:
-        - name
-        - description
-        - image
-        - attributes
     NFTMetadataAttribute:
       type: object
       properties:
@@ -3731,17 +3719,6 @@ components:
           type: string
         factory:
           $ref: '#/components/schemas/ContractFactoryName'
-      required: 
-        - name 
-        - symbol 
-        - abi 
-        - network 
-        - standard 
-        - ipfsOnly 
-        - royaltyReceiver 
-        - royaltyFee 
-        - logo 
-        - description 
     ContractFactoryName:
       type: string
       enum:
@@ -3774,18 +3751,6 @@ components:
           $ref: '#/components/schemas/NFTStandard'
         metadata:
           $ref: '#/components/schemas/NFTMetadataParam'
-        contractId: 
-          type: string
-        ipfsHash: 
-          type: string
-        ipfsHashOptions:
-          type: array
-          items: string
-        tokenURI: 
-          type: string
-        tokenURIOptions:
-          type: array
-          items: string
       required:
         - name
         - standard
