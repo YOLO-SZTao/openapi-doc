@@ -1,0 +1,6815 @@
+openapi: '3.0.0'
+
+info:
+  title: Moongate (1.0.0)
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    name: Official Site
+    url: 'http://www.moongate.id/'
+  x-logo:
+    url: './components/moongate-new-logo.svg'
+    altText: Moongate Logo
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    identifier: Apache 2.0
+  description: This is a backend documentation that provides information about the server-side functionality of the application. 
+
+tags: 
+  - name: Discounts
+    description: Everything related to discounts on tickets, including create, delete, modify, etc.
+  - name: Events
+    description: Everything related to events, including create, delete, modify, etc. 
+  - name: Jobs
+    description: Everything related to NFT airdrop jobs, including create, get failed jobs, etc. 
+  - name: Moonpasses
+    description: Everything related to Moonpass, including get moonpasses, set owner, etc. 
+  - name: Organizers
+    description: Everything related to organizers, including create organizer, add organizer's wallet, etc. 
+  - name: Users
+    description: Everything related to users, including create, delete, modify, etc. 
+  - name: Verification
+    description: Everything related to verifying resources, including token, event, ownership. 
+  - name: Admin
+    description: Admin-level function. 
+  - name: Nfts
+    description: Everything related to NFT, including NFT generation, deployment, redemption, etc. 
+
+
+  
+paths:
+  /:
+    get: 
+      security: 
+        - BearerAuth: []
+      summary: Check API health
+      responses:
+        '200':
+          description: API up and running
+          content:
+            text/plain:
+              schema:
+                type: string
+  /discounts/:
+    post:
+      security:
+        - BearerAuth: []
+      tags:
+        - Discounts
+      summary: Create new discount
+      requestBody:
+        description: The discount object to create
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/DiscountParam'
+      responses:
+        '201':
+          description: 'Discount created successfully'
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Discount'
+    get:
+      security:
+        - BearerAuth: []
+      tags:
+        - Discounts
+      summary: Get discount by code and eventId
+      parameters:
+        - name: eventId
+          in: query
+          required: true
+          description: Id of event
+          schema:
+            type: string
+        - name: code
+          in: query
+          required: true
+          description: Code of event
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Got discount by code successfully'
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/Discount'
+    delete:
+      security:
+        - BearerAuth: []
+      tags: 
+        - Discounts
+      summary: Delete discount by code and eventId
+      parameters:
+        - name: eventId
+          in: query
+          required: true
+          description: id of event
+          schema:
+            type: string
+        - name: code
+          in: query
+          required: true
+          description: code of event
+          schema:
+            type: string
+      responses:  
+        '200':
+          description: Discount deleted successfully
+          content:
+            application/json: {}
+  /discounts/{eventId}:
+    get:
+      tags:
+       - Discounts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: eventId for discount check
+          schema:
+            type: integer
+      summary: Get discounts by eventId
+      responses:
+        '200':
+          description: 'Got discounts successfully'
+          content:
+            application/json: 
+              schema:
+                type: array
+                items:  
+                  $ref: '#/components/schemas/Discount'
+  /discounts/used:
+    patch:
+      tags: 
+        - Discounts
+      security:
+        - BearerAuth: []
+      summary: Mark discount code usage
+      requestBody:  
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                eventId:
+                  type: string
+                code:
+                  type: string
+                quantity:
+                  type: number
+              required: 
+                - eventId
+                - code
+      responses:
+        '200':
+          description: Marked discount as used successfully
+          content:
+            application/json: {}
+  /discounts/unused:
+    patch:
+      tags:
+        - Discounts
+      security:
+        - BearerAuth: []
+      summary: Mark discount code usage
+      requestBody:  
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                eventId:
+                  type: string
+                code:
+                  type: string
+                quantity:
+                  type: number
+              required: 
+                - eventId
+                - code
+      responses:
+        '200':
+          description: Marked discount as unused successfully
+          content:
+            application/json: {}
+  /discounts/{discountId}:
+    patch:
+      tags:
+        - Discounts
+      security:
+        - BearerAuth: []
+      summary: Update discount by ID
+      parameters:
+        - name: discountId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscountParam'
+      responses:
+        '200':
+          description: Discount updated successfully
+          content:
+            application/json: {}
+    delete:
+      tags: 
+        - Discounts
+      security:
+        - BearerAuth: []
+      summary: Delete discount by ID
+      parameters:
+        - name: discountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Discount deleted successfully
+          content:
+            application/json: {}
+  /discounts/product/{productId}:
+    delete:
+      tags:
+        - Discounts
+      security:
+        - BearerAuth: []
+      summary: Delete discount by productId
+      parameters:
+        - name: productId
+          required: true
+          in: path
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: Discount deleted by productId successfully
+          content:
+            application/json: {}
+  /jobs:
+    post:
+      tags:
+        - Jobs
+      summary: Create new job
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobParam'
+      responses:
+        '200':
+          description: Created a new job successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+    get:
+      tags:
+        - Jobs
+      security:
+        - BearerAuth: []
+      summary: Get all jobs
+      responses:
+        '200':
+          description: Got all jobs successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+  /jobs/failed:
+    get:
+      tags:
+        - Jobs
+      security:
+        - BearerAuth: []
+      summary: Get all failed jobs
+      responses:
+        '200':
+          description: Got all failed jobs successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+  /jobs/airdrop:
+    post:
+      tags:
+        - Jobs
+      security:
+        - BearerAuth: []
+      summary: Create a new airdropJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobParam'
+      responses:
+        '200':
+          description: Created airdropJob successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirdropJob'
+  /moonpasses:
+    get:
+      tags:
+        - Moonpasses
+      security:
+        - BearerAuth: []
+      summary: Get moonpasses
+      description: Retrieve a list of moonpasses optionally filtered by user, edition or status
+      parameters:
+        - name: user
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: edition
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got moonpasses successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Moonpass'
+  /moonpasses/{moonpassId}:
+    get:
+      tags:
+        - Moonpasses
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: moonpassId
+          in: path
+          required: true
+          schema:
+            type: string
+      summary: Get moonpasses by ID
+      responses:
+        '200':
+          description: Got moonpass successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Moonpass'
+  /moonpasses/{moonpassId}/user/{userId}:
+    patch:
+      tags:
+        - Moonpasses
+      security:
+        - BearerAuth: []
+      summary: Set moonpass owner
+      parameters:
+        - name: moonpassId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Set moonpass owner successfully
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Moonpasses
+      security:
+        - BearerAuth: []
+      summary: Unset moonpass owner
+      parameters:
+        - name: moonpassId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Unset moonpass owner successfully
+          content:
+            application/json: {}
+  /organizers:
+    post:
+      tags:
+        - Organizers
+      security:
+        - BearerAuth: []
+      summary: Create a new organizer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizerInput'
+      responses:
+        '201':
+          description: New organizer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+  /organizers/{organizerId}:
+    get:
+      tags: 
+        - Organizers
+      security:
+        - BearerAuth: []
+      summary: Get organizer by ID and create a new one if not exist
+      parameters:
+        - name: organizerId
+          in: path
+          description: Organizer ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got organizer by ID successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '404':
+          description: Organizer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /organizers/{organizerId}/bank-accounts:
+    post:
+      tags:
+        - Organizers
+      security:
+        - BearerAuth: []
+      summary: Add new bank account
+      parameters:
+        - name: organizerId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountRequest'
+      responses:
+        '201':
+          description: New bank account added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          description: Missing parameters
+          content:
+            application/json: {}
+        '404':
+          description: Organizer not found
+          content:
+            application/json: {}
+  /organizers/{organizerId}/bank-accounts/{bankAccountId}:
+    patch:
+      tags:
+        - Organizers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: organizerId
+          in: path
+          description: Organizer ID
+          required: true
+          schema:
+            type: string
+        - name: bankAccountId
+          in: path
+          description: Bank account ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IBankAccount'
+      summary: Update bank account by organizer ID and bank account ID
+      responses:
+        '200':
+          description: Bank account updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Organizer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Organizers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: organizerId
+          in: path
+          description: Organizer ID
+          required: true
+          schema:
+            type: string
+        - name: bankAccountId
+          in: path
+          description: Bank account ID
+          required: true
+          schema:
+            type: string
+      summary: Delete bank account
+      responses:
+        '200':
+          description: Bank account deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Organizer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /organizers/{organizerId}/wallets:
+    post:
+      tags:
+        - Organizers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: organizerId
+          in: path
+          description: Organizer ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizerWalletInput'
+      summary: Add new wallet
+      responses:
+        '201':
+          description: New wallet added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Organizer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /organizers/{organizerId}/wallets/{walletId}:
+    patch:
+      tags:
+        - Organizers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: organizerId
+          in: path
+          description: Organizer ID
+          required: true
+          schema:
+            type: string
+        - name: walletId
+          in: path
+          description: Wallet ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizerWalletInput'
+      summary: Update wallet
+      responses:
+        '200':
+          description: Updated wallet successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Organizer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags: 
+        - Organizers
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: organizerId
+          in: path
+          description: Organizer ID
+          required: true
+          schema:
+            type: string
+        - name: walletId
+          in: path
+          description: Wallet ID
+          required: true
+          schema:
+            type: string
+      summary: Delete wallet
+      responses:
+        '200':
+          description: Deleted wallet successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organizer'
+        '400':
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Organizer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /scheduler/trigger:
+    post:
+      tags:
+        - scheduler
+      security:
+        - BearerAuth: []
+      summary: Trigger scheduler jobs
+      responses:
+        '200':
+          description: Trigger scheduler successfully
+          content:
+            application/json: {}
+  /storage/upload-url:
+    get:
+      security:
+        - BearerAuth: []
+      summary: Get signed URL
+      parameters:
+        - name: key
+          in: query
+          description: key
+          required: true
+          schema:
+            type: string
+        - name: bucket
+          in: query
+          description: bucket
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got signed URL successfully
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: MISSING_PARAMETERS
+        '401':
+          description: UNAUTHORIZED
+  /users/:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Create user
+      responses:
+        '200':
+          description: Created uesr successfully
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Get user
+      responses:
+        '200':
+          description: Got user successfully
+
+  /users/auth/:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Authenticate user by wallet address / email, create new user if not exists
+      parameters:
+        - name: address
+          in: query
+          description: key
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthParam'
+        required: true
+      responses:
+        '200':
+          description: Authenticated / Created new user user by wallet address/email successfully. 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResult'
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Authenticate user by auth token
+      parameters:
+        - name: token
+          in: query
+          description: Auth Token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Authenticated user by auth token successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResult'
+  /users/{userId}:
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      summary: Get user by ID
+      responses:
+        '200':
+          description: Got user by ID successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      summary: Delete user
+      responses:
+        '200':
+          description: Deleted user successfully
+  /users/{userId}/wallets:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      summary: Add user wallets by ID
+      responses:
+        '200':
+          description: Added user wallets successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: query
+          description: Wallet Network
+          required: true
+          schema:
+            type: string
+        - name: address
+          in: query
+          description: Wallet Address
+          required: true
+          schema:
+            type: string
+      summary: Delete user
+      responses:
+        '200':
+          description: Deleted user successfully
+  /users/{userId}/email:
+    patch:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Update and add user's email using userId
+      parameters:
+        - name: userId
+          description: User ID
+          in: path
+          required: true
+          schema: 
+            type: string
+
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                email:
+                  type: string
+        required: true
+      
+      responses:
+        '200':
+          description: Updated and added user's email using userId
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  
+  /verification/token/decrypt:
+    post:
+      tags:
+        - Verification
+      security:
+        - BearerAuth: []
+      summary: Decrypt verification token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Decrypted verification token successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationToken'
+
+  /verification/token/qrcode:
+    post:
+      tags:
+        - Verification
+      security:
+        - BearerAuth: []
+      summary: Generate verification token in QR code form
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userIds:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Generated verification token in QR code form successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationToken'
+  /verification/events/{eventId}/token:
+    post:
+      tags:
+        - Verification
+      security:
+        - BearerAuth: []
+      summary: Verify event by token
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Verified event by token successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTConstraintResult'
+  /verification/events/{eventId}/user/{userId}:
+    get:
+      tags:
+        - Verification
+      security:
+        - BearerAuth: []
+      summary: Verify event by userId
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verify event by userId successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTConstraintResult'
+  /verification/events/{eventId}/moonpass/{moonpassId}:
+    get:
+      tags:
+        - Verification
+      security:
+        - BearerAuth: []
+      summary: Verify event by moonpassId
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: moonpassId
+          in: path
+          description: Moonpass ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verified event by moonpassId successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTConstraintResult'
+  /verification/nft/user/{userId}:
+    post:
+      tags:
+        - Verification
+      security:
+        - BearerAuth: []
+      summary: Verify NFT ownership
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verified NFT ownership successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTConstraintResult'
+  /admin/discounts/refactor:
+    post:
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      summary: Return a list of discounts
+      responses:
+        '200':
+          description: Returned a list of discounts successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+  /admin/{wallet}/token:
+    get:
+      tags:
+        - Admin
+      security:
+        - BearerAuth: []
+      summary: Generate token for wallet
+      parameters:
+        - name: wallet
+          in: path
+          description: Wallet Address
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Generate token for wallet successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                  expire:
+                    type: number
+  /admin/moonpasses:
+    post:
+      tags:
+        - admin
+      security:
+        - BearerAuth: []
+      summary: Batch generate moonpasses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+                edition:
+                  type: string
+                config:
+                  $ref: '#/components/schemas/Moonpass'
+                prefix:
+                  type: string
+      responses:
+        '200':
+          description: Batch generate moonpasses successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  moonpasses:
+                    type: array
+                    items:
+                      type: string
+  /events/draft:
+    post: null
+  /events/publish:
+    post: null
+    patch: null
+  /events/:
+    post:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Create new event
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NFTEventParam'
+        required: true
+      responses:
+        '201':
+          description: Create new event
+    get:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get ticket from ongoing events
+      responses:
+        '201':
+          description: Get ticket
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Update event details
+      responses:
+        '201':
+          description: Update event details
+    delete:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Delete event
+      responses:
+        '201':
+          description: Delete event
+  /events/domain/{domain}:
+    get: null
+  /events/code/{code}:
+    get: null
+  /events/{eventId}:
+    get: null
+    patch: null
+    delete: null
+  /events/token-gated:
+    post: null
+  /events/ticketing/ongoing:
+    get: null
+  /events/{eventId}/user/{userId}/eligibility:
+    get:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get user eligibility of event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get user eligibility of event successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTEventEligibilityResult'
+  /events/{eventId}/sold:
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Mark ticket sold
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                priceId:
+                  type: string
+                quantity:
+                  type: number
+        required: true
+      responses:
+        '200':
+          description: Mark ticket sold successfully
+  /events/{eventId}/unsold:
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Revert mark ticket sold
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                priceId:
+                  type: string
+                quantity:
+                  type: number
+        required: true
+      responses:
+        '200':
+          description: Reverted mark ticket sold successfully
+  /events/{eventId}/reminder:
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Send event reminder emails
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Event reminder emails sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: number
+                  tickets:
+                    type: number
+                  redeem:
+                    type: number
+  /events/{eventId}/tiers/{tierId}/transactions/wallet:
+    post: null
+  /events/{eventId}/tiers/{tierId}/transactions:
+    post:
+      tags: 
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Create event transactions by wallets
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: tierId
+          in: path
+          description: Tier ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+                tierId:
+                  type: string
+                email:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Create event transactions by wallets successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  succeeded:
+                    type: array
+                    items:
+                      type: string
+                  failed:
+                    type: array
+                    items:
+                      type: string
+  /events/{eventId}/whitelists:
+    post:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Add whitelist to event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NFTEventWhitelistParam'
+        required: true
+      responses:
+        '201':
+          description: Add whitelist to event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEventWhitelistParam'
+    get:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get all whitelists of event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get all whitelists of event successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEventWhitelistParam'
+  /events/{eventId}/whitelists/count:
+    get: null
+  /events/{eventId}/whitelists/{tierId}:
+    get: null
+  /events/{eventId}/whitelists/count/{tierId}:
+    get:
+      tags:
+        - Events    
+      security:
+        - BearerAuth: []
+      summary: Get whitelists count of event for specific tier
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: tierId
+          in: path
+          description: Tier ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get whitelists count of event for specific tier successfully
+          content:
+            application/json:
+              schema:
+                type: number
+  /events/{eventId}/whitelists/{whitelistId}:
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Update whitelist quantity
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: whitelistId
+          in: path
+          description: Whitelist ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+        required: true
+      responses:
+        '201':
+          description: Update whitelist quantity
+  /events/{eventId}/usages:
+    get:
+      tags:
+        - events
+      summary: Get all usages of an event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: An array of usage objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTEventUsage'
+    post:
+      tags:
+        - events
+      summary: Create a usage for an event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NFTEventUsageParam'
+      responses:
+        '200':
+          description: Usage created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEventUsage'
+    delete:
+      tags:
+        - events
+      summary: Delete usage for an event by userId
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: user
+          in: query
+          description: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usage delete successfully
+          content:
+            application/json: {}
+  /events/v1/{eventId}/usages:
+    get:
+      tags:
+        - events
+      summary: Get all usages of event
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get usages successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTEventUsage'          
+
+  /nfts/airdrop/ipfs/metadata:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Upload metadata to IPFS
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                image:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Metadata has been uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hash:
+                    type: string
+                  uri:
+                    type: string
+                  url:
+                    type: string
+  /nfts/airdrop/metadata/template:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Create NFT metadata template
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/INFTMetadataTemplate'
+        required: true
+      responses:
+        '200':
+          description: Create NFT metadata template successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartContract'
+  /nfts/airdrop/contract:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Create Smart Contract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                body:
+                  $ref: '#/components/schemas/ISmartContract'
+        required: true
+      responses:
+        '200':
+          description: Smart contract created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartContract'
+  /nfts/airdrop/contracts/{contractId}/metadata/template:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Add NFT metadata template
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                standard:
+                  $ref: '#/components/schemas/NFTStandard'
+                metadata:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/NFTMetadataParam'
+        required: true
+      responses:
+        '200':
+          description: Add NFT metadata template successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTMetadataTemplate'
+  /nfts/airdrop/contracts/{contractId}/metadata:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Generate NFT metadata template
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: template
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                template:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Generate NFT metadata template successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTMetadataTemplate'
+  /nfts/airdrop/contracts/{contractId}/airdrop/batch:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Airdrop NFT by template
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tokenId:
+                  type: string
+                metadataTemplateId:
+                  type: string
+                template:
+                  type: string
+                metadataTemplateName:
+                  type: string
+                recipient:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Airdrop NFT by template successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirdropResult'
+  /nfts/airdrop/contract/{contractId}/airdrop/batch:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Batch airdrop NFT by template
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jobs:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Batch airdrop NFT by template successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  failed:
+                    type: array
+                    items:
+                      type: object
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AirdropResult'
+  /nfts/airdrop/contracts/{contractId}/incomplete:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Get incomplete transactions for NFT transfers
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: project
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get incomplete transactions for NFT transfers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/missingMintRecords'
+  /nfts/airdrop/events/{eventId}/failed:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Get failed to airdrop NFTs
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get failed to airdrop NFTs successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirdropJob'
+  /nfts/airdrop/events/{eventId}/retry:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Retry airdrop NFT
+      parameters:
+        - name: eventId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Retry airdrop NFT successfully
+  /nfts/collections/:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Get all NFT collection from database
+      responses:
+        '200':
+          description: Get all NFT collection successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTCollection'
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Post NFT collection to database
+      responses:
+        '200':
+          description: Posted NFT collection to database
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTCollection'
+
+
+  /nfts/contracts/{contractId}/metadata/{tokenId}:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: contractId
+          in: path
+          description: Contract ID
+          required: true
+          schema:
+            type: string
+        - name: tokenId
+          in: path
+          description: Token ID
+          required: true
+          schema:
+            type: string
+      summary: Upload NFT's metadata
+      responses:
+        '200':
+          description: Uploaded NFT's metadata successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTMetadataParam'
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: contractId
+          in: path
+          description: Contract ID
+          required: true
+          schema:
+            type: string
+        - name: tokenId
+          in: path
+          description: Token ID
+          required: true
+          schema:
+            type: string
+      summary: Get NFT's metadata
+      responses:
+        '200':
+          description: Get NFT's metadata successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTMetadataParam'
+    patch:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: contractId
+          in: path
+          description: Contract ID
+          required: true
+          schema:
+            type: string
+        - name: tokenId
+          in: path
+          description: Token ID
+          required: true
+          schema:
+            type: string
+      summary: Update NFT's metadata
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contractId:
+                  type: string
+                tokenId:
+                  type: string
+                metadata:
+                  $ref: '#/components/schemas/NFTMetadataParam'
+      responses:
+        '200':
+          description: Update NFT's metadata successfully
+  /nfts/factories/{factory}:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: factory
+          in: path
+          description: factory
+          required: true
+          schema:
+            type: string
+      summary: Get NFT contract based on factory name
+      responses:
+        '200':
+          description: Get NFT contract successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartContractFactory'
+  /nfts/factories:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: get NFT transfers of contract
+      responses:
+        '200':
+          description: Get contract's NFT transfers successfully
+  /nfts/factories/{factory}/deploy:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: factory
+          in: path
+          description: Factory Name
+          required: true
+          schema:
+            type: string
+      summary: Deploy collection by factory 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network:
+                  $ref: '#/components/schemas/Network'
+                name:
+                  type: string
+                symbol:
+                  type: string
+                royaltyReceiver:
+                  type: string
+                royaltyFee:
+                  type: number
+                baseURI:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Deploy collection successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractFactoryDeployment'
+ 
+  /nfts/factories/{factory}/add:
+    patch:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: factory
+          in: path
+          description: Factory Name
+          required: true
+          schema:
+            type: string
+      summary: Add smart contract to factory
+      
+      requestBody:
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                network:
+                  $ref : '#/components/schemas/Network'
+                address:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: 'Added smart contract to factory successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractFactoryDeployment' 
+ 
+  /nfts/airdrop/asset/image:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Upload image asset to IPFS
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bucket:
+                  type: string
+                key:
+                  type: string
+      responses:
+        '200':
+          description: Uploaded image successfully!
+  /nfts/{userId}:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: query
+          description: network
+          required: true
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          description: next cursor
+          required: true
+          schema:
+            type: string
+      summary: Get NFTs of user
+      responses:
+        '200':
+          description: Got user's NFTs successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFT'
+  /nfts/tickets/{userId}:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: query
+          description: network
+          required: true
+          schema:
+            type: string
+      summary: Get NFTs of user according to user ID
+      responses:
+        '200':
+          description: Got all NFTs according to user ID successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFT'
+  /nfts/wallets/{wallet}:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: wallet
+          in: path
+          description: wallet
+          required: true
+          schema:
+            type: string
+      summary: Get wallet's NFTs
+      responses:
+        '200':
+          description: Got wallet's NFTs successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFT'
+  /nfts/networks/{network}/wallets/{wallet}:
+    get:
+      tags: 
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: wallet
+          in: path
+          description: wallet
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: path
+          description: network
+          required: true
+          schema:
+            type: string
+      summary: Get NFTs of wallet according to network
+      responses:
+        '200':
+          description: Got NFTs of wallet according to network successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFT'
+  /nfts/redeem/{code}:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: code
+          in: path
+          description: For code verification before NFT redemption
+          required: true
+          schema:
+            type: string
+      summary: Verify redemption code to redeem NFT
+      responses:
+        '200':
+          description: Code existed and has been verified
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: code
+          in: path
+          description: Code used for NFT redemption
+          required: true
+          schema:
+            type: string
+      summary: Redeem NFT by code
+      responses:
+        '200':
+          description: Redeemed NFT successfully
+  /nfts/transfers/{chain}/{contract}:
+    get:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: chain
+          in: path
+          description: Chain ID
+          required: true
+          schema:
+            type: string
+        - name: contract
+          in: path
+          description: Contract address
+          required: true
+          schema:
+            type: string
+      summary: Get contract's NFT transfers
+      responses:
+        '200':
+          description: Got contract's NFT transfers successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SimplehashTransfer'
+  /webhook/{service}:
+    post:
+      security:
+        - BearerAuth: []
+      summary: Payment service selection
+      parameters:
+        - name: service
+          in: path
+          description: Payment service
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment service selected successfully
+  /events/{eventId}/usages:
+    get:
+      tags:
+        - Events
+      summary: Get all usages of an event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema: 
+            type: string
+        - name: projectId
+          in: query
+          description: Project ID
+          required: false
+          schema: 
+            type: number
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: An array of usage objects
+          content:
+            application/json:
+                schema:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      eventId: 
+                        type: string
+                      projectId:
+                        type: string
+    post:
+      tags:  
+        - Events
+      summary: Create a usage for an event
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                  tierId:
+                    type: string
+                  identifiers:
+                    type: array
+                    items:
+                      type: string
+      responses:
+        '201':
+          description: The newly created usage object
+          content:
+            application/json:
+                schema:
+                    items:
+                      type: object
+                      properties:
+                        eventId: 
+                          type: string
+                        projectId:
+                          type: string
+
+  /transactions/:
+    post:
+      tags:
+        - Transactions
+      summary: Create transaction
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                  body:
+                    $ref: '#/components/schemas/ITransaction'
+                  eventId:
+                    type: string
+      responses:
+        '201':
+          description: Transaction has been created
+          content:
+            application/json:
+                schema:
+                    $ref: '#/components/schemas/Transaction'
+
+
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction information
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                eventId:
+                  type: string
+                productId:
+                  type: string
+
+      responses:
+        '200':
+          description: Got transaction information successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    $ref: '#/components/schemas/Transaction'
+
+              
+  /transactions/{transactionId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get transaction by transactionId
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got transaction by transactionId successfully
+
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction by transactionId
+      security: 
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated transaction by transactionId successfully
+
+  /transactions/{transactionId}/updated:
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction's payment status
+      security: 
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/TransactionStatus'
+      responses:
+        '200':
+          description: Updated transaction's payment status successfully
+
+  /transactions/{transactionId}/initial:
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction's payment status as 'initial'
+      security: 
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Updated transaction's payment status as 'initial' successfully
+
+
+  /transactions/{transactionId}/submitted:
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction's payment status as 'submitted'
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated transaction's payment status as 'submitted' successfully
+  
+  /transactions/{transactionId}/failed:
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction's payment status as 'failed'
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Updated transaction's payment status as 'failed' successfully
+
+  /transactions/{transactionId}/succeeded:
+    patch:
+      tags:
+        - Transactions
+      summary: Update transaction's payment status as 'succeeded'
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: path
+          description: Transaction ID
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Updated transaction's payment status as 'failed' successfully
+
+  /transactions/event/{eventId}:
+    get:
+      tags:
+        - Transactions
+      summary: Get transactions by eventId
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventId:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Got transactions by eventId successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    $ref: '#/components/schemas/Transaction'
+
+
+  /transactions/checkout:
+    post:
+      tags:
+        - Transactions
+      summary: Handle transaction checkout 
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                _transaction:
+                  $ref: '#/components/schemas/ITransaction'
+                successUrl:
+                  type: string
+                cancelUrl:
+                  type: string
+      responses:
+        '201':
+          description: Transaction checkout has been created
+          content:
+            application/json:
+                schema: 
+                  type: object
+                  properties:
+                    url:
+                      type: string
+
+
+  /contracts/{contractId}:
+    get:
+      tags:
+        - Contracts
+      summary: Get contract by contract ID
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: contractId
+          in: path
+          description: Contract ID
+          required: true
+          schema: 
+            type: string
+      response:
+        '200':
+          description: Got contract by contract ID successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartContract'
+  /contracts/networks/{network}:
+    get:
+      tags:
+        - Contracts
+      summary: Get smart contract by network
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: network
+          in: path
+          description: Network
+          required: true
+          schema:
+            $ref: '#/components/schemas/Network'
+      response:
+        '200':
+          description: Got smart contract by network successfully
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/SmartContract'  
+
+  /contracts/networks/{network}/contracts/{address}:
+    get:
+      tags:
+        - Contracts
+      summary: Get smart contract by address
+      security:
+        - BearerAuth: []
+      parameters: 
+        - name: network
+          in: path
+          description: Network
+          required: true
+          schema:
+            $ref: '#/components/schemas/Network'
+        - name: address
+          in: path
+          description: Address
+          required: true
+          schema:
+            type: string
+      response:
+        '200':
+          description: Got smart contract by address successfully
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SmartContract'
+    post:
+      tags:
+        - Contracts
+      summary: Execute smart contract at address
+      security:
+        - BearerAuth: []
+      parameters: 
+        - name: network
+          in: path
+          description: Network
+          required: true
+          schema:
+            $ref: '#/components/schemas/Network'
+        - name: address
+          in: path
+          description: Address
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                method: 
+                  type: any
+                params:
+                  type: any
+
+      response:
+        '200':
+          description: Executed smart contract at address successfully
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecutionResult'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    ExecutionResult:
+      type: object
+      properties:
+        from: 
+          type: string
+        params:
+          type: any
+        receipt: 
+          type: any
+        txnHash:
+          type: string
+        txnFee:
+          type: number
+
+    TransactionContact:
+      type: object
+      properties:
+        email:
+          type: string
+        name: 
+          type: string
+        wallet:   
+          type: string
+        phone: 
+          type: string
+
+    TransactionStatus:
+      type: string
+      enum:
+        - initial
+        - submitted
+        - pending
+        - processing
+        - succeeded
+        - refunded
+        - failed
+    
+    TransactionItem:
+      type: object
+      properties:
+        productId:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        contact:
+          $ref: '#/components/schemas/TransactionContact'
+        priceId:
+          type: string
+        extraInfo:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+        createdAt:
+          type: number
+        valid:
+          type: boolean
+      required:
+        - productId
+        - name
+        - price
+        - priceId
+        - createdAt
+    
+    TransactionAirdropResult:
+      type: object
+      properties:
+        itemId:
+          type: string
+        recipient:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        contractAddress:
+          type: string
+        txnHash:
+          type: string
+        txnFee:
+          type: number
+        userId:
+          type: string
+        email:
+          type: string
+
+    Transaction:
+      type: object
+      properties:
+        userId:
+          type: string
+        eventId:
+          type: string
+        contact:
+          $ref: '#/components/schemas/TransactionContact'
+        language:
+          $ref: '#/components/schemas/Language'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        items:
+          $ref: '#/components/schemas/TransactionItem'
+        fee:
+          type: number
+        amount:
+          type: number
+        finalAmount:
+          type: number
+        webhookEvents: 
+          type: array
+          items:
+            type: any
+        refIds:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+        airdropResults:
+          $ref: '#/components/schemas/TransactionAirdropResult'
+        paymentMethod:
+          $ref: '#/components/schemas/PaymentMethod'
+        discount:
+          $ref: '#/components/schemas/Discount'
+        error:
+          type: string
+        
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+    
+    PaymentMethod:
+      type: string
+      enum:
+        - paypal
+        - stripe
+        - coingate
+    
+    SimplehashTransfer:
+      type: object
+      properties:
+        nft_id:
+          type: string
+        chain:
+          type: string
+        contract_address:
+          type: string
+        token_id:
+          type: string
+        from_address:
+          type: string
+        to_address:
+          type: string
+        quantity:
+          type: number
+        timestamp:
+          type: string
+        block_number:
+          type: number
+        block_hash:
+          type: string
+        transaction:
+          type: string
+        transaction_initiator:
+          type: string
+        log_index:
+          type: number
+        batch_transfer_index:
+          type: number
+        sales_details:
+          $ref: '#/components/schemas/SimplehashSaleDetails'
+        nft_details:
+          $ref: '#/components/schemas/SimplehashNFT'
+    SimplehashSaleDetails:
+      type: object
+      properties:
+        marketplace_name:
+          type: string
+        is_bundle_sale:
+          type: boolean
+        payment_token:
+          $ref: '#/components/schemas/SimplehashPaymentToken'
+        unit_price:
+          type: number
+        total_price:
+          type: number
+    SimplehashSale:
+      type: object
+      properties:
+        from_address:
+          type: string
+          nullable: true
+        to_address:
+          type: string
+          nullable: true
+        quantity:
+          type: integer
+        timestamp:
+          type: string
+        transaction:
+          type: string
+        marketplace_name:
+          type: string
+        is_bundle_sale:
+          type: boolean
+        payment_token:
+          $ref: '#/components/schemas/SimplehashPaymentToken'
+        unit_price:
+          type: number
+        total_price:
+          type: number
+    SimplehashPaymentToken:
+      type: object
+      properties:
+        payment_token_id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        address:
+          type: string
+          nullable: true
+        decimals:
+          type: integer
+    SimplehashNFTContract:
+      type: object
+      properties:
+        address:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        schema_name:
+          type: string
+        image_url:
+          type: string
+        description:
+          type: string
+        external_link:
+          type: string
+    SimplehashNFTCollection:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+          nullable: true
+        banner_image_url:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+    SimplehashNFTOwner:
+      type: object
+      properties:
+        owner_address:
+          type: string
+        quantity:
+          type: number
+        first_acquired_date:
+          type: string
+        last_acquired_date:
+          type: string
+    SimplehashNFTOwnerResponse:
+      allOf:
+        - $ref: '#/components/schemas/SimplehashNFTOwner'
+        - type: object
+          properties:
+            nft_id:
+              type: string
+            token_id:
+              type: string
+    SimplehashNFT:
+      type: object
+      properties:
+        nft_id:
+          type: string
+        chain:
+          type: string
+        contract_address:
+          type: string
+        token_id:
+          type: string
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        image_url:
+          type: string
+          nullable: true
+        video_url:
+          type: string
+          nullable: true
+        audio_url:
+          type: string
+          nullable: true
+        model_url:
+          type: string
+          nullable: true
+        previews:
+          type: object
+          properties:
+            image_small_url:
+              type: string
+              nullable: true
+            image_medium_url:
+              type: string
+              nullable: true
+            image_large_url:
+              type: string
+              nullable: true
+            image_opengraph_url:
+              type: string
+              nullable: true
+            blur_hash:
+              type: string
+              nullable: true
+        background_color:
+          type: string
+          nullable: true
+        external_link:
+          type: string
+          nullable: true
+        created_date:
+          type: string
+          nullable: true
+        status:
+          type: string
+        token_count:
+          type: integer
+        owner_count:
+          type: integer
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimplehashNFTOwner'
+        last_sale:
+          $ref: '#/components/schemas/SimplehashSale'
+          nullable : true
+        contract:
+          $ref: '#/components/schemas/SimplehashContract'
+        collection:
+          $ref: '#/components/schemas/SimplehashCollection'
+        extra_metadata:
+          $ref: '#/components/schemas/SimplehashNFTMetaData'
+    SimplehashNFTMetaData:
+      type: object
+      properties:
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimplehashNFTAttribute'
+          nullable: true
+        image_original_url:
+          type: string
+          nullable: true
+        animation_original_url:
+          type: string
+          nullable: true
+        metadata_original_url:
+          type: string
+          nullable: true
+    SimplehashNFTAttribute:
+      type: object
+      properties:
+        key:
+          type: string
+          nullable: true
+        trait_type:
+          type: string
+        display_type:
+          type: string
+          nullable: true
+        value:
+          oneOf:
+            - type: string
+            - type: number
+    SimplehashCollection:
+      type: object
+      properties:
+        collection_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        image_url:
+          type: string
+          nullable: true
+        banner_image_url:
+          type: string
+          nullable: true
+        external_url:
+          type: string
+          nullable: true
+        twitter_username:
+          type: string
+          nullable: true
+        discord_url:
+          type: string
+          nullable: true
+        marketplace_pages:
+          type: array
+          items:
+            type: object
+            properties:
+              marketplace_name:
+                type: string
+              marketplace_collection_id:
+                type: string
+              collection_url:
+                type: string
+              nft_url:
+                type: string
+              verified:
+                type: boolean
+        metaplex_mint:
+          type: string
+          nullable: true
+    SimplehashCollectionMarketplacePage:
+      type: object
+      properties:
+        marketplace_name:
+          type: string
+        marketplace_collection_id:
+          type: string
+        collection_url:
+          type: string
+        nft_url:
+          type: string
+        verified:
+          type: boolean
+    SimplehashContract:
+      type: object
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+          nullable: true
+    SimplehashNFTResponse:
+      type: object
+      properties:
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimplehashNFT'
+    SimplehashOwnerResponse:
+      type: object
+      properties:
+        next:
+          type: string
+          nullable: true
+        previous:
+          type: string
+          nullable: true
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimplehashNFTOwnerResponse'
+    NFTStandard:
+      type: string
+      enum:
+        - ERC721
+        - ERC1155
+        - BEP721
+        - BEP1155
+    toNFTId:
+      type: string
+    missingMintRecords:
+      type: object
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        contractId:
+          type: string
+        contractAddress:
+          type: string
+        missingWallet:
+          type: array
+          items:
+            type: string
+        havePendingJobs:
+          type: array
+          items:
+            type: string
+        missingJobs:
+          type: array
+          items:
+            type: string
+    SmartContractFactory:
+      type: object
+      properties:
+        name:
+          type: string
+        contracts:
+          type: array
+          items:
+            type: object
+            properties:
+              network:
+                type: string
+              address:
+                type: string
+        abi:
+          type: array
+          items:
+            type: any
+        templateAbi:
+          type: array
+          items:
+            type: any
+        standard:
+          type: string
+      required:
+        - name
+        - contracts
+        - standard
+    Network:
+      type: string
+      enum:
+        - EVM
+        - ETHEREUM
+        - BSC
+        - POLYGON
+        - AVALANCHE
+        - FANTOM
+        - CRONOS
+        - OPTIMISM
+        - ARBITRUM
+        - CELO
+        - HARMONY
+        - MOONBEAM
+        - MOONRIVER
+        - KLAYTN
+        - GNOSIS
+        - SOLANA
+        - EHTEREUM-GOERLI
+        - POLYGON-MUMBAI
+        - AVALANCHE-FUJI
+    SUPPORTED_NETWORKS:
+      type: array
+      items:
+        $ref: '#/components/schemas/Network'
+    toMainnet:
+      type: string
+    normalizeAddress:
+      type: string
+    NFTAttribute:
+      type: object
+      properties:
+        traitType:
+          type: string
+        value:
+          oneOf:
+            - type: string
+            - type: number
+    NFTCollection:
+      type: object
+      properties:
+        id:
+          type: string
+        collectionId:
+          type: string
+        collectionName:
+          type: string
+          nullable: true
+        simplehashId:
+          type: string
+          nullable: true
+        webhookId:
+          type: string
+          nullable: true
+        standard:
+          type: string
+          nullable: true
+        network:
+          type: string
+        description:
+          type: string
+          nullable: true
+        tokenCount:
+          type: integer
+          nullable: true
+        nextCursor:
+          type: string
+          nullable: true
+        updatedAt:
+          type: number
+          nullable: true
+        tokens:
+          type: array
+          items:
+            type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+    INFTCollection:
+      allOf:
+        - $ref: '#/components/schemas/NFTCollection'
+        - type: object
+          properties:
+            collectionId:
+              type: string
+            network:
+              type: string
+          required:
+            - collectionId
+            - network
+    NFTOwner:
+      type: object
+      properties:
+        address:
+          type: string
+        quantity:
+          type: number
+    NFTEventUsageParam:
+      type: object
+      properties:
+        eventId:
+          type: string
+        tierId:
+          type: string
+        identifiers:
+          type: array
+          items:
+            type: string
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/INFTOwnership'
+      required:
+        - eventId
+        - tierId
+        - identifiers
+    INFTOwnership:
+      type: object
+      properties:
+        owner:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        collectionId:
+          type: string
+        tokenId:
+          type: string
+      required:
+        - owner
+        - network
+        - collectionId
+        - tokenId
+    NFTCollectionInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        url:
+          type: string
+          nullable: true
+    NFTParams:
+      type: object
+      properties:
+        network:
+          type: string
+        collectionId:
+          type: string
+        tokenId:
+          type: string
+        collectionImageUrl:
+          type: string
+          nullable: true
+        standard:
+          type: string
+          nullable: true
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTOwner'
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        videoUrl:
+          type: string
+          nullable: true
+        audioUrl:
+          type: string
+          nullable: true
+        modelUrl:
+          type: string
+          nullable: true
+        marketplaceUrl:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        animationUrl:
+          type: string
+          nullable: true
+        collection:
+          $ref: '#/components/schemas/NFTCollectionInfo'
+          nullable: true
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTAttribute'
+          nullable: true
+        updatedAt:
+          type: number
+          nullable: true
+        initial:
+          type: boolean
+          nullable: true
+    toJSON:
+      type: string
+    NFT:
+      type: object
+      properties:
+        id:
+          type: string
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTOwner'
+        ownerAddresses:
+          type: array
+          items:
+            type: string
+        network:
+          type: string
+        collectionId:
+          type: string
+        tokenId:
+          type: string
+        updatedAt:
+          type: number
+        standard:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTAttribute'
+        name:
+          type: string
+        imageUrl:
+          type: string
+        videoUrl:
+          type: string
+        audioUrl:
+          type: string
+        modelUrl:
+          type: string
+        marketplaceUrl:
+          type: string
+        description:
+          type: string
+        animationUrl:
+          type: string
+        collection:
+          $ref: '#/components/schemas/NFTCollectionInfo'
+          nullable: true
+        initial:
+          type: boolean
+          nullable: true
+    Base:
+      type: string
+    ISmartContractFactory:
+      type: string
+    NFTMetadata:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        image_data:
+          type: string
+        external_url:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTMetadataAttribute'
+        background_color:
+          type: string
+        animation_url:
+          type: string
+        youtube_url:
+          type: string
+    NFTMetadataAttribute:
+      type: object
+      properties:
+        trait_type:
+          type: string
+          description: The type of the attribute
+        value:
+          anyOf:
+            - type: string
+            - type: number
+          description: The value of the attribute
+        display_type:
+          type: string
+          enum:
+            - number
+            - boost_percentage
+            - boost_number
+            - date
+        max_value:
+          type: number
+    SmartContract:
+      type: object
+      properties:
+        name:
+          type: string
+        symbol:
+          type: string
+        abi:
+          type: array
+          items:
+            type: any
+        address:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        standard:
+          $ref: '#/components/schemas/NFTStandard'
+        ipfsOnly:
+          type: boolean
+        royaltyReceiver:
+          type: string
+        royaltyFee:
+          type: number
+        logo:
+          type: string
+        description:
+          type: string
+        factory:
+          $ref: '#/components/schemas/ContractFactoryName'
+    ContractFactoryName:
+      type: string
+      enum:
+        - erc721-airdrop
+        - erc721-soulbound-airdrop
+        - erc1155-airdrop
+    ContractFactoryDeployment:
+      type: object
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        factory:
+          $ref: '#/components/schemas/ContractFactoryName'
+        name:
+          type: string
+        symbol:
+          type: string
+        baseURI:
+          type: string
+        royaltyReceiver:
+          type: string
+        royaltyFee:
+          type: number
+    INFTMetadataTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+        standard:
+          $ref: '#/components/schemas/NFTStandard'
+        metadata:
+          $ref: '#/components/schemas/NFTMetadataParam'
+      required:
+        - name
+        - standard
+        - metadata
+    NFTMetadataParam:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        image_data:
+          type: string
+        external_url:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTMetadataAttribute'
+        background_color:
+          type: string
+        animation_url:
+          type: string
+        youtube_url:
+          type: string
+      required:
+        - name
+        - image
+    ISmartContract:
+      type: object
+      properties:
+        name:
+          type: string
+        symbol:
+          type: string
+        abi:
+          type: array
+          items:
+            type: any
+        address:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        standard:
+          $ref: '#/components/schemas/NFTStandard'
+        ipfsOnly:
+          type: boolean
+        royaltyReceiver:
+          type: string
+        royaltyFee:
+          type: number
+        logo:
+          type: string
+        description:
+          type: string
+        factory:
+          $ref: '#/components/schemas/ContractFactoryName'
+    NFTMetadataTemplate:
+      type: object
+      properties:
+        contractId:
+          type: string
+        name:
+          type: string
+        ipfsHash:
+          type: string
+        standard:
+          $ref: '#/components/schemas/NFTStandard'
+        metadata:
+          $ref: '#/components/schemas/NFTMetadata'
+        ipfsHashOptions:
+          type: array
+          items:
+            type: string
+        tokenURI:
+          type: string
+        tokenURIOptions:
+          type: array
+          items:
+            type: string
+    NFTEventWhitelistParam:
+      type: object
+      properties:
+        eventId:
+          type: string
+        tierId:
+          type: string
+        identifier:
+          type: string
+    NFTConstraintResult:
+      type: object
+      properties:
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTConstraintResultCollection'
+        quantity:
+          type: number
+    NFTConstraintResultCollection:
+      type: object
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        collectionId:
+          type: string
+        tokens:
+          type: array
+          items:
+            type: string
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTOwnership'
+    NFTOwnership:
+      type: object
+      properties:
+        id:
+          type: string
+        owner:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        collectionId:
+          type: string
+        tokenId:
+          type: string
+        updatedAt:
+          type: number
+        quantity:
+          type: number
+        standard:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTAttribute'
+        imageUrl:
+          type: string
+    NFTEventEligibilityResult:
+      type: object
+      properties:
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTOwnership'
+        whitelists:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTEventWhitelist'
+        moonpasses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Moonpass'
+    MoonpassConfig:
+      type: object
+      properties:
+        redirect:
+          type: string
+    Moonpass:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        connectedAt:
+          type: number
+        createdAt:
+          type: number
+        updatedAt:
+          type: number
+        config:
+          $ref: '#/components/schemas/MoonpassConfig'
+        edition:
+          type: string
+    NFTEventWhitelist:
+      type: object
+      properties:
+        eventId:
+          type: string
+        tierId:
+          type: string
+        identifier:
+          type: string
+        quantity:
+          type: number
+        wallets:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+        revoked:
+          type: boolean
+        order:
+          type: number
+    NFTEventParam:
+      type: object
+      properties:
+        organizerId:
+          type: string
+        info:
+          $ref: '#/components/schemas/NFTEventInfoParam'
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTEventTierParam'
+        type: 
+          $ref: '#/components/schemas/EventTypeEnum'
+        editors:
+          type: array
+          items:
+            type: string
+        projectId:
+          type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Network'
+        collections:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+        start:
+          type: number
+        end:
+          type: number
+        timeZone:
+          $ref: '#/components/schemas/Timezone'
+        tags:
+          type: array
+          items:
+            type: string
+        hidden:
+          type: boolean
+        version:
+          type: number
+        slug:
+          type: string
+        domain: 
+          type: string
+        code:
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        paymentMethods: 
+          type: array
+          items: 
+            $ref: '#/components/schemas/PaymentMethod'
+        transactionFee:
+          type: number
+        allowCrossTierPurchase:
+          type: boolean
+        pubished:
+          type: boolean
+        status: 
+          $ref: '#/components/schemas/EventStatus'
+        customization:
+          $ref: '#/components/schemas/NFTEventCustomization'
+    
+
+        
+      required:
+        - organizerId
+    NFTEventCustomization:
+      type: object
+      properties:
+        showCountdown:
+          type: boolean
+    EventStatus:
+      type: string
+      enum:
+        - draft
+        - published
+        - deleted
+    PaymentMethod:
+      type: string
+      enum:
+        - paypal
+        - stripe
+        - coingate
+    NFTEventInfoParam:
+      type: object
+      properties:
+        name:
+          type: string
+        descriptions:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              content:
+                type: string
+        organizer:
+          type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+        location:
+          type: string
+        locationQuery:
+          type: string
+        locationUrl:
+          type: string
+        date:
+          type: string
+        time:
+          type: string
+        banner:
+          type: string
+        hero:
+          type: string
+        gallery:
+          type: array
+          items:
+            type: string
+        externalLinks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+        faqs:
+          type: array
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+              answer:
+                type: string
+        customActions:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              url:
+                type: string
+        url:
+          type: string
+        subtitle:
+          type: string
+      additionalProperties: false
+    NFTEventOrganizer:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+    NFTEventUsage:
+      type: object
+      properties:
+        eventId:
+          type: string
+        tierId:
+          type: string
+        tierName:
+          type: string
+        identifiers:
+          type: array
+          items:
+            type: string
+        validCount:
+          type: integer
+        id:
+          type: string
+        timestamp:
+          type: integer
+        wallets:
+          type: array
+          items:
+            type: string
+        email:
+          type: string
+        userId:
+          type: string
+        nftIds:
+          type: array
+          items:
+            type: string
+        nfts:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTOwnership'
+        whitelist:
+          type: object
+          properties:
+            id:
+              type: string
+            identifier:
+              type: string
+            quantity:
+              type: integer
+            order:
+              type: integer
+      required:
+        - eventId
+        - tierId
+        - tierName
+        - identifiers
+        - validCount
+        - id
+        - timestamp
+    NFTEventTierParam:
+      type: object
+      properties:
+        whitelistConstraint:
+          $ref: '#/components/schemas/NFTEventTierWhitelistConstraintParam'
+        nftConstraint:
+          $ref: '#/components/schemas/NFTConstraintParam'
+        moonpassConstraint:
+          $ref: '#/components/schemas/NFTEventTierMoonpassConstraintParam'
+        usageConstraint:
+          $ref: '#/components/schemas/NFTEventTierUsageConstraintParam'
+        paymentConfig:
+          $ref: '#/components/schemas/PaymentConfigParam'
+        airdropConfig:
+          $ref: '#/components/schemas/AirdropConfigParam'
+        emailConfig:
+          $ref: '#/components/schemas/NFTEventTierEmailConfigParam'
+        attendanceAirdropConfig:
+          $ref: '#/components/schemas/AirdropConfigParam'
+        runnerConfig:
+          $ref: '#/components/schemas/RunnerConfigParam'
+    NFTEventTierWhitelistConstraintParam:
+      type: object
+      properties:
+        start:
+          type: number
+        end:
+          type: number
+        max:
+          type: number
+        maxPerUser:
+          type: number
+        nftRequirement:
+          type: number
+        externalUrl:
+          type: string
+    NFTConstraintCollectionConfigParam:
+      type: object
+      properties:
+        id:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        collectionId:
+          type: string
+        attributes:
+          type: array
+          items:
+            type: object
+            properties:
+              traitType:
+                type: string
+              values:
+                type: array
+                items:
+                  type: string
+    EventTypeEnum:
+      type: string
+      enum:
+        - ticket
+        - benefit
+        - membership
+    NFTConstraintParam:
+      type: object
+      properties:
+        attribute:
+          type: string
+        operator:
+          type: string
+        value:
+          type: string
+        collections:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTConstraintCollectionConfigParam'
+    NFTEventTierMoonpassConstraintParam:
+      type: object
+      properties:
+        edition:
+          type: string
+    NFTEventTierUsageConstraintParam:
+      type: object
+      properties:
+        boundToUser:
+          type: boolean
+        interval:
+          $ref: '#/components/schemas/UsageInterval'
+        limit:
+          type: number
+      additionalProperties: false
+    UsageInterval:
+      type: string
+      enum:
+        - day
+        - week
+        - month
+        - year
+    DiscountType:
+      type: string
+      enum:
+        - percent_off
+        - amount_off
+        - fixed_price
+    DiscountParam:
+      type: object
+      properties:
+        eventId:
+          type: string
+        type:
+          $ref: '#/components/schemas/DiscountType'
+        value:
+          type: number
+        remainUse:
+          type: number
+    AutoDiscountConfigParam:
+      type: object
+      properties:
+        priority:
+          type: integer
+        criteria:
+          type: object
+          properties:
+            quantity:
+              type: integer
+          additionalProperties: false
+        discount:
+          $ref: '#/components/schemas/DiscountParam'
+    PaymentConfigParam:
+      type: object
+      properties:
+        max:
+          type: integer
+        customForm:
+          $ref: '#/components/schemas/FormField'
+        inviteOnly:
+          type: boolean
+        maxPerTransaction:
+          type: integer
+        maxPerUser:
+          type: integer
+        start:
+          type: integer
+        end:
+          type: integer
+        nftConstraint:
+          $ref: '#/components/schemas/NFTConstraintParam'
+        disableBuyForOthers:
+          type: boolean
+        whitelist:
+          type: array
+          items:
+            type: string
+        autoDiscounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AutoDiscountConfigParam'
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/IPaymentPrice'
+    
+    ITransaction:
+      type: object
+      properties:
+        userId:
+          type: string
+        eventId:
+          type: string
+        items:
+          $ref: '#/components/schemas/ITransactionItem'
+        discount:
+          $ref: '#/components/schemas/DiscountParam'
+    
+    ITransactionItem:
+      type: object
+      properties:
+        productId:
+          type: string
+        price: 
+          type: number
+        priceId: 
+          type: string
+
+    
+    
+    IPaymentPrice:
+      type: object
+      properties:
+        id:
+          type: string
+        info:
+          $ref: '#/components/schemas/Translation'
+        price:
+          type: number
+        end:
+          type: integer
+        max:
+          type: integer
+        sold:
+          type: integer
+    Translation:
+      type: object
+      properties:
+        language:
+          $ref: '#/components/schemas/Language'
+    AirdropConfigParam:
+      type: object
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        contractId:
+          type: string
+        standard:
+          $ref: '#/components/schemas/NFTStandard'
+    NFTEventTierEmailConfig:
+      type: object
+      properties:
+        templates:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Translation'
+            properties:
+              customSections:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTEventEmailCustomSection'
+    NFTEventEmailCustomSection:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        links:
+          type: object
+          properties:
+            text:
+              type: string
+            url:
+              type: string
+    NFTEventTierEmailConfigParam:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/NFTEventTierEmailConfig'
+        - type: object
+          properties:
+            templates:
+              type: object
+              additionalProperties:
+                $ref: '#/components/schemas/Translation'
+    RunnerConfigParam:
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            type: object
+            properties:
+              job:
+                $ref: '#/components/schemas/JobParam'
+              critical:
+                type: boolean
+              order:
+                type: number
+            required:
+              - job
+              - critical
+    JobParam:
+      type: object
+      properties:
+        name:
+          type: string
+          enum:
+            - airdrop_nft
+            - deploy_contract
+            - create_discount
+        status:
+          type: string
+          enum:
+            - created
+            - pending
+            - in_progress
+            - completed
+            - failed
+        code:
+          type: string
+        data:
+          type: any
+          nullable: true
+        refIds:
+          type: array
+          items:
+            type: string
+          nullable: true
+        error:
+          type: any
+          nullable: true
+        result:
+          type: any
+          nullable: true
+        recurrent:
+          type: boolean
+      required:
+        - name
+        - status
+        - code
+    UpdateCurrentEventPreviewPartFunction:
+      type: object
+      properties:
+        fieldKey:
+          type: string
+    FormField:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/FormFieldType'
+        label:
+          $ref: '#/components/schemas/Translation'
+        key:
+          type: string
+        note:
+          $ref: '#/components/schemas/Translation'
+        tooltip:
+          $ref: '#/components/schemas/Translation'
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+            - type: array
+              items:
+                oneOf:
+                  - type: string
+                  - type: number
+                  - type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/FormSelectOption'
+        placeholder:
+          $ref: '#/components/schemas/Translation'
+        span:
+          type: number
+        errorMessages:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Translation'
+        confirm:
+          type: boolean
+        disabled:
+          type: boolean
+        required:
+          type: boolean
+        readonly:
+          type: boolean
+        checked:
+          type: boolean
+        size:
+          type: number
+        step:
+          type: number
+        max:
+          type: number
+        maxLength:
+          type: number
+        min:
+          type: number
+        minLength:
+          type: number
+        pattern:
+          type: string
+        accept:
+          type: string
+        uploadPath:
+          type: string
+        updateCurrentEventPreviewPart:
+          $ref: '#/components/schemas/UpdateCurrentEventPreviewPartFunction'
+    FormFieldType:
+      type: string
+      enum:
+        - text
+        - email
+        - tel
+        - date
+        - datetime-local
+        - time
+        - url
+        - password
+        - file
+        - hidden
+        - number
+        - select
+        - checkbox
+        - radio
+        - toggle
+        - range
+        - editable
+        - textarea
+    FormSelectOption:
+      type: object
+      properties:
+        label:
+          $ref: '#/components/schemas/Translation'
+        value:
+          type: string
+        selected:
+          type: boolean
+        disabled:
+          type: boolean
+      additionalProperties: false
+    Language:
+      type: string
+      enum:
+        - aa
+        - aa-DJ
+        - aa-ER
+        - aa-ET
+        - af
+        - af-NA
+        - af-ZA
+        - agq
+        - agq-CM
+        - ak
+        - ak-GH
+        - sq
+        - sq-AL
+        - sq-MK
+        - gsw
+        - gsw-FR
+        - gsw-LI
+        - gsw-CH
+        - am
+        - am-ET
+        - ar
+        - ar-DZ
+        - ar-BH
+        - ar-TD
+        - ar-KM
+        - ar-DJ
+        - ar-EG
+        - ar-ER
+        - ar-IQ
+        - ar-IL
+        - ar-JO
+        - ar-KW
+        - ar-LB
+        - ar-LY
+        - ar-MR
+        - ar-MA
+        - ar-OM
+        - ar-PS
+        - ar-QA
+        - ar-SA
+        - ar-SO
+        - ar-SS
+        - ar-SD
+        - ar-SY
+        - ar-TN
+        - ar-AE
+        - ar-001
+        - ar-YE
+        - hy
+        - hy-AM
+        - as
+        - as-IN
+        - ast
+        - ast-ES
+        - asa
+        - asa-TZ
+        - az-Cyrl
+        - az-Cyrl-AZ
+        - az
+        - az-Latn
+        - az-Latn-AZ
+        - ksf
+        - ksf-CM
+        - bm
+        - bm-Latn-ML
+        - bn
+        - bn-BD
+        - bn-IN
+        - bas
+        - bas-CM
+        - ba
+        - ba-RU
+        - eu
+        - eu-ES
+        - be
+        - be-BY
+        - bem
+        - bem-ZM
+        - bez
+        - bez-TZ
+        - byn
+        - byn-ER
+        - brx
+        - brx-IN
+        - bs-Cyrl
+        - bs-Cyrl-BA
+        - bs-Latn
+        - bs
+        - bs-Latn-BA
+        - br
+        - br-FR
+        - bg
+        - bg-BG
+        - my
+        - my-MM
+        - ca
+        - ca-AD
+        - ca-FR
+        - ca-IT
+        - ca-ES
+        - ceb
+        - ceb-Latn
+        - ceb-Latn-PH
+        - tzm-Latn-
+        - ku
+        - ku-Arab
+        - ku-Arab-IQ
+        - ccp
+        - ccp-Cakm
+        - ccp-Cakm-
+        - cd-RU
+        - chr
+        - chr-Cher
+        - chr-Cher-US
+        - cgg
+        - cgg-UG
+        - zh-Hans
+        - zh
+        - zh-CN
+        - zh-SG
+        - zh-Hant
+        - zh-HK
+        - zh-MO
+        - zh-TW
+        - cu-RU
+        - swc
+        - swc-CD
+        - kw
+        - kw-GB
+        - co
+        - co-FR
+        - hr
+        - hr-HR
+        - hr-BA
+        - cs
+        - cs-CZ
+        - da
+        - da-DK
+        - da-GL
+        - prs
+        - prs-AF
+        - dv
+        - dv-MV
+        - dua
+        - dua-CM
+        - nl
+        - nl-AW
+        - nl-BE
+        - nl-BQ
+        - nl-CW
+        - nl-NL
+        - nl-SX
+        - nl-SR
+        - dz
+        - dz-BT
+        - ebu
+        - ebu-KE
+        - en
+        - en-AS
+        - en-AI
+        - en-AG
+        - en-AU
+        - en-AT
+        - en-BS
+        - en-BB
+        - en-BE
+        - en-BZ
+        - en-BM
+        - en-BW
+        - en-IO
+        - en-VG
+        - en-BI
+        - en-CM
+        - en-CA
+        - en-029
+        - en-KY
+        - en-CX
+        - en-CC
+        - en-CK
+        - en-CY
+        - en-DK
+        - en-DM
+        - en-ER
+        - en-150
+        - en-FK
+        - en-FI
+        - en-FJ
+        - en-GM
+        - en-DE
+        - en-GH
+        - en-GI
+        - en-GD
+        - en-GU
+        - en-GG
+        - en-GY
+        - en-HK
+        - en-IN
+        - en-IE
+        - en-IM
+        - en-IL
+        - en-JM
+        - en-JE
+        - en-KE
+        - en-KI
+        - en-LS
+        - en-LR
+        - en-MO
+        - en-MG
+        - en-MW
+        - en-MY
+        - en-MT
+        - en-MH
+        - en-MU
+        - en-FM
+        - en-MS
+        - en-NA
+        - en-NR
+        - en-NL
+        - en-NZ
+        - en-NG
+        - en-NU
+        - en-NF
+        - en-MP
+        - en-PK
+        - en-PW
+        - en-PG
+        - en-PN
+        - en-PR
+        - en-PH
+        - en-RW
+        - en-KN
+        - en-LC
+        - en-VC
+        - en-WS
+        - en-SC
+        - en-SL
+        - en-SG
+        - en-SX
+        - en-SI
+        - en-SB
+        - en-ZA
+        - en-SS
+        - en-SH
+        - en-SD
+        - en-SZ
+        - en-SE
+        - en-CH
+        - en-TZ
+        - en-TK
+        - en-TO
+        - en-TT
+        - en-TC
+        - en-TV
+        - en-UG
+        - en-AE
+        - en-GB
+        - en-US
+        - en-UM
+        - en-VI
+        - en-VU
+        - en-001
+        - en-ZM
+        - en-ZW
+        - eo
+        - eo-001
+        - et
+        - et-EE
+        - ee
+        - ee-GH
+        - ee-TG
+        - ewo
+        - ewo-CM
+        - fo
+        - fo-DK
+        - fo-FO
+        - fil
+        - fil-PH
+        - fi
+        - fi-FI
+        - fr
+        - fr-DZ
+        - fr-BE
+        - fr-BJ
+        - fr-BF
+        - fr-BI
+        - fr-CM
+        - fr-CA
+        - fr-CF
+        - fr-TD
+        - fr-KM
+        - fr-CG
+        - fr-CD
+        - fr-CI
+        - fr-DJ
+        - fr-GQ
+        - fr-FR
+        - fr-GF
+        - fr-PF
+        - fr-GA
+        - fr-GP
+        - fr-GN
+        - fr-HT
+        - fr-LU
+        - fr-MG
+        - fr-ML
+        - fr-MQ
+        - fr-MR
+        - fr-MU
+        - fr-YT
+        - fr-MA
+        - fr-NC
+        - fr-NE
+        - fr-MC
+        - fr-RE
+        - fr-RW
+        - fr-BL
+        - fr-MF
+        - fr-PM
+        - fr-SN
+        - fr-SC
+        - fr-CH
+        - fr-SY
+        - fr-TG
+        - fr-TN
+        - fr-VU
+        - fr-WF
+        - fy
+        - fy-NL
+        - fur
+        - fur-IT
+        - ff
+        - ff-Latn
+        - ff-Latn-BF
+        - ff-CM
+        - ff-Latn-CM
+        - ff-Latn-GM
+        - ff-Latn-GH
+        - ff-GN
+        - ff-Latn-GN
+        - ff-Latn-GW
+        - ff-Latn-LR
+        - ff-MR
+        - ff-Latn-MR
+        - ff-Latn-NE
+        - ff-NG
+        - ff-Latn-NG
+        - ff-Latn-SN
+        - ff-Latn-SL
+        - gl
+        - gl-ES
+        - lg
+        - lg-UG
+        - ka
+        - ka-GE
+        - de
+        - de-AT
+        - de-BE
+        - de-DE
+        - de-IT
+        - de-LI
+        - de-LU
+        - de-CH
+        - el
+        - el-CY
+        - el-GR
+        - kl
+        - kl-GL
+        - gn
+        - gn-PY
+        - gu
+        - gu-IN
+        - guz
+        - guz-KE
+        - ha
+        - ha-Latn
+        - ha-Latn-GH
+        - ha-Latn-NE
+        - ha-Latn-NG
+        - haw
+        - haw-US
+        - he
+        - he-IL
+        - hi
+        - hi-IN
+        - hu
+        - hu-HU
+        - is
+        - is-IS
+        - ig
+        - ig-NG
+        - id
+        - id-ID
+        - ia
+        - ia-FR
+        - ia-001
+        - iu
+        - iu-Latn
+        - iu-Latn-CA
+        - iu-Cans
+        - iu-Cans-CA
+        - ga
+        - ga-IE
+        - it
+        - it-IT
+        - it-SM
+        - it-CH
+        - it-VA
+        - ja
+        - ja-JP
+        - jv
+        - jv-Latn
+        - jv-Latn-ID
+        - dyo
+        - dyo-SN
+        - kea
+        - kea-CV
+        - kab
+        - kab-DZ
+        - kkj
+        - kkj-CM
+        - kln
+        - kln-KE
+        - kam
+        - kam-KE
+        - kn
+        - kn-IN
+        - ks
+        - ks-Arab
+        - ks-Arab-IN
+        - kk
+        - kk-KZ
+        - km
+        - km-KH
+        - quc
+        - quc-Latn-GT
+        - ki
+        - ki-KE
+        - rw
+        - rw-RW
+        - sw
+        - sw-KE
+        - sw-TZ
+        - sw-UG
+        - kok
+        - kok-IN
+        - ko
+        - ko-KR
+        - ko-KP
+        - khq
+        - khq-ML
+        - ses
+        - ses-ML
+        - nmg
+        - nmg-CM
+        - ky
+        - ky-KG
+        - ku-Arab-IR
+        - lkt
+        - lkt-US
+        - lag
+        - lag-TZ
+        - lo
+        - lo-LA
+        - lv
+        - lv-LV
+        - ln
+        - ln-AO
+        - ln-CF
+        - ln-CG
+        - ln-CD
+        - lt
+        - lt-LT
+        - nds
+        - nds-DE
+        - nds-NL
+        - dsb
+        - dsb-DE
+        - lu
+        - lu-CD
+        - luo
+        - luo-KE
+        - lb
+        - lb-LU
+        - luy
+        - luy-KE
+        - mk
+        - mk-MK
+        - jmc
+        - jmc-TZ
+        - mgh
+        - mgh-MZ
+        - kde
+        - kde-TZ
+        - mg
+        - mg-MG
+        - ms
+        - ms-BN
+        - ms-MY
+        - ml
+        - ml-IN
+        - mt
+        - mt-MT
+        - gv
+        - gv-IM
+        - mi
+        - mi-NZ
+        - arn
+        - arn-CL
+        - mr
+        - mr-IN
+        - mas
+        - mas-KE
+        - mas-TZ
+        - mzn-IR
+        - mer
+        - mer-KE
+        - mgo
+        - mgo-CM
+        - moh
+        - moh-CA
+        - mn
+        - mn-Cyrl
+        - mn-MN
+        - mn-Mong
+        - mn-Mong-CN
+        - mn-Mong-MN
+        - mfe
+        - mfe-MU
+        - mua
+        - mua-CM
+        - nqo
+        - nqo-GN
+        - naq
+        - naq-NA
+        - ne
+        - ne-IN
+        - ne-NP
+        - nnh
+        - nnh-CM
+        - jgo
+        - jgo-CM
+        - lrc-IQ
+        - lrc-IR
+        - nd
+        - nd-ZW
+        - 'no'
+        - nb
+        - nb-NO
+        - nn
+        - nn-NO
+        - nb-SJ
+        - nus
+        - nus-SD
+        - nus-SS
+        - nyn
+        - nyn-UG
+        - oc
+        - oc-FR
+        - or
+        - or-IN
+        - om
+        - om-ET
+        - om-KE
+        - os
+        - os-GE
+        - os-RU
+        - ps
+        - ps-AF
+        - ps-PK
+        - fa
+        - fa-AF
+        - fa-IR
+        - pl
+        - pl-PL
+        - pt
+        - pt-AO
+        - pt-BR
+        - pt-CV
+        - pt-GQ
+        - pt-GW
+        - pt-LU
+        - pt-MO
+        - pt-MZ
+        - pt-PT
+        - pt-ST
+        - pt-CH
+        - pt-TL
+        - prg-001
+        - qps-ploca
+        - qps-ploc
+        - qps-plocm
+        - pa
+        - pa-Arab
+        - pa-IN
+        - pa-Arab-PK
+        - quz
+        - quz-BO
+        - quz-EC
+        - quz-PE
+        - ksh
+        - ksh-DE
+        - ro
+        - ro-MD
+        - ro-RO
+        - rm
+        - rm-CH
+        - rof
+        - rof-TZ
+        - rn
+        - rn-BI
+        - ru
+        - ru-BY
+        - ru-KZ
+        - ru-KG
+        - ru-MD
+        - ru-RU
+        - ru-UA
+        - rwk
+        - rwk-TZ
+        - ssy
+        - ssy-ER
+        - sah
+        - sah-RU
+        - saq
+        - saq-KE
+        - smn
+        - smn-FI
+        - smj
+        - smj-NO
+        - smj-SE
+        - se
+        - se-FI
+        - se-NO
+        - se-SE
+        - sms
+        - sms-FI
+        - sma
+        - sma-NO
+        - sma-SE
+        - sg
+        - sg-CF
+        - sbp
+        - sbp-TZ
+        - sa
+        - sa-IN
+        - gd
+        - gd-GB
+        - seh
+        - seh-MZ
+        - sr-Cyrl
+        - sr-Cyrl-BA
+        - sr-Cyrl-ME
+        - sr-Cyrl-RS
+        - sr-Cyrl-CS
+        - sr-Latn
+        - sr
+        - sr-Latn-BA
+        - sr-Latn-ME
+        - sr-Latn-RS
+        - sr-Latn-CS
+        - nso
+        - nso-ZA
+        - tn
+        - tn-BW
+        - tn-ZA
+        - ksb
+        - ksb-TZ
+        - sn
+        - sn-Latn
+        - sn-Latn-ZW
+        - sd
+        - sd-Arab
+        - sd-Arab-PK
+        - si
+        - si-LK
+        - sk
+        - sk-SK
+        - sl
+        - sl-SI
+        - xog
+        - xog-UG
+        - so
+        - so-DJ
+        - so-ET
+        - so-KE
+        - so-SO
+        - st
+        - st-ZA
+        - nr
+        - nr-ZA
+        - st-LS
+        - es
+        - es-AR
+        - es-BZ
+        - es-VE
+        - es-BO
+        - es-BR
+        - es-CL
+        - es-CO
+        - es-CR
+        - es-CU
+        - es-DO
+        - es-EC
+        - es-SV
+        - es-GQ
+        - es-GT
+        - es-HN
+        - es-419
+        - es-MX
+        - es-NI
+        - es-PA
+        - es-PY
+        - es-PE
+        - es-PH
+        - es-PR
+        - es-ES_tradnl
+        - es-ES
+        - es-US
+        - es-UY
+        - zgh
+        - zgh-Tfng-MA
+        - zgh-Tfng
+        - ss
+        - ss-ZA
+        - ss-SZ
+        - sv
+        - sv-AX
+        - sv-FI
+        - sv-SE
+        - syr
+        - syr-SY
+        - shi
+        - shi-Tfng
+        - shi-Tfng-MA
+        - shi-Latn
+        - shi-Latn-MA
+        - dav
+        - dav-KE
+        - tg
+        - tg-Cyrl
+        - tg-Cyrl-TJ
+        - tzm
+        - tzm-Latn
+        - tzm-Latn-DZ
+        - ta
+        - ta-IN
+        - ta-MY
+        - ta-SG
+        - ta-LK
+        - twq
+        - twq-NE
+        - tt
+        - tt-RU
+        - te
+        - te-IN
+        - teo
+        - teo-KE
+        - teo-UG
+        - th
+        - th-TH
+        - bo
+        - bo-IN
+        - bo-CN
+        - tig
+        - tig-ER
+        - ti
+        - ti-ER
+        - ti-ET
+        - to
+        - to-TO
+        - ts
+        - ts-ZA
+        - tr
+        - tr-CY
+        - tr-TR
+        - tk
+        - tk-TM
+        - uk
+        - uk-UA
+        - hsb
+        - hsb-DE
+        - ur
+        - ur-IN
+        - ur-PK
+        - ug
+        - ug-CN
+        - uz-Arab
+        - uz-Arab-AF
+        - uz-Cyrl
+        - uz-Cyrl-UZ
+        - uz
+        - uz-Latn
+        - uz-Latn-UZ
+        - vai
+        - vai-Vaii
+        - vai-Vaii-LR
+        - vai-Latn-LR
+        - vai-Latn
+        - ca-ES-
+        - ve
+        - ve-ZA
+        - vi
+        - vi-VN
+        - vo
+        - vo-001
+        - vun
+        - vun-TZ
+        - wae
+        - wae-CH
+        - cy
+        - cy-GB
+        - wal
+        - wal-ET
+        - wo
+        - wo-SN
+        - xh
+        - xh-ZA
+        - yav
+        - yav-CM
+        - ii
+        - ii-CN
+        - yo
+        - yo-BJ
+        - yo-NG
+        - dje
+        - dje-NE
+        - zu
+        - zu-ZA
+    Discount:
+      allOf:
+        - $ref: '#/components/schemas/Base'
+        - type: object
+          properties:
+            code:
+              type: string
+            eventId:
+              type: string
+            productId:
+              type: string
+            type:
+              $ref: '#/components/schemas/DiscountType'
+            value:
+              type: number
+            reusable:
+              type: boolean
+            expiry:
+              type: number
+            applyLimit:
+              type: number
+            max:
+              type: number
+            usageCount:
+              type: number
+    IBaseIdOnly:
+      type: object
+      properties:
+        id:
+          type: string
+    BaseIdOnly:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    OmitId:
+      type: string
+      enum:
+        - id
+        - json
+    IBase:
+      allOf:
+        - $ref: '#/components/schemas/IBaseIdOnly'
+        - type: object
+          properties:
+            createdAt:
+              type: number
+            updatedAt:
+              type: number
+    VerificationToken:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              results:
+                type: object
+                additionalProperties:
+                  type: string
+              failed:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    failed:
+                      type: array
+                      items:
+                        type: string
+                    userIds:
+                      type: array
+                      items:
+                        type: string
+    AirdropJobData:
+      type: object
+      properties:
+        contractId:
+          type: string
+        metadataTemplateId:
+          type: string
+        standard:
+          $ref: '#/components/schemas/NFTStandard'
+        network:
+          $ref: '#/components/schemas/Network'
+        contractAddress:
+          type: string
+        metadataTemplateName:
+          type: string
+        recipient:
+          type: string
+        metadataUpdate:
+          $ref: '#/components/schemas/NFTMetadataUpdate'
+        identifier:
+          type: string
+        transactionId:
+          type: string
+        eventId:
+          type: string
+        tierId:
+          type: string
+        itemId:
+          type: string
+        userId:
+          type: string
+        template:
+          type: string
+    Job:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/AirdropJobData'
+    AirdropJob:
+      allOf:
+        - $ref: '#/components/schemas/Job'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/AirdropJobData'
+    NFTMetadataUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        image_data:
+          type: string
+        external_url:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/NFTMetadataAttribute'
+        background_color:
+          type: string
+        animation_url:
+          type: string
+        youtube_url:
+          type: string
+    AirdropResult:
+      type: object
+      properties:
+        contractId:
+          type: string
+        metadataTemplateId:
+          type: string
+        receipient:
+          type: string
+        jobId:
+          type: string
+        txHash:
+          type: string
+    User:
+      type: object
+      properties:
+        authId:
+          type: string
+        identifiers:
+          type: array
+          items:
+            type: string
+        wallets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Wallet'
+        walletAddresses:
+          type: array
+          items:
+            type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Network'
+        events:
+          type: array
+          items:
+            type: string
+        moonpassIds:
+          type: array
+          items:
+            type: string
+        session:
+          type: string
+        source:
+          type: string
+        lastActive:
+          type: number
+    Wallet:
+      allOf:
+        - $ref: '#/components/schemas/IWallet'
+        - type: object
+          properties:
+            network:
+              $ref: '#/components/schemas/Network'
+            address:
+              type: string
+            connectedAt:
+              type: number
+            nickname:
+              type: string
+            verified:
+              type: boolean
+            disconnected:
+              type: boolean
+            provider:
+              $ref: '#/components/schemas/WalletProvider'
+    IWallet:
+      type: object
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        address:
+          type: string
+        web3auth:
+          type: boolean
+    WalletProvider:
+      type: string
+      enum:
+        - web3auth
+        - particle_network
+        - magic_link
+    AuthParam:
+      type: object
+      properties:
+        email:
+          type: string
+        authId:
+          type: string
+        authIdToken:
+          type: string
+        address:
+          type: string
+        network:
+          $ref: '#/components/schemas/Network'
+        signature:
+          type: string
+        siweMessage:
+          type: any
+        provider:
+          $ref: '#/components/schemas/WalletProvider'
+        ip:
+          type: string
+        source:
+          type: string
+    AuthResult:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        authToken:
+          type: string
+    OrganizerInput:
+      type: object
+      properties:
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizerProfileInput'
+        bankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccountInput'
+        wallets:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizerWalletInput'
+        defaultPayment:
+          type: object
+          properties:
+            bankAccountId:
+              type: string
+            walletId:
+              type: string
+          required:
+            - bankAccountId
+            - walletId
+    OrganizerProfileInput:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+        organization:
+          type: string
+    OrganizerWalletInput:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum:
+            - ETH
+            - BTC
+            - USDT
+            - AVAX
+            - USDC
+        address:
+          type: string
+    BankAccountInput:
+      type: object
+      properties:
+        country:
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        holderType:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        province:
+          type: string
+        accountType:
+          type: string
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+        swiftCode:
+          type: string
+    Organizer:
+      type: object
+      properties:
+        id:
+          type: string
+        profiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizerProfile'
+        bankAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccount'
+        wallets:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizerWallet'
+        defaultPayment:
+          type: object
+          properties:
+            bankAccountId:
+              type: string
+            walletId:
+              type: string
+    OrganizerProfile:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+        organization:
+          type: string
+    OrganizerWallet:
+      type: object
+      properties:
+        id:
+          type: string
+        currency:
+          type: string
+          enum:
+            - ETH
+            - BTC
+            - USDT
+            - AVAX
+            - USDC
+        address:
+          type: string
+    IBankAccount:
+      type: object
+      properties:
+        country:
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        holderType:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        province:
+          type: string
+        accountType:
+          type: string
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+        swiftCode:
+          type: string
+    BankAccountRequest:
+      type: object
+      properties:
+        bankAccount:
+          $ref: '#/components/schemas/IBankAccount'
+        isDefault:
+          type: boolean
+      required:
+        - bankAccount
+    BankAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        country:
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        holderType:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        province:
+          type: string
+        accountType:
+          type: string
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+        swiftCode:
+          type: string
+    Currency:
+      type: string
+      enum:
+        - AFN
+        - EUR
+        - ALL
+        - DZD
+        - USD
+        - AOA
+        - XCD
+        - ARS
+        - AMD
+        - AWG
+        - AUD
+        - AZN
+        - BSD
+        - BHD
+        - BDT
+        - BBD
+        - BYN
+        - BZD
+        - XOF
+        - BMD
+        - INR
+        - BTN
+        - BOB
+        - BOV
+        - BAM
+        - BWP
+        - NOK
+        - BRL
+        - BND
+        - BGN
+        - BIF
+        - CVE
+        - KHR
+        - XAF
+        - CAD
+        - KYD
+        - CLP
+        - CLF
+        - CNY
+        - COP
+        - COU
+        - KMF
+        - CDF
+        - NZD
+        - CRC
+        - HRK
+        - CUP
+        - CUC
+        - ANG
+        - CZK
+        - DKK
+        - DJF
+        - DOP
+        - EGP
+        - SVC
+        - ERN
+        - SZL
+        - ETB
+        - FKP
+        - FJD
+        - XPF
+        - GMD
+        - GEL
+        - GHS
+        - GIP
+        - GTQ
+        - GBP
+        - GNF
+        - GYD
+        - HTG
+        - HNL
+        - HKD
+        - HUF
+        - ISK
+        - IDR
+        - XDR
+        - IRR
+        - IQD
+        - ILS
+        - JMD
+        - JPY
+        - JOD
+        - KZT
+        - KES
+        - AUD
+        - KPW
+        - KRW
+        - KWD
+        - KGS
+        - LAK
+        - EUR
+        - LBP
+        - LSL
+        - ZAR
+        - LRD
+        - LYD
+        - CHF
+        - EUR
+        - EUR
+        - MOP
+        - MKD
+        - MGA
+        - MWK
+        - MYR
+        - MVR
+        - XOF
+        - EUR
+        - USD
+        - EUR
+        - MRU
+        - MUR
+        - EUR
+        - XUA
+        - MXN
+        - MXV
+        - USD
+        - MDL
+        - EUR
+        - MNT
+        - EUR
+        - XCD
+        - MAD
+        - MZN
+        - MMK
+        - NAD
+        - ZAR
+        - AUD
+        - NPR
+        - EUR
+        - XPF
+        - NZD
+        - NIO
+        - XOF
+        - NGN
+        - NZD
+        - AUD
+        - USD
+        - NOK
+        - OMR
+        - PKR
+        - USD
+        - PAB
+        - USD
+        - PGK
+        - PYG
+        - PEN
+        - PHP
+        - NZD
+        - PLN
+        - EUR
+        - USD
+        - QAR
+        - EUR
+        - RON
+        - RUB
+        - RWF
+        - EUR
+        - SHP
+        - XCD
+        - XCD
+        - EUR
+        - EUR
+        - XCD
+        - WST
+        - EUR
+        - STN
+        - SAR
+        - XOF
+        - RSD
+        - SCR
+        - SLL
+        - SGD
+        - ANG
+        - XSU
+        - EUR
+        - EUR
+        - SBD
+        - SOS
+        - ZAR
+        - SSP
+        - EUR
+        - LKR
+        - SDG
+        - SRD
+        - NOK
+        - SEK
+        - CHF
+        - CHE
+        - CHW
+        - SYP
+        - TWD
+        - TJS
+        - TZS
+        - THB
+        - USD
+        - XOF
+        - NZD
+        - TOP
+        - TTD
+        - TND
+        - TRY
+        - TMT
+        - USD
+        - AUD
+        - UGX
+        - UAH
+        - AED
+        - GBP
+        - USD
+        - USD
+        - USN
+        - UYU
+        - UYI
+        - UYW
+        - UZS
+        - VUV
+        - VES
+        - VND
+        - USD
+        - USD
+        - XPF
+        - MAD
+        - YER
+        - ZMW
+        - ZWL
+        - XBA
+        - XBB
+        - XBC
+        - XBD
+        - XTS
+        - XXX
+        - XAU
+        - XPD
+        - XPT
+        - XAG
+        - AFA
+        - FIM
+        - ALK
+        - ADP
+        - ESP
+        - FRF
+        - AOK
+        - AON
+        - AOR
+        - ARA
+        - ARP
+        - ARY
+        - RUR
+        - ATS
+        - AYM
+        - AZM
+        - RUR
+        - BYB
+        - BYR
+        - RUR
+        - BEC
+        - BEF
+        - BEL
+        - BOP
+        - BAD
+        - BRB
+        - BRC
+        - BRE
+        - BRN
+        - BRR
+        - BGJ
+        - BGK
+        - BGL
+        - BUK
+        - HRD
+        - HRK
+        - CYP
+        - CSJ
+        - CSK
+        - ECS
+        - ECV
+        - GQE
+        - EEK
+        - XEU
+        - FIM
+        - FRF
+        - FRF
+        - FRF
+        - GEK
+        - RUR
+        - DDM
+        - DEM
+        - GHC
+        - GHP
+        - GRD
+        - FRF
+        - GNE
+        - GNS
+        - GWE
+        - GWP
+        - ITL
+        - ISJ
+        - IEP
+        - ILP
+        - ILR
+        - ITL
+        - RUR
+        - RUR
+        - LAJ
+        - LVL
+        - LVR
+        - LSM
+        - ZAL
+        - LTL
+        - LTT
+        - LUC
+        - LUF
+        - LUL
+        - MGF
+        - MWK
+        - MVQ
+        - MLF
+        - MTL
+        - MTP
+        - FRF
+        - MRO
+        - FRF
+        - MXP
+        - RUR
+        - FRF
+        - MZE
+        - MZM
+        - NLG
+        - ANG
+        - NIC
+        - PEH
+        - PEI
+        - PEN
+        - PES
+        - PLZ
+        - PTE
+        - FRF
+        - ROK
+        - ROL
+        - RON
+        - RUR
+        - FRF
+        - FRF
+        - FRF
+        - ITL
+        - STD
+        - CSD
+        - EUR
+        - SKK
+        - SIT
+        - ZAL
+        - SDG
+        - RHD
+        - ESA
+        - ESB
+        - ESP
+        - SDD
+        - SDP
+        - SRG
+        - SZL
+        - CHC
+        - RUR
+        - TJR
+        - IDR
+        - TPE
+        - TRL
+        - TRY
+        - RUR
+        - TMM
+        - UGS
+        - UGW
+        - UAK
+        - SUR
+        - USS
+        - UYN
+        - UYP
+        - RUR
+        - VEB
+        - VEF
+        - VEF
+        - VEF
+        - VNC
+        - YDD
+        - YUD
+        - YUM
+        - YUN
+        - ZRN
+        - ZRZ
+        - ZMK
+        - ZWC
+        - ZWD
+        - ZWD
+        - ZWN
+        - ZWR
+        - XFO
+        - XRE
+        - XFU
+    Timezone:
+      type: string
+      enum:
+        - Africa/Algiers
+        - Atlantic/Cape_Verde
+        - Africa/Ndjamena
+        - Africa/Abidjan
+        - Africa/Bamako
+        - Africa/Banjul
+        - Africa/Conakry
+        - Africa/Dakar
+        - Africa/Freetown
+        - Africa/Lome
+        - Africa/Nouakchott
+        - Africa/Ouagadougou
+        - Atlantic/St_Helena
+        - Africa/Cairo
+        - Africa/Accra
+        - Africa/Bissau
+        - Africa/Nairobi
+        - Africa/Addis_Ababa
+        - Africa/Asmara
+        - Africa/Dar_es_Salaam
+        - Africa/Djibouti
+        - Africa/Kampala
+        - Africa/Mogadishu
+        - Indian/Antananarivo
+        - Indian/Comoro
+        - Indian/Mayotte
+        - Africa/Monrovia
+        - Africa/Tripoli
+        - Indian/Mauritius
+        - Africa/Casablanca
+        - Africa/El_Aaiun
+        - Africa/Maputo
+        - Africa/Blantyre
+        - Africa/Bujumbura
+        - Africa/Gaborone
+        - Africa/Harare
+        - Africa/Kigali
+        - Africa/Lubumbashi
+        - Africa/Lusaka
+        - Africa/Windhoek
+        - Africa/Lagos
+        - Africa/Bangui
+        - Africa/Brazzaville
+        - Africa/Douala
+        - Africa/Kinshasa
+        - Africa/Libreville
+        - Africa/Luanda
+        - Africa/Malabo
+        - Africa/Niamey
+        - Africa/Porto-Novo
+        - Indian/Reunion
+        - Africa/Sao_Tome
+        - Indian/Mahe
+        - Africa/Johannesburg
+        - Africa/Maseru
+        - Africa/Mbabane
+        - Africa/Khartoum
+        - Africa/Juba
+        - Africa/Tunis
+        - Antarctica/Casey
+        - Antarctica/Davis
+        - Antarctica/Mawson
+        - Indian/Kerguelen
+        - Antarctica/DumontDUrville
+        - Antarctica/Syowa
+        - Antarctica/Troll
+        - Antarctica/Vostok
+        - Antarctica/Rothera
+        - Asia/Kabul
+        - Asia/Yerevan
+        - Asia/Baku
+        - Asia/Dhaka
+        - Asia/Thimphu
+        - Indian/Chagos
+        - Asia/Brunei
+        - Asia/Yangon
+        - Asia/Shanghai
+        - Asia/Urumqi
+        - Asia/Hong_Kong
+        - Asia/Taipei
+        - Asia/Macau
+        - Asia/Nicosia
+        - Asia/Famagusta
+        - Europe/Nicosia
+        - Asia/Tbilisi
+        - Asia/Dili
+        - Asia/Kolkata
+        - Asia/Jakarta
+        - Asia/Pontianak
+        - Asia/Makassar
+        - Asia/Jayapura
+        - Asia/Tehran
+        - Asia/Baghdad
+        - Asia/Jerusalem
+        - Asia/Tokyo
+        - Asia/Amman
+        - Asia/Almaty
+        - Asia/Qyzylorda
+        - Asia/Qostanay
+        - Asia/Aqtobe
+        - Asia/Aqtau
+        - Asia/Atyrau
+        - Asia/Oral
+        - Asia/Bishkek
+        - Asia/Seoul
+        - Asia/Pyongyang
+        - Asia/Beirut
+        - Asia/Kuala_Lumpur
+        - Asia/Kuching
+        - Indian/Maldives
+        - Asia/Hovd
+        - Asia/Ulaanbaatar
+        - Asia/Choibalsan
+        - Asia/Kathmandu
+        - Asia/Karachi
+        - Asia/Gaza
+        - Asia/Hebron
+        - Asia/Manila
+        - Asia/Qatar
+        - Asia/Bahrain
+        - Asia/Riyadh
+        - Asia/Aden
+        - Asia/Kuwait
+        - Asia/Singapore
+        - Asia/Colombo
+        - Asia/Damascus
+        - Asia/Dushanbe
+        - Asia/Bangkok
+        - Asia/Phnom_Penh
+        - Asia/Vientiane
+        - Asia/Ashgabat
+        - Asia/Dubai
+        - Asia/Muscat
+        - Asia/Samarkand
+        - Asia/Tashkent
+        - Asia/Ho_Chi_Minh
+        - Australia/Darwin
+        - Australia/Perth
+        - Australia/Eucla
+        - Australia/Brisbane
+        - Australia/Lindeman
+        - Australia/Adelaide
+        - Australia/Hobart
+        - Australia/Currie
+        - Australia/Melbourne
+        - Australia/Sydney
+        - Australia/Broken_Hill
+        - Australia/Lord_Howe
+        - Antarctica/Macquarie
+        - Indian/Christmas
+        - Indian/Cocos
+        - Pacific/Fiji
+        - Pacific/Gambier
+        - Pacific/Marquesas
+        - Pacific/Tahiti
+        - Pacific/Guam
+        - Pacific/Saipan
+        - Pacific/Tarawa
+        - Pacific/Enderbury
+        - Pacific/Kiritimati
+        - Pacific/Majuro
+        - Pacific/Kwajalein
+        - Pacific/Chuuk
+        - Pacific/Pohnpei
+        - Pacific/Kosrae
+        - Pacific/Nauru
+        - Pacific/Noumea
+        - Pacific/Auckland
+        - Pacific/Chatham
+        - Antarctica/McMurdo
+        - Pacific/Rarotonga
+        - Pacific/Niue
+        - Pacific/Norfolk
+        - Pacific/Palau
+        - Pacific/Port_Moresby
+        - Pacific/Bougainville
+        - Pacific/Pitcairn
+        - Pacific/Pago_Pago
+        - Pacific/Midway
+        - Pacific/Apia
+        - Pacific/Guadalcanal
+        - Pacific/Fakaofo
+        - Pacific/Tongatapu
+        - Pacific/Funafuti
+        - Pacific/Wake
+        - Pacific/Efate
+        - Pacific/Wallis
+        - Africa/Asmera
+        - Africa/Timbuktu
+        - America/Argentina/ComodRivadavia
+        - America/Atka
+        - America/Buenos_Aires
+        - America/Catamarca
+        - America/Coral_Harbour
+        - America/Cordoba
+        - America/Ensenada
+        - America/Fort_Wayne
+        - America/Indianapolis
+        - America/Jujuy
+        - America/Knox_IN
+        - America/Louisville
+        - America/Mendoza
+        - America/Montreal
+        - America/Porto_Acre
+        - America/Rosario
+        - America/Santa_Isabel
+        - America/Shiprock
+        - America/Virgin
+        - Antarctica/South_Pole
+        - Asia/Ashkhabad
+        - Asia/Calcutta
+        - Asia/Chongqing
+        - Asia/Chungking
+        - Asia/Dacca
+        - Asia/Harbin
+        - Asia/Kashgar
+        - Asia/Katmandu
+        - Asia/Macao
+        - Asia/Rangoon
+        - Asia/Saigon
+        - Asia/Tel_Aviv
+        - Asia/Thimbu
+        - Asia/Ujung_Pandang
+        - Asia/Ulan_Bator
+        - Atlantic/Faeroe
+        - Atlantic/Jan_Mayen
+        - Australia/ACT
+        - Australia/Canberra
+        - Australia/LHI
+        - Australia/NSW
+        - Australia/North
+        - Australia/Queensland
+        - Australia/South
+        - Australia/Tasmania
+        - Australia/Victoria
+        - Australia/West
+        - Australia/Yancowinna
+        - Brazil/Acre
+        - Brazil/DeNoronha
+        - Brazil/East
+        - Brazil/West
+        - Canada/Atlantic
+        - Canada/Central
+        - Canada/Eastern
+        - Canada/Mountain
+        - Canada/Newfoundland
+        - Canada/Pacific
+        - Canada/Saskatchewan
+        - Canada/Yukon
+        - Chile/Continental
+        - Chile/EasterIsland
+        - Cuba
+        - Egypt
+        - Eire
+        - Etc/UCT
+        - Europe/Belfast
+        - Europe/Tiraspol
+        - GB
+        - GB-Eire
+        - GMT+0
+        - GMT-0
+        - GMT0
+        - Greenwich
+        - Hongkong
+        - Iceland
+        - Iran
+        - Israel
+        - Jamaica
+        - Japan
+        - Kwajalein
+        - Libya
+        - Mexico/BajaNorte
+        - Mexico/BajaSur
+        - Mexico/General
+        - NZ
+        - NZ-CHAT
+        - Navajo
+        - PRC
+        - Pacific/Johnston
+        - Pacific/Ponape
+        - Pacific/Samoa
+        - Pacific/Truk
+        - Pacific/Yap
+        - Poland
+        - Portugal
+        - ROC
+        - ROK
+        - Singapore
+        - Turkey
+        - UCT
+        - US/Alaska
+        - US/Aleutian
+        - US/Arizona
+        - US/Central
+        - US/East-Indiana
+        - US/Eastern
+        - US/Hawaii
+        - US/Indiana-Starke
+        - US/Michigan
+        - US/Mountain
+        - US/Pacific
+        - US/Samoa
+        - UTC
+        - Universal
+        - W-SU
+        - Zulu
+        - Etc/GMT
+        - Etc/UTC
+        - GMT
+        - Etc/Universal
+        - Etc/Zulu
+        - Etc/Greenwich
+        - Etc/GMT-0
+        - Etc/GMT+0
+        - Etc/GMT0
+        - Etc/GMT-14
+        - Etc/GMT-13
+        - Etc/GMT-12
+        - Etc/GMT-11
+        - Etc/GMT-10
+        - Etc/GMT-9
+        - Etc/GMT-8
+        - Etc/GMT-7
+        - Etc/GMT-6
+        - Etc/GMT-5
+        - Etc/GMT-4
+        - Etc/GMT-3
+        - Etc/GMT-2
+        - Etc/GMT-1
+        - Etc/GMT+1
+        - Etc/GMT+2
+        - Etc/GMT+3
+        - Etc/GMT+4
+        - Etc/GMT+5
+        - Etc/GMT+6
+        - Etc/GMT+7
+        - Etc/GMT+8
+        - Etc/GMT+9
+        - Etc/GMT+10
+        - Etc/GMT+11
+        - Etc/GMT+12
+        - Europe/London
+        - Europe/Jersey
+        - Europe/Guernsey
+        - Europe/Isle_of_Man
+        - Europe/Dublin
+        - WET
+        - CET
+        - MET
+        - EET
+        - Europe/Tirane
+        - Europe/Andorra
+        - Europe/Vienna
+        - Europe/Minsk
+        - Europe/Brussels
+        - Europe/Sofia
+        - Europe/Prague
+        - Europe/Copenhagen
+        - Atlantic/Faroe
+        - America/Danmarkshavn
+        - America/Scoresbysund
+        - America/Godthab
+        - America/Thule
+        - Europe/Tallinn
+        - Europe/Helsinki
+        - Europe/Mariehamn
+        - Europe/Paris
+        - Europe/Berlin
+        - Europe/Busingen
+        - Europe/Gibraltar
+        - Europe/Athens
+        - Europe/Budapest
+        - Atlantic/Reykjavik
+        - Europe/Rome
+        - Europe/Vatican
+        - Europe/San_Marino
+        - Europe/Riga
+        - Europe/Vaduz
+        - Europe/Vilnius
+        - Europe/Luxembourg
+        - Europe/Malta
+        - Europe/Chisinau
+        - Europe/Monaco
+        - Europe/Amsterdam
+        - Europe/Oslo
+        - Arctic/Longyearbyen
+        - Europe/Warsaw
+        - Europe/Lisbon
+        - Atlantic/Azores
+        - Atlantic/Madeira
+        - Europe/Bucharest
+        - Europe/Kaliningrad
+        - Europe/Moscow
+        - Europe/Simferopol
+        - Europe/Astrakhan
+        - Europe/Volgograd
+        - Europe/Saratov
+        - Europe/Kirov
+        - Europe/Samara
+        - Europe/Ulyanovsk
+        - Asia/Yekaterinburg
+        - Asia/Omsk
+        - Asia/Barnaul
+        - Asia/Novosibirsk
+        - Asia/Tomsk
+        - Asia/Novokuznetsk
+        - Asia/Krasnoyarsk
+        - Asia/Irkutsk
+        - Asia/Chita
+        - Asia/Yakutsk
+        - Asia/Vladivostok
+        - Asia/Khandyga
+        - Asia/Sakhalin
+        - Asia/Magadan
+        - Asia/Srednekolymsk
+        - Asia/Ust-Nera
+        - Asia/Kamchatka
+        - Asia/Anadyr
+        - Europe/Belgrade
+        - Europe/Ljubljana
+        - Europe/Podgorica
+        - Europe/Sarajevo
+        - Europe/Skopje
+        - Europe/Zagreb
+        - Europe/Bratislava
+        - Europe/Madrid
+        - Africa/Ceuta
+        - Atlantic/Canary
+        - Europe/Stockholm
+        - Europe/Zurich
+        - Europe/Istanbul
+        - Asia/Istanbul
+        - Europe/Kiev
+        - Europe/Uzhgorod
+        - Europe/Zaporozhye
+        - Factory
+        - EST
+        - MST
+        - HST
+        - EST5EDT
+        - CST6CDT
+        - MST7MDT
+        - PST8PDT
+        - America/New_York
+        - America/Chicago
+        - America/North_Dakota/Center
+        - America/North_Dakota/New_Salem
+        - America/North_Dakota/Beulah
+        - America/Denver
+        - America/Los_Angeles
+        - America/Juneau
+        - America/Sitka
+        - America/Metlakatla
+        - America/Yakutat
+        - America/Anchorage
+        - America/Nome
+        - America/Adak
+        - Pacific/Honolulu
+        - America/Phoenix
+        - America/Boise
+        - America/Indiana/Indianapolis
+        - America/Indiana/Marengo
+        - America/Indiana/Vincennes
+        - America/Indiana/Tell_City
+        - America/Indiana/Petersburg
+        - America/Indiana/Knox
+        - America/Indiana/Winamac
+        - America/Indiana/Vevay
+        - America/Kentucky/Louisville
+        - America/Kentucky/Monticello
+        - America/Detroit
+        - America/Menominee
+        - America/St_Johns
+        - America/Goose_Bay
+        - America/Halifax
+        - America/Glace_Bay
+        - America/Moncton
+        - America/Blanc-Sablon
+        - America/Toronto
+        - America/Thunder_Bay
+        - America/Nipigon
+        - America/Rainy_River
+        - America/Atikokan
+        - America/Winnipeg
+        - America/Regina
+        - America/Swift_Current
+        - America/Edmonton
+        - America/Vancouver
+        - America/Dawson_Creek
+        - America/Fort_Nelson
+        - America/Creston
+        - America/Pangnirtung
+        - America/Iqaluit
+        - America/Resolute
+        - America/Rankin_Inlet
+        - America/Cambridge_Bay
+        - America/Yellowknife
+        - America/Inuvik
+        - America/Whitehorse
+        - America/Dawson
+        - America/Cancun
+        - America/Merida
+        - America/Matamoros
+        - America/Monterrey
+        - America/Mexico_City
+        - America/Ojinaga
+        - America/Chihuahua
+        - America/Hermosillo
+        - America/Mazatlan
+        - America/Bahia_Banderas
+        - America/Tijuana
+        - America/Nassau
+        - America/Barbados
+        - America/Belize
+        - Atlantic/Bermuda
+        - America/Costa_Rica
+        - America/Havana
+        - America/Santo_Domingo
+        - America/El_Salvador
+        - America/Guatemala
+        - America/Port-au-Prince
+        - America/Tegucigalpa
+        - America/Jamaica
+        - America/Martinique
+        - America/Managua
+        - America/Panama
+        - America/Cayman
+        - America/Puerto_Rico
+        - America/Miquelon
+        - America/Grand_Turk
+        - US/Pacific-New
+        - America/Argentina/Buenos_Aires
+        - America/Argentina/Cordoba
+        - America/Argentina/Salta
+        - America/Argentina/Tucuman
+        - America/Argentina/La_Rioja
+        - America/Argentina/San_Juan
+        - America/Argentina/Jujuy
+        - America/Argentina/Catamarca
+        - America/Argentina/Mendoza
+        - America/Argentina/San_Luis
+        - America/Argentina/Rio_Gallegos
+        - America/Argentina/Ushuaia
+        - America/Aruba
+        - America/La_Paz
+        - America/Noronha
+        - America/Belem
+        - America/Santarem
+        - America/Fortaleza
+        - America/Recife
+        - America/Araguaina
+        - America/Maceio
+        - America/Bahia
+        - America/Sao_Paulo
+        - America/Campo_Grande
+        - America/Cuiaba
+        - America/Porto_Velho
+        - America/Boa_Vista
+        - America/Manaus
+        - America/Eirunepe
+        - America/Rio_Branco
+        - America/Santiago
+        - America/Punta_Arenas
+        - Pacific/Easter
+        - Antarctica/Palmer
+        - America/Bogota
+        - America/Curacao
+        - America/Lower_Princes
+        - America/Kralendijk
+        - America/Guayaquil
+        - Pacific/Galapagos
+        - Atlantic/Stanley
+        - America/Cayenne
+        - America/Guyana
+        - America/Asuncion
+        - America/Lima
+        - Atlantic/South_Georgia
+        - America/Paramaribo
+        - America/Port_of_Spain
+        - America/Anguilla
+        - America/Antigua
+        - America/Dominica
+        - America/Grenada
+        - America/Guadeloupe
+        - America/Marigot
+        - America/Montserrat
+        - America/St_Barthelemy
+        - America/St_Kitts
+        - America/St_Lucia
+        - America/St_Thomas
+        - America/St_Vincent
+        - America/Tortola
+        - America/Montevideo
+        - America/Caracas
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/TOMSUN/workspace2/1.0.0
