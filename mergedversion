@@ -2003,7 +2003,7 @@ paths:
                   results:
                     type: array 
                     items: any
-  /nfts/collections/:
+  /nfts/collections/: #checked
     get:
       tags:
         - Nfts
@@ -2025,6 +2025,7 @@ paths:
         - BearerAuth: []
       summary: Post NFT collection to database
       requestBody:
+        required: true 
         content:
           application/json:
             schema:
@@ -2041,9 +2042,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTCollection'
-
-
-  /nfts/contracts/{contractId}/metadata/{tokenId}:
+  /nfts/contracts/{contractId}/metadata/{tokenId}: #checked
     post:
       tags:
         - Nfts
@@ -2059,17 +2058,20 @@ paths:
         - name: tokenId
           in: path
           description: Token ID
-          required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/NFTMetadataParam'
       summary: Upload NFT's metadata
       responses:
         '200':
           description: Uploaded NFT's metadata successfully
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NFTMetadataParam'
+            application/json: {}
     get:
       tags:
         - Nfts
@@ -2090,12 +2092,14 @@ paths:
             type: string
       summary: Get NFT's metadata
       responses:
-        '200':
+        default:
           description: Get NFT's metadata successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTMetadataParam'
+                oneOf:
+                  - $ref: '#/components/schemas/NFTMetadataParam'
+                  - {}
     patch:
       tags:
         - Nfts
@@ -2119,17 +2123,12 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                contractId:
-                  type: string
-                tokenId:
-                  type: string
-                metadata:
-                  $ref: '#/components/schemas/NFTMetadataParam'
+              $ref: '#/components/schemas/NFTMetadataParam'
       responses:
         '200':
           description: Update NFT's metadata successfully
+          content:  
+            application/json: {}
   /nfts/factories/{factory}:
     get:
       tags:
@@ -3516,6 +3515,19 @@ components:
         imageUrl:
           type: string
           nullable: true
+      required:
+        - id 
+        - collectionId 
+        - collectionName 
+        - simplehashId 
+        - webhookId
+        - standard 
+        - network 
+        - description 
+        - tokenCount 
+        - nextCursor 
+        - updateAt 
+        - imageUrl  
     INFTCollection:
       allOf:
         - $ref: '#/components/schemas/NFTCollection'
