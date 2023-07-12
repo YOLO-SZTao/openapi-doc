@@ -1707,7 +1707,7 @@ paths:
       responses:
         '201':
           description: Update whitelist quantity
-  /nfts/airdrop/asset/metadata:
+  /nfts/airdrop/ipfs/metadata: #checked
     post:
       tags:
         - Nfts
@@ -1748,7 +1748,7 @@ paths:
                       image:
                         type: string
                     additionalProperties: true
-  /nfts/airdrop/metadata/template:
+  /nfts/airdrop/metadata/template: #checked
     post:
       tags:
         - Nfts
@@ -1759,10 +1759,7 @@ paths:
         content:
           application/json: 
             schema:
-              type: object
-              properties:
-                body:
-                    $ref: '#/components/schemas/INFTMetadataTemplate'
+              $ref: '#/components/schemas/INFTMetadataTemplate'
         required: true
       responses:
         '200':
@@ -1771,7 +1768,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTMetadataTemplate'
-  /nfts/airdrop/contract:
+  /nfts/airdrop/contract: #checked
     post:
       tags:
         - Nfts
@@ -1782,10 +1779,7 @@ paths:
         content:
           application/json: 
             schema:
-              type: object
-              properties:
-                body:
-                    $ref: '#/components/schemas/ISmartContract'
+              $ref: '#/components/schemas/ISmartContract'
         required: true
       responses:
         '200':
@@ -1794,7 +1788,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContract'
-  /nfts/airdrop/contracts/{contractId}/metadata/template:
+  /nfts/airdrop/contracts/{contractId}/metadata/template: #checked
     post:
       tags:
         - Nfts
@@ -1821,6 +1815,10 @@ paths:
                   type: array
                   items: 
                     $ref: '#/components/schemas/NFTMetadataParam'
+              required:
+                - name
+                - standard
+                - metadata
         required: true
       responses:
         '200':
@@ -1829,7 +1827,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTMetadataTemplate'
-  /nfts/airdrop/contracts/{contractId}/metadata:
+  /nfts/airdrop/contracts/{contractId}/metadata: #checked
     post:
       tags:
         - Nfts
@@ -1977,7 +1975,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AirdropJob'
                 
-  /nfts/airdrop/events/{eventId}/retry:
+  /nfts/airdrop/events/{eventId}/retry: #checked
     post:
       tags:
         - Nfts
@@ -1994,6 +1992,17 @@ paths:
       responses:
         '200':
           description: Retry airdrop NFT successfully
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties: 
+                  failed: 
+                    type: array
+                    items: any
+                  results:
+                    type: array 
+                    items: any
   /nfts/collections/:
     get:
       tags:
