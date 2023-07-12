@@ -1189,17 +1189,17 @@ paths:
       responses:
         '200':
           description: Publish an event
-      patch:
-        tags:
-          - Events
-        security:
-          - BearerAuth: []
-        summary: Update an event
-        requestBody:
-          $ref: '#/components/requestBodies/NFTEventRequestBody'
-        responses:
-          '200':
-            description: Update a published event
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Update an event
+      requestBody:
+        $ref: '#/components/requestBodies/NFTEventRequestBody'
+      responses:
+        '200':
+          description: Update a published event
   /events/:
     post:
       tags:
@@ -1350,13 +1350,6 @@ paths:
       security:
         - BearerAuth: []
       summary: Get ongoing ticketing event 
-      parameters:
-        - name: eventId
-          in: path
-          description: eventId
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Got ongoing ticketing event successfully
@@ -1558,10 +1551,12 @@ paths:
                 contacts:
                   type: array
                   items:
-                    email:
-                      type: string
-                    wallet:
-                      type: string
+                    type: object
+                    properties: 
+                      email:
+                        type: string
+                      wallet:
+                        type: string
         required: true
       responses:
         '200':
@@ -1848,23 +1843,25 @@ paths:
       requestBody:
         content:
           application/json:
-            $ref: '#/components/schemas/NFTMetadataUpdate'
+            schema:
+              $ref: '#/components/schemas/NFTMetadataUpdate'
         required: true
       responses:
         '200':
           description: 'Generate NFT metadata template successfully'
           content:
             application/json:
-              type: object
-              properties:
-                hash: 
-                  type: string
-                uri:
-                  type: string
-                url: 
-                  type: string
-                metadata: 
-                  $ref: '#/components/schemas/NFTMetadata'
+              schema:
+                type: object
+                properties:
+                  hash: 
+                    type: string
+                  uri:
+                    type: string
+                  url: 
+                    type: string
+                  metadata: 
+                    $ref: '#/components/schemas/NFTMetadata'
   /nfts/airdrop/contract/{contractId}/airdrop/batch: #checked
     post:
       tags:
@@ -1887,17 +1884,16 @@ paths:
                 jobs:
                   type: array
                   items:
-                    schema: 
-                      type: object
-                      properties:
-                        template:
-                          type: string
-                        metadataTemplateId:
-                          type: string
-                        metadataTemplateName:
-                          type: string
-                        recipient:  
-                          type: string
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      metadataTemplateId:
+                        type: string
+                      metadataTemplateName:
+                        type: string
+                      recipient:  
+                        type: string
       responses:
         '200':
           description: 'Batch airdrop NFT by template successfully'
@@ -1909,17 +1905,16 @@ paths:
                   failed:
                     type: array
                     items:
-                      schema: 
-                        type: object
-                        properties:
-                          template:
-                            type: string
-                          metadataTemplateId:
-                            type: string
-                          metadataTemplateName:
-                            type: string
-                          recipient:  
-                            type: string
+                      type: object
+                      properties:
+                        template:
+                          type: string
+                        metadataTemplateId:
+                          type: string
+                        metadataTemplateName:
+                          type: string
+                        recipient:  
+                          type: string
                   results:
                     type: array
                     items:
@@ -1999,10 +1994,12 @@ paths:
                 properties: 
                   failed: 
                     type: array
-                    items: any
+                    items: 
+                      type: any
                   results:
                     type: array 
-                    items: any
+                    items: 
+                      type: any
   /nfts/collections/: #checked
     get:
       tags:
@@ -2015,9 +2012,10 @@ paths:
           description: Get all NFT collection successfully
           content:
             application/json:
-              type: array
-              items:
-                $ref: '#/components/schemas/NFTCollection'
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTCollection'
     post:
       tags:
         - Nfts
@@ -2058,6 +2056,7 @@ paths:
         - name: tokenId
           in: path
           description: Token ID
+          required: true
           schema:
             type: string
       requestBody:
@@ -2542,28 +2541,28 @@ paths:
             application/json:
                 schema:
                     $ref: '#/components/schemas/Transaction'
-
-
     get:
       tags:
         - Transactions
       summary: Get transaction information
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId:
-                  type: string
-                eventId:
-                  type: string
-                productId:
-                  type: string
-
+      parameters:
+        - name: userId
+          in: query
+          required: true 
+          schema: 
+            type: string
+        - name: eventId
+          in: query 
+          required: true 
+          schema: 
+            type: string
+        - name: productId
+          in: query
+          required: true 
+          schema: 
+            type: string
       responses:
         '200':
           description: Got transaction information successfully
@@ -2721,17 +2720,17 @@ paths:
       summary: Get transactions by eventId
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                eventId:
-                  type: string
-                status:
-                  type: string
+      parameters:
+        - name: eventId
+          in: path
+          schema: 
+            type: string
+          required: true 
+        - name: status 
+          in: query
+          schema: 
+            type: string 
+          required: true
       responses:
         '200':
           description: Got transactions by eventId successfully
@@ -2774,8 +2773,6 @@ paths:
                   properties:
                     url:
                       type: string
-
-
   /contracts/{contractId}:
     get:
       tags:
@@ -2790,7 +2787,7 @@ paths:
           required: true
           schema: 
             type: string
-      response:
+      responses:
         '200':
           description: Got contract by contract ID successfully
           content:
@@ -2811,14 +2808,13 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Network'
-      response:
+      responses:
         '200':
           description: Got smart contract by network successfully
           content:
             application/json:
               schema: 
                 $ref: '#/components/schemas/SmartContract'  
-
   /contracts/networks/{network}/contracts/{address}:
     get:
       tags:
@@ -2839,7 +2835,7 @@ paths:
           required: true
           schema:
             type: string
-      response:
+      responses:
         '200':
           description: Got smart contract by address successfully
           content: 
@@ -2876,8 +2872,7 @@ paths:
                   type: any
                 params:
                   type: any
-
-      response:
+      responses:
         '200':
           description: Executed smart contract at address successfully
           content: 
@@ -3803,12 +3798,14 @@ components:
           type: string
         ipfsHashOptions:
           type: array
-          items: string
+          items: 
+            type: string
         tokenURI: 
           type: string
         tokenURIOptions:
           type: array
-          items: string
+          items: 
+            type: string
       required:
         - name
         - standard
