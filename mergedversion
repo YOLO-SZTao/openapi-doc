@@ -1867,7 +1867,7 @@ paths:
                   type: string
                 metadata: 
                   $ref: '#/components/schemas/NFTMetadata'
-  /nfts/airdrop/contract/{contractId}/airdrop/batch:
+  /nfts/airdrop/contract/{contractId}/airdrop/batch: #checked
     post:
       tags:
         - Nfts
@@ -1922,12 +1922,11 @@ paths:
                             type: string
                           recipient:  
                             type: string
-
                   results:
                     type: array
                     items:
                       $ref: '#/components/schemas/AirdropResult'
-  /nfts/airdrop/contracts/{contractId}/incomplete:
+  /nfts/airdrop/contracts/{contractId}/v1/incomplete: #checked
     get:
       tags:
         - Nfts
@@ -1945,16 +1944,19 @@ paths:
           required: true
           schema:
             type: string
+        - name: refresh
+          in: query
+          required: false
+          schema:
+            type: string 
       responses:
         '200':
           description: 'Get incomplete transactions for NFT transfers'
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/missingMintRecords'
-  /nfts/airdrop/events/{eventId}/failed:
+              schema: 
+                $ref: '#/components/schemas/missingMintRecords'
+  /nfts/airdrop/events/{eventId}/failed: #checked
     get:
       tags:
         - Nfts
@@ -5435,7 +5437,9 @@ components:
           type: string
         template:
           type: string
-
+      required:
+        - contractId
+        - metadataTemplateId 
     Job:
       type: object
       properties:
