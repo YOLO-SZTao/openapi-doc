@@ -1,5 +1,7 @@
 openapi: '3.0.0'
-
+servers:
+  - url: localhost:5000
+    description: Production server
 info:
   title: Moongate (1.0.0)
   termsOfService: 'http://swagger.io/terms/'
@@ -145,6 +147,7 @@ paths:
                 type: array
                 items:  
                   $ref: '#/components/schemas/Discount'
+                  
   /discounts/used:
     patch:
       tags: 
@@ -275,6 +278,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Job"
+
     get:
       tags:
         - Jobs
@@ -290,6 +294,7 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Job'
+
   /jobs/failed:
     get:
       tags:
@@ -306,6 +311,7 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Job'
+
   /jobs/airdrop/:
     post:
       tags:
@@ -326,6 +332,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AirdropJob'
+
   /moonpasses/:
     get:
       tags:
@@ -359,6 +366,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Moonpass'
+
   /moonpasses/{moonpassId}:
     get:
       tags:
@@ -442,6 +450,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Organizer'
+
   /organizers/{organizerId}:
     get:
       tags: 
@@ -469,6 +478,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /organizers/{organizerId}/bank-accounts:
     post:
       tags:
@@ -488,6 +498,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BankAccountRequest'
+              
       responses:
         '201':
           description: New bank account added successfully
@@ -545,6 +556,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
     delete:
       tags:
         - Organizers
@@ -583,6 +595,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /organizers/{organizerId}/wallets:
     post:
       tags:
@@ -621,6 +634,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /organizers/{organizerId}/wallets/{walletId}:
     patch:
       tags:
@@ -665,6 +679,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
     delete:
       tags: 
         - Organizers
@@ -687,7 +702,6 @@ paths:
       responses:
         '200':
           description: Deleted wallet successfully
-
         '400':
           description: Missing parameters
           content:
@@ -700,6 +714,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
   /scheduler/trigger/:
     post:
       security:
@@ -738,6 +753,7 @@ paths:
           description: MISSING_PARAMETERS
         '401':
           description: UNAUTHORIZED        
+
   /users/:      
     post:
       tags:
@@ -777,7 +793,6 @@ paths:
           application/json: 
             schema:
               $ref: '#/components/schemas/AuthParam'
-
         required: true
       responses:
         '200':
@@ -786,6 +801,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResult'
+
     get:
       tags:
         - Users
@@ -806,6 +822,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthResult'              
+
   /users/{userId}:
     get:
       tags:
@@ -827,6 +844,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
     delete:
       tags:
         - Users
@@ -843,6 +861,7 @@ paths:
       responses:
         '200':
           description: Deleted user successfully
+          
   /users/{userId}/wallets:
     post:
       tags:
@@ -864,6 +883,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+
     delete:
       tags:
         - Users
@@ -892,6 +912,7 @@ paths:
       responses:
         '200':
           description: Deleted user successfully
+
   /users/{userId}/email:
     patch:
       tags:
@@ -906,7 +927,6 @@ paths:
           required: true
           schema: 
             type: string
-
       requestBody:
         content:
           application/json:
@@ -916,7 +936,6 @@ paths:
                 email:
                   type: string
         required: true
-      
       responses:
         '200':
           description: Updated and added user's email using userId
@@ -976,6 +995,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VerificationToken'
+
   /verification/events/{eventId}/token:
     post:
       tags:
@@ -1008,6 +1028,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTConstraintResult'
+
   /verification/events/{eventId}/user/{userId}:
     get:
       tags:
@@ -1037,6 +1058,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTConstraintResult'
+
   /verification/events/{eventId}/moonpass/{moonpassId}:
     get:
       tags:
@@ -1066,6 +1088,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTConstraintResult'
+
   /verification/nft/user/{userId}:
     post:
       tags:
@@ -1089,6 +1112,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTConstraintResult'
+
   /admin/discounts/refactor:
     post:
       tags:
@@ -1103,6 +1127,7 @@ paths:
             application/json: 
               schema:
                 $ref: '#/components/schemas/Discount'
+
   /admin/{wallet}/token:
     get:
       tags:
@@ -1131,6 +1156,7 @@ paths:
                     type: string
                   expire:
                     type: number
+
   /admin/moonpasses:
     post:
       tags:
@@ -1152,7 +1178,6 @@ paths:
                         $ref: '#/components/schemas/Moonpass'
                       prefix:
                         type: string
-
       responses:
         '200':
           description: Batch generate moonpasses successfully
@@ -1165,6 +1190,7 @@ paths:
                     type: array
                     items: 
                       type: string
+
   /events/draft:
     post:
       tags:
@@ -1177,6 +1203,7 @@ paths:
       responses:
         '201':
           description: Create new draft event
+
   /events/publish:
     post:
       tags:
@@ -1200,6 +1227,7 @@ paths:
       responses:
         '200':
           description: Update a published event
+
   /events/:
     post:
       tags:
@@ -1243,6 +1271,7 @@ paths:
       responses:
         '201':
           description: Delete event
+
   /events/domain/{domain}:
     get: 
       tags:
@@ -1357,6 +1386,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTEvent'
+
   /events/{eventId}/user/{userId}/eligibility:
     get:
       tags:
@@ -1386,6 +1416,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTEventEligibilityResult'
+
   /events/{eventId}/sold:
     patch:
       tags:
@@ -1416,6 +1447,7 @@ paths:
       responses:
         '200':
           description: Mark ticket sold successfully
+
   /events/{eventId}/unsold:
     patch:
       tags:
@@ -1446,6 +1478,7 @@ paths:
       responses:
         '200':
           description: Reverted mark ticket sold successfully
+
   /events/{eventId}/reminder:
     patch:
       tags:
@@ -1474,6 +1507,7 @@ paths:
                     type: number
                   redeem:
                     type: number              
+
   /events/{eventId}/tiers/{tierId}/transactions/email:
     post:
       tags: 
@@ -1574,6 +1608,7 @@ paths:
                     type: array
                     items:
                       type: string
+
   /events/{eventId}/whitelists:
     post:
       tags:
@@ -1601,6 +1636,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTEventWhitelistParam'
+
     get:
       tags:
         - Events
@@ -1621,6 +1657,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTEventWhitelistParam'
+
   /events/{eventId}/whitelists/count:
     get:
       tags:
@@ -1670,6 +1707,7 @@ paths:
             application/json:
               schema:
                 type: number
+
   /events/{eventId}/whitelists/{whitelistId}:
     patch:
       tags:
@@ -1702,6 +1740,7 @@ paths:
       responses:
         '201':
           description: Update whitelist quantity
+
   /nfts/airdrop/ipfs/metadata: #checked
     post:
       tags:
@@ -1743,6 +1782,7 @@ paths:
                       image:
                         type: string
                     additionalProperties: true
+
   /nfts/airdrop/metadata/template: #checked
     post:
       tags:
@@ -1763,6 +1803,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTMetadataTemplate'
+
   /nfts/airdrop/contract: #checked
     post:
       tags:
@@ -1783,6 +1824,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContract'
+
   /nfts/airdrop/contracts/{contractId}/metadata/template: #checked
     post:
       tags:
@@ -1822,6 +1864,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTMetadataTemplate'
+
   /nfts/airdrop/contracts/{contractId}/metadata: #checked
     post:
       tags:
@@ -1862,6 +1905,7 @@ paths:
                     type: string
                   metadata: 
                     $ref: '#/components/schemas/NFTMetadata'
+
   /nfts/airdrop/contract/{contractId}/airdrop/batch: #checked
     post:
       tags:
@@ -1919,6 +1963,7 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/AirdropResult'
+
   /nfts/airdrop/contracts/{contractId}/v1/incomplete: #checked
     get:
       tags:
@@ -1949,6 +1994,7 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/missingMintRecords'
+
   /nfts/airdrop/events/{eventId}/failed: #checked
     get:
       tags:
@@ -1983,7 +2029,6 @@ paths:
           schema:
             type: string
           required: true
-          
       responses:
         '200':
           description: Retry airdrop NFT successfully
@@ -2000,6 +2045,7 @@ paths:
                     type: array 
                     items: 
                       type: any
+
   /nfts/collections/: #checked
     get:
       tags:
@@ -2016,6 +2062,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTCollection'
+
     post:
       tags:
         - Nfts
@@ -2040,6 +2087,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTCollection'
+
   /nfts/contracts/{contractId}/metadata/{tokenId}: #checked
     post:
       tags:
@@ -2071,6 +2119,7 @@ paths:
           description: Uploaded NFT's metadata successfully
           content:
             application/json: {}
+
     get:
       tags:
         - Nfts
@@ -2099,6 +2148,7 @@ paths:
                 oneOf:
                   - $ref: '#/components/schemas/NFTMetadataParam'
                   - {}
+
     patch:
       tags:
         - Nfts
@@ -2128,6 +2178,7 @@ paths:
           description: Update NFT's metadata successfully
           content:  
             application/json: {}
+
   /nfts/factories/{factory}:
     get:
       tags:
@@ -2149,6 +2200,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContractFactory'
+
   /nfts/factories:
     post:
       tags:
@@ -2174,7 +2226,6 @@ paths:
           schema:
             type: string
       summary: Deploy collection by factory 
-      
       requestBody:
         content:
           application/json: 
@@ -2201,6 +2252,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ContractFactoryDeployment'
+
   /nfts/factories/{factory}/add:
     post:
       tags:
@@ -2215,7 +2267,6 @@ paths:
           schema:
             type: string
       summary: Add smart contract to factory
-      
       requestBody:
         content:
           application/json: 
@@ -2256,6 +2307,7 @@ paths:
       responses:
           '200':
             description: 'Uploaded image successfully'
+
   /nfts/{userId}:
     get:
       tags:
@@ -2289,6 +2341,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFT'
+
   /nfts/tickets/{userId}:
     get:
       tags:
@@ -2316,6 +2369,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFT'
+
   /nfts/wallets/{wallet}:
     get:
       tags:
@@ -2329,7 +2383,6 @@ paths:
           required: true
           schema:
             type: string
-
       summary: Get wallet's NFTs
       responses:
         '200':
@@ -2338,6 +2391,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFT'
+
   /nfts/networks/{network}/wallets/{wallet}:
     get:
       tags: 
@@ -2365,6 +2419,7 @@ paths:
             application/json:
               schema:
                   $ref : '#/components/schemas/NFT'      
+
   /nfts/redeem/{code}:
     get:
       tags:
@@ -2398,6 +2453,7 @@ paths:
       responses:
         '200':
           description: Redeemed NFT successfully
+
   /nfts/transfers/{chain}/{contract}:
     get:
       tags:
@@ -2427,6 +2483,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SimplehashTransfer'
+
   /webhook/{service}:
     post:
       security:
@@ -2442,6 +2499,7 @@ paths:
       responses:
         '200':
           description: Payment service selected successfully
+
   /events/{eventId}/usages:
     get:
       tags:
@@ -2476,6 +2534,7 @@ paths:
                         type: string
                       projectId:
                         type: string
+
     post:
       tags:  
         - Events
@@ -2541,6 +2600,7 @@ paths:
             application/json:
                 schema:
                     $ref: '#/components/schemas/Transaction'
+
     get:
       tags:
         - Transactions
@@ -2573,7 +2633,6 @@ paths:
                 properties:
                   transactions:
                     $ref: '#/components/schemas/Transaction'
-
               
   /transactions/{transactionId}:
     get:
@@ -2651,11 +2710,9 @@ paths:
           required: true
           schema:
             type: string
-
       responses:
         '200':
           description: Updated transaction's payment status as 'initial' successfully
-
 
   /transactions/{transactionId}/submitted:
     patch:
@@ -2689,7 +2746,6 @@ paths:
           required: true
           schema:
             type: string
-
       responses:
         '200':
           description: Updated transaction's payment status as 'failed' successfully
@@ -2708,7 +2764,6 @@ paths:
           required: true
           schema:
             type: string
-
       responses:
         '200':
           description: Updated transaction's payment status as 'failed' successfully
@@ -2742,7 +2797,6 @@ paths:
                   transactions:
                     $ref: '#/components/schemas/Transaction'
 
-
   /transactions/checkout:
     post:
       tags:
@@ -2773,6 +2827,7 @@ paths:
                   properties:
                     url:
                       type: string
+
   /contracts/{contractId}:
     get:
       tags:
@@ -2794,6 +2849,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContract'
+
   /contracts/networks/{network}:
     get:
       tags:
@@ -2815,6 +2871,7 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/SmartContract'  
+
   /contracts/networks/{network}/contracts/{address}:
     get:
       tags:
@@ -2842,6 +2899,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContract'
+
     post:
       tags:
         - Contracts
@@ -2879,11 +2937,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExecutionResult'
+
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
+
   schemas:
     ExecutionResult:
       type: object
@@ -3067,6 +3127,7 @@ components:
           $ref: '#/components/schemas/SimplehashSaleDetails'
         nft_details:
           $ref : '#/components/schemas/SimplehashNFT'
+
     SimplehashSaleDetails:
       type: object
       properties:
@@ -3080,6 +3141,7 @@ components:
           type: number 
         total_price: 
           type: number    
+
     SimplehashSale:
           type: object
           properties:
@@ -3105,6 +3167,7 @@ components:
               type: number
             total_price:
               type: number
+
     SimplehashPaymentToken:
       type: object
       properties:
@@ -3119,6 +3182,7 @@ components:
           nullable: true
         decimals:
           type: integer
+
     SimplehashNFTContract:
       type: object
       properties:
@@ -3136,6 +3200,7 @@ components:
           type: string
         external_link:
           type: string
+
     SimplehashNFTCollection:
       type: object
       properties:
@@ -3153,6 +3218,7 @@ components:
         image_url:
           type: string
           nullable: true
+
     SimplehashNFTOwner:
       type: object
       properties:
@@ -3164,6 +3230,7 @@ components:
           type: string
         last_acquired_date:
           type: string
+
     SimplehashNFTOwnerResponse:
       allOf:
         - $ref: '#/components/schemas/SimplehashNFTOwner'
@@ -3173,6 +3240,7 @@ components:
               type: string
             token_id:
               type: string
+
     SimplehashNFT:
       type: object
       properties:
@@ -3248,6 +3316,7 @@ components:
           $ref: '#/components/schemas/SimplehashCollection'
         extra_metadata:
           $ref: '#/components/schemas/SimplehashNFTMetaData'
+
     SimplehashNFTMetaData:
       type: object
       properties:
@@ -3265,6 +3334,7 @@ components:
         metadata_original_url:
           type: string
           nullable: true
+
     SimplehashNFTAttribute:
       type: object
       properties:
@@ -3280,6 +3350,7 @@ components:
           oneOf:
             - type: string
             - type: number
+
     SimplehashCollection:
       type: object
       properties:
@@ -3322,6 +3393,7 @@ components:
         metaplex_mint:
           type: string
           nullable: true
+
     SimplehashCollectionMarketplacePage:
       type: object
       properties:
@@ -3335,6 +3407,7 @@ components:
           type: string
         verified:
           type: boolean
+
     SimplehashContract:
       type: object
       properties:
@@ -3345,6 +3418,7 @@ components:
         symbol:
           type: string
           nullable: true
+
     SimplehashNFTResponse:
       type: object
       properties:
@@ -3358,6 +3432,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SimplehashNFT'
+
     SimplehashOwnerResponse:
       type: object
       properties:
@@ -3379,8 +3454,10 @@ components:
         - ERC1155
         - BEP721
         - BEP1155
+
     toNFTId:
       type: string
+
     missingMintRecords:
       type: object
       properties:
@@ -3402,6 +3479,7 @@ components:
           type: array
           items:
             type: any
+
     SmartContractFactory:
       type: object
       properties:
@@ -3430,6 +3508,7 @@ components:
         - name
         - contracts
         - standard
+
     Network:
       type: string
       enum:
@@ -3452,14 +3531,18 @@ components:
         - EHTEREUM-GOERLI
         - POLYGON-MUMBAI
         - AVALANCHE-FUJI     
+
     SUPPORTED_NETWORKS:
       type: array
       items:
         $ref: '#/components/schemas/Network'
+
     toMainnet:
       type: string
+
     normalizeAddress:
       type: string
+      
     NFTAttribute:
       type: object
       properties:
@@ -3469,6 +3552,7 @@ components:
           oneOf:
             - type: string
             - type: number
+
     NFTCollection:
       type: object
       properties:
@@ -3523,6 +3607,7 @@ components:
         - nextCursor 
         - updateAt 
         - imageUrl  
+
     INFTCollection:
       allOf:
         - $ref: '#/components/schemas/NFTCollection'
@@ -3535,6 +3620,7 @@ components:
           required:
             - collectionId
             - network
+
     NFTOwner:
       type: object
       properties:
@@ -3558,6 +3644,7 @@ components:
         url:
           type: string
           nullable: true
+
     NFTParams:
       type: object
       properties:
@@ -3616,9 +3703,10 @@ components:
         initial:
           type: boolean
           nullable: true
-
+          
     toJSON:
       type: string
+
     NFT:
       type: object
       properties:
@@ -3668,10 +3756,13 @@ components:
         initial:
           type: boolean
           nullable: true
+
     Base:
       type: string
+
     ISmartContractFactory:
       type: string
+
     NFTMetadata:
       type: object
       properties:
@@ -3700,6 +3791,7 @@ components:
         - description
         - image
         - attributes
+
     NFTMetadataAttribute:
       type: object
       properties:
@@ -3720,6 +3812,7 @@ components:
             - date
         max_value:
           type: number   
+
     SmartContract:
       type: object
       properties:
@@ -3760,12 +3853,14 @@ components:
         - royaltyFee 
         - logo 
         - description 
+        
     ContractFactoryName:
       type: string
       enum:
         - erc721-airdrop
         - erc721-soulbound-airdrop
         - erc1155-airdrop   
+
     ContractFactoryDeployment:
       type: object
       properties:
@@ -3783,6 +3878,7 @@ components:
           type: string
         royaltyFee:
           type: number
+
     INFTMetadataTemplate:
       type: object
       properties:
@@ -3810,6 +3906,7 @@ components:
         - name
         - standard
         - metadata
+
     NFTMetadataParam:
       type: object
       properties:
@@ -3836,6 +3933,7 @@ components:
       required:
         - name
         - image
+
     ISmartContract:
       type: object
       properties:
@@ -3865,6 +3963,7 @@ components:
           type: string
         factory:
           $ref: '#/components/schemas/ContractFactoryName'   
+
     NFTMetadataTemplate:
       type: object
       properties:
@@ -3888,6 +3987,7 @@ components:
           type: array
           items:
             type: string       
+
     NFTEventWhitelistParam:
       type: object
       properties:
@@ -3897,6 +3997,7 @@ components:
           type: string
         identifier:
           type: string
+
     NFTConstraintResult:
       type: object
       properties:
@@ -3906,6 +4007,7 @@ components:
             $ref: '#/components/schemas/NFTConstraintResultCollection'
         quantity:
           type: number
+
     NFTConstraintResultCollection:
       type: object
       properties:
@@ -3921,6 +4023,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NFTOwnership'
+
     NFTOwnership:
       type: object
       properties:
@@ -3946,6 +4049,7 @@ components:
             $ref: '#/components/schemas/NFTAttribute'
         imageUrl:
           type: string
+
     NFTEventEligibilityResult:
       type: object
       properties:
@@ -3961,11 +4065,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Moonpass'
+
     MoonpassConfig:
       type: object
       properties:
         redirect:
           type: string 
+
     Moonpass:
       type: object
       properties:
@@ -3983,6 +4089,7 @@ components:
           $ref: '#/components/schemas/MoonpassConfig'
         edition:
           type: string
+
     NFTEventWhitelist:
       type: object
       properties:
@@ -4004,6 +4111,7 @@ components:
           type: boolean
         order:
           type: number
+
     NFTEventParam:
       type: object
       properties:
@@ -4027,6 +4135,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NFTEventTierParam'
+
     NFTEventInfoParam:
       type: object
       properties:
@@ -4098,6 +4207,7 @@ components:
         subtitle:
           type: string
       additionalProperties: false
+
     NFTEventOrganizer:
       type: object
       properties:
@@ -4109,6 +4219,7 @@ components:
           type: string
         description:
           type: string    
+
     NFTEventTierParam:
       type: object
       properties:
@@ -4130,6 +4241,7 @@ components:
           $ref: '#/components/schemas/AirdropConfigParam'
         runnerConfig:
           $ref: '#/components/schemas/RunnerConfigParam'
+
     NFTEventTierWhitelistConstraintParam:
       type: object
       properties:
@@ -4145,6 +4257,7 @@ components:
           type: number
         externalUrl:
           type: string
+
     NFTConstraintCollectionConfigParam:
       type: object
       properties:
@@ -4165,6 +4278,7 @@ components:
                 type: array
                 items:
                   type: string
+
     NFTConstraintParam:
       type: object
       properties:
@@ -4178,11 +4292,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NFTConstraintCollectionConfigParam'
+
     NFTEventTierMoonpassConstraintParam:
       type: object
       properties:
         edition:
           type: string
+          
     NFTEventTierUsageConstraintParam:
       type: object
       properties:
@@ -4193,6 +4309,7 @@ components:
         limit:
           type: number
       additionalProperties: false
+
     UsageInterval:
       type: string
       enum:
@@ -4200,12 +4317,14 @@ components:
         - week
         - month
         - year
+
     DiscountType:
       type: string
       enum:
         - percent_off
         - amount_off
         - fixed_price
+
     DiscountParam:
       type: object
       properties:
@@ -4217,6 +4336,7 @@ components:
           type: number
         remainUse:
           type: number
+
     AutoDiscountConfigParam:
       type: object
       properties:
@@ -4230,6 +4350,7 @@ components:
           additionalProperties: false
         discount:
           $ref: '#/components/schemas/DiscountParam'
+
     PaymentConfigParam:
       type: object
       properties:
@@ -4285,8 +4406,6 @@ components:
           type: number
         priceId: 
           type: string
-
-    
     
     IPaymentPrice:
       type: object
@@ -4303,11 +4422,13 @@ components:
           type: integer
         sold:
           type: integer
+
     Translation:
       type: object
       properties:
         language:
           $ref: '#/components/schemas/Language'
+
     AirdropConfigParam:
       type: object
       properties:
@@ -4317,6 +4438,7 @@ components:
           type: string
         standard:
           $ref: '#/components/schemas/NFTStandard'
+
     NFTEventTierEmailConfig:
       type: object
       properties:
@@ -4329,6 +4451,7 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/NFTEventEmailCustomSection'
+
     NFTEventEmailCustomSection:
       type: object
       properties:
@@ -4343,6 +4466,7 @@ components:
               type: string
             url:
               type: string
+
     NFTEventTierEmailConfigParam:
       type: object
       allOf:
@@ -4353,6 +4477,7 @@ components:
               type: object
               additionalProperties:
                 $ref: '#/components/schemas/Translation'
+
     RunnerConfigParam:
       type: object
       properties:
@@ -4370,6 +4495,7 @@ components:
             required:
               - job
               - critical
+
     JobParam:
       type: object
       properties:
@@ -4409,11 +4535,13 @@ components:
         - name
         - status
         - code
+
     UpdateCurrentEventPreviewPartFunction:
       type: object
       properties:
         fieldKey:
           type: string
+
     FormField:
       type: object
       properties:
@@ -4480,6 +4608,7 @@ components:
           type: string
         updateCurrentEventPreviewPart:
           $ref: '#/components/schemas/UpdateCurrentEventPreviewPartFunction'
+
     FormFieldType:
       type: string
       enum:
@@ -4501,6 +4630,7 @@ components:
         - range
         - editable
         - textarea
+
     FormSelectOption:
       type: object
       properties:
@@ -4513,6 +4643,7 @@ components:
         disabled:
           type: boolean
       additionalProperties: false
+
     Language:
       type: string
       enum:
@@ -5370,11 +5501,13 @@ components:
               type: number
             usageCount:
               type: number
+
     IBaseIdOnly:
       type: object
       properties:
         id:
           type: string
+
     BaseIdOnly:
       type: object
       properties:
@@ -5382,11 +5515,13 @@ components:
           type: string
       required:
         - id
+        
     OmitId:
       type: string
       enum:
         - id
         - json
+
     IBase:
       allOf:
         - $ref: '#/components/schemas/IBaseIdOnly'
@@ -5422,6 +5557,7 @@ components:
                       type: array
                       items:
                         type: string    
+
     AirdropJobData:
       type: object
       properties:
@@ -5458,11 +5594,13 @@ components:
       required:
         - contractId
         - metadataTemplateId 
+
     Job:
       type: object
       properties:
         data:
           $ref: '#/components/schemas/AirdropJobData'
+
     AirdropJob:
       allOf:
       - $ref: '#/components/schemas/Job'      
@@ -5470,6 +5608,7 @@ components:
         properties:
           data:
             $ref: '#/components/schemas/AirdropJobData'
+
     NFTMetadataUpdate:
       type: object
       properties:
@@ -5491,6 +5630,7 @@ components:
           type: string
         youtube_url:
           type: string
+
     AirdropResult:
       type: object
       properties:
@@ -5504,6 +5644,7 @@ components:
           type: string
         txHash:
           type: string
+
     User:
       type: object
       properties:
@@ -5539,6 +5680,7 @@ components:
           type: string
         lastActive:
           type: number
+
     Wallet:
       allOf:
         - $ref: '#/components/schemas/IWallet'
@@ -5558,6 +5700,7 @@ components:
               type: boolean
             provider:
               $ref: '#/components/schemas/WalletProvider' 
+
     IWallet:
       type: object
       properties:
@@ -5567,12 +5710,14 @@ components:
           type: string
         web3auth:
           type: boolean  
+
     WalletProvider:
       type: string
       enum:
         - web3auth
         - particle_network
         - magic_link
+        
     AuthParam:
       type: object
       properties:
@@ -5628,6 +5773,7 @@ components:
           required:
             - bankAccountId
             - walletId
+
     OrganizerProfileInput:
       type: object
       properties:
@@ -5641,6 +5787,7 @@ components:
           type: string
         organization:
           type: string
+
     OrganizerWalletInput:
       type: object
       properties:
@@ -5654,6 +5801,7 @@ components:
             - USDC
         address:
           type: string
+
     BankAccountInput:
       type: object
       properties:
@@ -5683,6 +5831,7 @@ components:
           type: string
         swiftCode:
           type: string
+
     Organizer:
       type: object
       properties:
@@ -5707,6 +5856,7 @@ components:
               type: string
             walletId:
               type: string
+
     OrganizerProfile:
       type: object
       properties:
@@ -5720,6 +5870,7 @@ components:
           type: string
         organization:
           type: string
+
     OrganizerWallet:
       type: object
       properties:
@@ -5735,6 +5886,7 @@ components:
             - USDC
         address:
           type: string
+
     IBankAccount:
       type: object
       properties:
@@ -5764,6 +5916,7 @@ components:
           type: string
         swiftCode:
           type: string
+
     BankAccountRequest:
       type: object
       properties: 
@@ -5773,6 +5926,7 @@ components:
           type: boolean
       required:
           - bankAccount
+
     BankAccount:
       type: object
       properties:
@@ -5804,6 +5958,7 @@ components:
           type: string
         swiftCode:
           type: string
+
     Currency:
       type: string
       enum:
@@ -6204,6 +6359,7 @@ components:
         - XFO
         - XRE
         - XFU
+        
     Timezone:
       type: string
       enum:
