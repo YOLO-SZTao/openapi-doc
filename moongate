@@ -1,6 +1,7 @@
 openapi: '3.0.0'
 
 info:
+  version: 0.0.1
   title: Moongate (1.0.0)
   termsOfService: 'http://swagger.io/terms/'
   contact:
@@ -12,10 +13,14 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-    identifier: Apache 2.0
+    # identifier: Apache 2.0
   description: This is a backend documentation that provides information about the server-side functionality of the application. 
 
-tags: 
+tags:   
+  - name: Admin
+    description: Admin-level function. 
+  - name: Contracts
+    description: Everything related to smart contract, including get contract, execution, etc. 
   - name: Discounts
     description: Everything related to discounts on tickets, including create, delete, modify, etc.
   - name: Events
@@ -24,18 +29,16 @@ tags:
     description: Everything related to NFT airdrop jobs, including create, get failed jobs, etc. 
   - name: Moonpasses
     description: Everything related to Moonpass, including get moonpasses, set owner, etc. 
+  - name: Nfts
+    description: Everything related to NFT, including NFT generation, deployment, redemption, etc. 
   - name: Organizers
     description: Everything related to organizers, including create organizer, add organizer's wallet, etc. 
+  - name: Transactions
+    description: Everything related to transactions handling, including create, update, etc.
   - name: Users
     description: Everything related to users, including create, delete, modify, etc. 
   - name: Verification
     description: Everything related to verifying resources, including token, event, ownership. 
-  - name: Admin
-    description: Admin-level function. 
-  - name: Nfts
-    description: Everything related to NFT, including NFT generation, deployment, redemption, etc. 
-
-
   
 paths:
   /:
@@ -119,8 +122,7 @@ paths:
       responses:  
         '200':
           description: Discount deleted successfully
-          content:
-            application/json: {}
+
   /discounts/{eventId}:
     get:
       tags:
@@ -170,8 +172,7 @@ paths:
       responses:
         '200':
           description: Marked discount as used successfully
-          content:
-            application/json: {}
+
   /discounts/unused:
     patch:
       tags:
@@ -198,8 +199,7 @@ paths:
       responses:
         '200':
           description: Marked discount as unused successfully
-          content:
-            application/json: {}
+
   /discounts/{discountId}:
     patch:
       tags:
@@ -307,7 +307,7 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Job'
-  /jobs/airdrop:
+  /jobs/airdrop/:
     post:
       tags:
         - Jobs
@@ -422,8 +422,7 @@ paths:
       responses:
         '200':
           description: Unset moonpass owner successfully
-          content:
-            application/json: {}
+
   /organizers/:
     post:
       tags:
@@ -499,12 +498,10 @@ paths:
                 $ref: '#/components/schemas/Organizer'
         '400':
           description: Missing parameters
-          content:
-            application/json: {}
+
         '404': 
           description: Organizer not found
-          content:
-            application/json: {}
+
   /organizers/{organizerId}/bank-accounts/{bankAccountId}:
     patch:
       tags:
@@ -1169,6 +1166,41 @@ paths:
                     type: array
                     items: 
                       type: string
+  /events/draft:
+    post:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Create new draft event
+      requestBody:
+        $ref: '#/components/requestBodies/NFTEventRequestBody'
+      responses:
+        '201':
+          description: Create new draft event
+  /events/publish:
+    post:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Publish an event
+      requestBody:
+        $ref: '#/components/requestBodies/NFTEventRequestBody'
+      responses:
+        '200':
+          description: Publish an event
+    patch:
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Update an event
+      requestBody:
+        $ref: '#/components/requestBodies/NFTEventRequestBody'
+      responses:
+        '200':
+          description: Update a published event
   /events/:
     post:
       tags:
@@ -1211,7 +1243,121 @@ paths:
       summary: Delete event
       responses:
         '201':
-          description: Delete event       
+          description: Delete event
+  /events/domain/{domain}:
+    get: 
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get event by domain
+      parameters:
+        - name: domain
+          in: path
+          description: domain
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got event by domain successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEvent'
+
+  /events/code/{code}:
+    get: 
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get event by code
+      parameters:
+        - name: code
+          in: path
+          description: code
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got event by code successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEvent'
+
+  /events/{eventId}:
+    get: 
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get event by eventId
+      parameters:
+        - name: eventId
+          in: path
+          description: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got event by eventId successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEvent'
+
+    patch: 
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Update event by eventId
+      parameters:
+        - name: eventId
+          in: path
+          description: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated event by eventId successfully
+
+    delete: 
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Delete event by eventId
+      parameters:
+        - name: eventId
+          in: path
+          description: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted event by eventId successfully
+
+  /events/ticketing/ongoing:
+    get: 
+      tags:
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Get ongoing ticketing event 
+      responses:
+        '200':
+          description: Got ongoing ticketing event successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NFTEvent'
   /events/{eventId}/user/{userId}/eligibility:
     get:
       tags:
@@ -1329,7 +1475,55 @@ paths:
                     type: number
                   redeem:
                     type: number              
-  /events/{eventId}/tiers/{tierId}/transactions:
+  /events/{eventId}/tiers/{tierId}/transactions/email:
+    post:
+      tags: 
+        - Events
+      security:
+        - BearerAuth: []
+      summary: Create event transactions by emails
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+        - name: tierId
+          in: path
+          description: Tier ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                email:
+                  type: array
+                  items:
+                    type: string
+        required: true
+      responses:
+        '200':
+          description: Create event transactions by emails successfully
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  succeeded:
+                    type: array
+                    items:
+                      type: string
+                  failed:
+                    type: array
+                    items:
+                      type: string
+
+  /events/{eventId}/tiers/{tierId}/transactions/wallet:
     post:
       tags: 
         - Events
@@ -1355,14 +1549,15 @@ paths:
             schema:
               type: object
               properties:
-                eventId:
-                  type: string
-                tierId:
-                  type: string
-                email:
+                contacts:
                   type: array
                   items:
-                    type: string
+                    type: object
+                    properties: 
+                      email:
+                        type: string
+                      wallet:
+                        type: string
         required: true
       responses:
         '200':
@@ -1427,7 +1622,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTEventWhitelistParam'
-                
+  /events/{eventId}/whitelists/count:
+    get:
+      tags:
+        - Events    
+      security:
+        - BearerAuth: []
+      summary: Get whitelists count of event for specific tier
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Get whitelists count of event for specific tier successfully'
+          content:
+            application/json:
+              schema:
+                type: number
+
   /events/{eventId}/whitelists/count/{tierId}:
     get:
       tags:
@@ -1487,7 +1703,7 @@ paths:
       responses:
         '201':
           description: Update whitelist quantity
-  /nfts/airdrop/asset/metadata:
+  /nfts/airdrop/ipfs/metadata: #checked
     post:
       tags:
         - Nfts
@@ -1504,6 +1720,7 @@ paths:
                   type: string
                 image:
                   type: string
+              additionalProperties: true
         required: true
       responses:
         '200':
@@ -1519,7 +1736,15 @@ paths:
                     type: string
                   url:
                     type: string
-  /nfts/airdrop/metadata/template:
+                  metadata:
+                    type: object
+                    properties: 
+                      name: 
+                        type: string
+                      image:
+                        type: string
+                    additionalProperties: true
+  /nfts/airdrop/metadata/template: #checked
     post:
       tags:
         - Nfts
@@ -1530,10 +1755,7 @@ paths:
         content:
           application/json: 
             schema:
-              type: object
-              properties:
-                body:
-                    $ref: '#/components/schemas/INFTMetadataTemplate'
+              $ref: '#/components/schemas/INFTMetadataTemplate'
         required: true
       responses:
         '200':
@@ -1541,8 +1763,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SmartContract'
-  /nfts/airdrop/contract:
+                $ref: '#/components/schemas/NFTMetadataTemplate'
+  /nfts/airdrop/contract: #checked
     post:
       tags:
         - Nfts
@@ -1553,10 +1775,7 @@ paths:
         content:
           application/json: 
             schema:
-              type: object
-              properties:
-                body:
-                    $ref: '#/components/schemas/ISmartContract'
+              $ref: '#/components/schemas/ISmartContract'
         required: true
       responses:
         '200':
@@ -1565,7 +1784,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContract'
-  /nfts/airdrop/contracts/{contractId}/metadata/template:
+  /nfts/airdrop/contracts/{contractId}/metadata/template: #checked
     post:
       tags:
         - Nfts
@@ -1592,6 +1811,10 @@ paths:
                   type: array
                   items: 
                     $ref: '#/components/schemas/NFTMetadataParam'
+              required:
+                - name
+                - standard
+                - metadata
         required: true
       responses:
         '200':
@@ -1600,7 +1823,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTMetadataTemplate'
-  /nfts/airdrop/contracts/{contractId}/metadata:
+  /nfts/airdrop/contracts/{contractId}/metadata: #checked
     post:
       tags:
         - Nfts
@@ -1620,12 +1843,9 @@ paths:
             type: string
       requestBody:
         content:
-          application/json: 
+          application/json:
             schema:
-              type: object
-              properties:
-                template:
-                  type: string
+              $ref: '#/components/schemas/NFTMetadataUpdate'
         required: true
       responses:
         '200':
@@ -1633,45 +1853,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTMetadataTemplate'
-  /nfts/airdrop/contracts/{contractId}/airdrop:
-    post:
-      tags:
-        - Nfts
-      security:
-        - BearerAuth: []
-      summary: Airdrop NFT by template
-      parameters:
-        - name: contractId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json: 
-            schema:
-              type: object
-              properties:
-                tokenId: 
-                  type: string
-                metadataTemplateId:
-                  type: string
-                template: 
-                  type: string
-                metadataTemplateName:
-                  type: string
-                recipient:
-                  type: string          
-        required: true
-      responses:
-        '200':
-          description: 'Airdrop NFT by template successfully'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AirdropResult'           
-  /nfts/airdrop/contract/{contractId}/airdrop/batch:
+                type: object
+                properties:
+                  hash: 
+                    type: string
+                  uri:
+                    type: string
+                  url: 
+                    type: string
+                  metadata: 
+                    $ref: '#/components/schemas/NFTMetadata'
+  /nfts/airdrop/contract/{contractId}/airdrop/batch: #checked
     post:
       tags:
         - Nfts
@@ -1692,8 +1884,17 @@ paths:
               properties:
                 jobs:
                   type: array
-                  items: 
-                    type: string
+                  items:
+                    type: object
+                    properties:
+                      template:
+                        type: string
+                      metadataTemplateId:
+                        type: string
+                      metadataTemplateName:
+                        type: string
+                      recipient:  
+                        type: string
       responses:
         '200':
           description: 'Batch airdrop NFT by template successfully'
@@ -1706,11 +1907,20 @@ paths:
                     type: array
                     items:
                       type: object
+                      properties:
+                        template:
+                          type: string
+                        metadataTemplateId:
+                          type: string
+                        metadataTemplateName:
+                          type: string
+                        recipient:  
+                          type: string
                   results:
                     type: array
                     items:
                       $ref: '#/components/schemas/AirdropResult'
-  /nfts/airdrop/contracts/{contractId}/incomplete:
+  /nfts/airdrop/contracts/{contractId}/v1/incomplete: #checked
     get:
       tags:
         - Nfts
@@ -1728,16 +1938,19 @@ paths:
           required: true
           schema:
             type: string
+        - name: refresh
+          in: query
+          required: false
+          schema:
+            type: string 
       responses:
         '200':
           description: 'Get incomplete transactions for NFT transfers'
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/missingMintRecords'
-  /nfts/airdrop/events/{eventId}/failed:
+              schema: 
+                $ref: '#/components/schemas/missingMintRecords'
+  /nfts/airdrop/events/{eventId}/failed: #checked
     get:
       tags:
         - Nfts
@@ -1758,24 +1971,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/AirdropJob'
                 
-  /nfts/airdrop/events/{eventId}/retry:
-    post:
-      tags:
-        - Nfts
-      security:
-        - BearerAuth: []
-      summary: Retry airdrop NFT 
-      parameters:
-        - name: eventId
-          in: path
-          schema:
-            type: string
-          required: true
+  # /nfts/airdrop/events/{eventId}/retry: #checked
+  #   post:
+  #     tags:
+  #       - Nfts
+  #     security:
+  #       - BearerAuth: []
+  #     summary: Retry airdrop NFT 
+  #     parameters:
+  #       - name: eventId
+  #         in: path
+  #         schema:
+  #           type: string
+  #         required: true
           
-      responses:
-        '200':
-          description: Retry airdrop NFT successfully
-  /nfts/collections/:
+  #     responses:
+  #       '200':
+  #         description: Retry airdrop NFT successfully
+  #         content:
+  #           application/json: 
+  #             schema:
+  #               type: object
+  #               properties: 
+  #                 failed: 
+  #                   type: array
+  #                   items: 
+  #                     type: any
+  #                 results:
+  #                   type: array 
+  #                   items: 
+  #                     type: any
+  /nfts/collections/: #checked
     get:
       tags:
         - Nfts
@@ -1787,14 +2013,27 @@ paths:
           description: Get all NFT collection successfully
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/NFTCollection'
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/NFTCollection'
     post:
       tags:
         - Nfts
       security:
         - BearerAuth: []
       summary: Post NFT collection to database
+      requestBody:
+        required: true 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network:
+                  $ref: '#/components/schemas/Network'
+                contractAddress: 
+                  type: string
       responses:
         '200':
           description: Posted NFT collection to database
@@ -1802,9 +2041,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NFTCollection'
-
-
-  /nfts/contracts/{contractId}/metadata/{tokenId}:
+  /nfts/contracts/{contractId}/metadata/{tokenId}: #checked
     post:
       tags:
         - Nfts
@@ -1823,14 +2060,18 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/NFTMetadataParam'
       summary: Upload NFT's metadata
       responses:
         '200':
           description: Uploaded NFT's metadata successfully
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/NFTMetadataParam'
+            application/json: {}
     get:
       tags:
         - Nfts
@@ -1851,12 +2092,14 @@ paths:
             type: string
       summary: Get NFT's metadata
       responses:
-        '200':
+        default:
           description: Get NFT's metadata successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTMetadataParam'
+                oneOf:
+                  - $ref: '#/components/schemas/NFTMetadataParam'
+                  - {}
     patch:
       tags:
         - Nfts
@@ -1880,17 +2123,12 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                contractId:
-                  type: string
-                tokenId:
-                  type: string
-                metadata:
-                  $ref: '#/components/schemas/NFTMetadataParam'
+              $ref: '#/components/schemas/NFTMetadataParam'
       responses:
         '200':
           description: Update NFT's metadata successfully
+          content:  
+            application/json: {}
   /nfts/factories/{factory}:
     get:
       tags:
@@ -1964,7 +2202,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ContractFactoryDeployment'
- 
   /nfts/factories/{factory}/add:
     post:
       tags:
@@ -2305,28 +2542,28 @@ paths:
             application/json:
                 schema:
                     $ref: '#/components/schemas/Transaction'
-
-
     get:
       tags:
         - Transactions
       summary: Get transaction information
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId:
-                  type: string
-                eventId:
-                  type: string
-                productId:
-                  type: string
-
+      parameters:
+        - name: userId
+          in: query
+          required: true 
+          schema: 
+            type: string
+        - name: eventId
+          in: query 
+          required: true 
+          schema: 
+            type: string
+        - name: productId
+          in: query
+          required: true 
+          schema: 
+            type: string
       responses:
         '200':
           description: Got transaction information successfully
@@ -2484,17 +2721,17 @@ paths:
       summary: Get transactions by eventId
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                eventId:
-                  type: string
-                status:
-                  type: string
+      parameters:
+        - name: eventId
+          in: path
+          schema: 
+            type: string
+          required: true 
+        - name: status 
+          in: query
+          schema: 
+            type: string 
+          required: true
       responses:
         '200':
           description: Got transactions by eventId successfully
@@ -2537,8 +2774,6 @@ paths:
                   properties:
                     url:
                       type: string
-
-
   /contracts/{contractId}:
     get:
       tags:
@@ -2553,7 +2788,7 @@ paths:
           required: true
           schema: 
             type: string
-      response:
+      responses:
         '200':
           description: Got contract by contract ID successfully
           content:
@@ -2574,14 +2809,13 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Network'
-      response:
+      responses:
         '200':
           description: Got smart contract by network successfully
           content:
             application/json:
               schema: 
                 $ref: '#/components/schemas/SmartContract'  
-
   /contracts/networks/{network}/contracts/{address}:
     get:
       tags:
@@ -2602,51 +2836,50 @@ paths:
           required: true
           schema:
             type: string
-      response:
+      responses:
         '200':
           description: Got smart contract by address successfully
           content: 
             application/json:
               schema:
                 $ref: '#/components/schemas/SmartContract'
-    post:
-      tags:
-        - Contracts
-      summary: Execute smart contract at address
-      security:
-        - BearerAuth: []
-      parameters: 
-        - name: network
-          in: path
-          description: Network
-          required: true
-          schema:
-            $ref: '#/components/schemas/Network'
-        - name: address
-          in: path
-          description: Address
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                method: 
-                  type: any
-                params:
-                  type: any
-
-      response:
-        '200':
-          description: Executed smart contract at address successfully
-          content: 
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExecutionResult'
+    # post:
+    #   tags:
+    #     - Contracts
+    #   summary: Execute smart contract at address
+    #   security:
+    #     - BearerAuth: []
+    #   parameters: 
+    #     - name: network
+    #       in: path
+    #       description: Network
+    #       required: true
+    #       schema:
+    #         $ref: '#/components/schemas/Network'
+    #     - name: address
+    #       in: path
+    #       description: Address
+    #       required: true
+    #       schema:
+    #         type: string
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           type: object
+    #           properties:
+    #             method: 
+    #               type: any
+    #             params:
+    #               type: any
+    #   responses:
+    #     '200':
+    #       description: Executed smart contract at address successfully
+    #       content: 
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/ExecutionResult'
 components:
   securitySchemes:
     BearerAuth:
@@ -2658,10 +2891,10 @@ components:
       properties:
         from: 
           type: string
-        params:
-          type: any
-        receipt: 
-          type: any
+        # params:
+        #   type: any
+        # receipt: 
+        #   type: any
         txnHash:
           type: string
         txnFee:
@@ -2766,10 +2999,10 @@ components:
           type: number
         finalAmount:
           type: number
-        webhookEvents: 
-          type: array
-          items:
-            type: any
+        # webhookEvents: 
+        #   type: array
+        #   items:
+        #     type: any
         refIds:
           type: array
           items:
@@ -3158,18 +3391,18 @@ components:
           type: string
         contractAddress: 
           type: string
-        missingWallet:
-          type: array
-          items:
-            type: string
-        havePendingJobs:
-          type: array
-          items:
-            type: string
-        missingJobs:
-          type: array
-          items:
-            type: string
+        # missingWallet:
+        #   type: array
+        #   items:
+        #     type: any
+        # havePendingJobs:
+        #   type: array
+        #   items:
+        #     type: any
+        # missingJobs:
+        #   type: array
+        #   items:
+        #     type: any
     SmartContractFactory:
       type: object
       properties:
@@ -3184,14 +3417,14 @@ components:
                 type: string
               address:
                 type: string
-        abi:
-          type: array
-          items:
-            type: any
-        templateAbi:
-          type: array
-          items:
-            type: any
+        # abi:
+        #   type: array
+        #   items:
+        #     type: any
+        # templateAbi:
+        #   type: array
+        #   items:
+        #     type: any
         standard:
           type: string
       required:
@@ -3278,6 +3511,19 @@ components:
         imageUrl:
           type: string
           nullable: true
+      required:
+        - id 
+        - collectionId 
+        - collectionName 
+        - simplehashId 
+        - webhookId
+        - standard 
+        - network 
+        - description 
+        - tokenCount 
+        - nextCursor 
+        - updateAt 
+        - imageUrl  
     INFTCollection:
       allOf:
         - $ref: '#/components/schemas/NFTCollection'
@@ -3450,6 +3696,11 @@ components:
           type: string
         youtube_url:
           type: string
+      required:
+        - name
+        - description
+        - image
+        - attributes
     NFTMetadataAttribute:
       type: object
       properties:
@@ -3477,10 +3728,7 @@ components:
           type: string
         symbol:
           type: string
-        abi:
-          type: array
-          items:
-            type: any
+        # abi:p
         address:
           type: string
         network:
@@ -3499,6 +3747,17 @@ components:
           type: string
         factory:
           $ref: '#/components/schemas/ContractFactoryName'
+      required: 
+        - name 
+        - symbol 
+        - abi 
+        - network 
+        - standard 
+        - ipfsOnly 
+        - royaltyReceiver 
+        - royaltyFee 
+        - logo 
+        - description 
     ContractFactoryName:
       type: string
       enum:
@@ -3531,6 +3790,20 @@ components:
           $ref: '#/components/schemas/NFTStandard'
         metadata:
           $ref: '#/components/schemas/NFTMetadataParam'
+        contractId: 
+          type: string
+        ipfsHash: 
+          type: string
+        ipfsHashOptions:
+          type: array
+          items: 
+            type: string
+        tokenURI: 
+          type: string
+        tokenURIOptions:
+          type: array
+          items: 
+            type: string
       required:
         - name
         - standard
@@ -3568,10 +3841,10 @@ components:
           type: string
         symbol:
           type: string
-        abi:
-          type: array
-          items:
-            type: any
+        # abi:
+        #   type: array
+        #   items:
+        #     type: any
         address:
           type: string
         network:
@@ -4114,20 +4387,20 @@ components:
             - failed
         code:
           type: string
-        data:
-          type: any
-          nullable: true
+        # data:
+        #   type: any
+        #   nullable: true
         refIds:
           type: array
           items:
             type: string
           nullable: true
-        error:
-          type: any
-          nullable: true
-        result:
-          type: any
-          nullable: true
+        # error:
+        #   type: any
+        #   nullable: true
+        # result:
+        #   type: any
+        #   nullable: true
         recurrent:
           type: boolean
       required:
@@ -5180,7 +5453,9 @@ components:
           type: string
         template:
           type: string
-
+      required:
+        - contractId
+        - metadataTemplateId 
     Job:
       type: object
       properties:
@@ -5311,8 +5586,8 @@ components:
           $ref: '#/components/schemas/Network'
         signature:
           type: string
-        siweMessage:
-          type: any
+        # siweMessage:
+        #   type: any
         provider:
           $ref: '#/components/schemas/WalletProvider'
         ip:
@@ -5927,8 +6202,681 @@ components:
         - XFO
         - XRE
         - XFU
+    Timezone:
+      type: string
+      enum:
+        - Africa/Algiers
+        - Atlantic/Cape_Verde
+        - Africa/Ndjamena
+        - Africa/Abidjan
+        - Africa/Bamako
+        - Africa/Banjul
+        - Africa/Conakry
+        - Africa/Dakar
+        - Africa/Freetown
+        - Africa/Lome
+        - Africa/Nouakchott
+        - Africa/Ouagadougou
+        - Atlantic/St_Helena
+        - Africa/Cairo
+        - Africa/Accra
+        - Africa/Bissau
+        - Africa/Nairobi
+        - Africa/Addis_Ababa
+        - Africa/Asmara
+        - Africa/Dar_es_Salaam
+        - Africa/Djibouti
+        - Africa/Kampala
+        - Africa/Mogadishu
+        - Indian/Antananarivo
+        - Indian/Comoro
+        - Indian/Mayotte
+        - Africa/Monrovia
+        - Africa/Tripoli
+        - Indian/Mauritius
+        - Africa/Casablanca
+        - Africa/El_Aaiun
+        - Africa/Maputo
+        - Africa/Blantyre
+        - Africa/Bujumbura
+        - Africa/Gaborone
+        - Africa/Harare
+        - Africa/Kigali
+        - Africa/Lubumbashi
+        - Africa/Lusaka
+        - Africa/Windhoek
+        - Africa/Lagos
+        - Africa/Bangui
+        - Africa/Brazzaville
+        - Africa/Douala
+        - Africa/Kinshasa
+        - Africa/Libreville
+        - Africa/Luanda
+        - Africa/Malabo
+        - Africa/Niamey
+        - Africa/Porto-Novo
+        - Indian/Reunion
+        - Africa/Sao_Tome
+        - Indian/Mahe
+        - Africa/Johannesburg
+        - Africa/Maseru
+        - Africa/Mbabane
+        - Africa/Khartoum
+        - Africa/Juba
+        - Africa/Tunis
+        - Antarctica/Casey
+        - Antarctica/Davis
+        - Antarctica/Mawson
+        - Indian/Kerguelen
+        - Antarctica/DumontDUrville
+        - Antarctica/Syowa
+        - Antarctica/Troll
+        - Antarctica/Vostok
+        - Antarctica/Rothera
+        - Asia/Kabul
+        - Asia/Yerevan
+        - Asia/Baku
+        - Asia/Dhaka
+        - Asia/Thimphu
+        - Indian/Chagos
+        - Asia/Brunei
+        - Asia/Yangon
+        - Asia/Shanghai
+        - Asia/Urumqi
+        - Asia/Hong_Kong
+        - Asia/Taipei
+        - Asia/Macau
+        - Asia/Nicosia
+        - Asia/Famagusta
+        - Europe/Nicosia
+        - Asia/Tbilisi
+        - Asia/Dili
+        - Asia/Kolkata
+        - Asia/Jakarta
+        - Asia/Pontianak
+        - Asia/Makassar
+        - Asia/Jayapura
+        - Asia/Tehran
+        - Asia/Baghdad
+        - Asia/Jerusalem
+        - Asia/Tokyo
+        - Asia/Amman
+        - Asia/Almaty
+        - Asia/Qyzylorda
+        - Asia/Qostanay
+        - Asia/Aqtobe
+        - Asia/Aqtau
+        - Asia/Atyrau
+        - Asia/Oral
+        - Asia/Bishkek
+        - Asia/Seoul
+        - Asia/Pyongyang
+        - Asia/Beirut
+        - Asia/Kuala_Lumpur
+        - Asia/Kuching
+        - Indian/Maldives
+        - Asia/Hovd
+        - Asia/Ulaanbaatar
+        - Asia/Choibalsan
+        - Asia/Kathmandu
+        - Asia/Karachi
+        - Asia/Gaza
+        - Asia/Hebron
+        - Asia/Manila
+        - Asia/Qatar
+        - Asia/Bahrain
+        - Asia/Riyadh
+        - Asia/Aden
+        - Asia/Kuwait
+        - Asia/Singapore
+        - Asia/Colombo
+        - Asia/Damascus
+        - Asia/Dushanbe
+        - Asia/Bangkok
+        - Asia/Phnom_Penh
+        - Asia/Vientiane
+        - Asia/Ashgabat
+        - Asia/Dubai
+        - Asia/Muscat
+        - Asia/Samarkand
+        - Asia/Tashkent
+        - Asia/Ho_Chi_Minh
+        - Australia/Darwin
+        - Australia/Perth
+        - Australia/Eucla
+        - Australia/Brisbane
+        - Australia/Lindeman
+        - Australia/Adelaide
+        - Australia/Hobart
+        - Australia/Currie
+        - Australia/Melbourne
+        - Australia/Sydney
+        - Australia/Broken_Hill
+        - Australia/Lord_Howe
+        - Antarctica/Macquarie
+        - Indian/Christmas
+        - Indian/Cocos
+        - Pacific/Fiji
+        - Pacific/Gambier
+        - Pacific/Marquesas
+        - Pacific/Tahiti
+        - Pacific/Guam
+        - Pacific/Saipan
+        - Pacific/Tarawa
+        - Pacific/Enderbury
+        - Pacific/Kiritimati
+        - Pacific/Majuro
+        - Pacific/Kwajalein
+        - Pacific/Chuuk
+        - Pacific/Pohnpei
+        - Pacific/Kosrae
+        - Pacific/Nauru
+        - Pacific/Noumea
+        - Pacific/Auckland
+        - Pacific/Chatham
+        - Antarctica/McMurdo
+        - Pacific/Rarotonga
+        - Pacific/Niue
+        - Pacific/Norfolk
+        - Pacific/Palau
+        - Pacific/Port_Moresby
+        - Pacific/Bougainville
+        - Pacific/Pitcairn
+        - Pacific/Pago_Pago
+        - Pacific/Midway
+        - Pacific/Apia
+        - Pacific/Guadalcanal
+        - Pacific/Fakaofo
+        - Pacific/Tongatapu
+        - Pacific/Funafuti
+        - Pacific/Wake
+        - Pacific/Efate
+        - Pacific/Wallis
+        - Africa/Asmera
+        - Africa/Timbuktu
+        - America/Argentina/ComodRivadavia
+        - America/Atka
+        - America/Buenos_Aires
+        - America/Catamarca
+        - America/Coral_Harbour
+        - America/Cordoba
+        - America/Ensenada
+        - America/Fort_Wayne
+        - America/Indianapolis
+        - America/Jujuy
+        - America/Knox_IN
+        - America/Louisville
+        - America/Mendoza
+        - America/Montreal
+        - America/Porto_Acre
+        - America/Rosario
+        - America/Santa_Isabel
+        - America/Shiprock
+        - America/Virgin
+        - Antarctica/South_Pole
+        - Asia/Ashkhabad
+        - Asia/Calcutta
+        - Asia/Chongqing
+        - Asia/Chungking
+        - Asia/Dacca
+        - Asia/Harbin
+        - Asia/Kashgar
+        - Asia/Katmandu
+        - Asia/Macao
+        - Asia/Rangoon
+        - Asia/Saigon
+        - Asia/Tel_Aviv
+        - Asia/Thimbu
+        - Asia/Ujung_Pandang
+        - Asia/Ulan_Bator
+        - Atlantic/Faeroe
+        - Atlantic/Jan_Mayen
+        - Australia/ACT
+        - Australia/Canberra
+        - Australia/LHI
+        - Australia/NSW
+        - Australia/North
+        - Australia/Queensland
+        - Australia/South
+        - Australia/Tasmania
+        - Australia/Victoria
+        - Australia/West
+        - Australia/Yancowinna
+        - Brazil/Acre
+        - Brazil/DeNoronha
+        - Brazil/East
+        - Brazil/West
+        - Canada/Atlantic
+        - Canada/Central
+        - Canada/Eastern
+        - Canada/Mountain
+        - Canada/Newfoundland
+        - Canada/Pacific
+        - Canada/Saskatchewan
+        - Canada/Yukon
+        - Chile/Continental
+        - Chile/EasterIsland
+        - Cuba
+        - Egypt
+        - Eire
+        - Etc/UCT
+        - Europe/Belfast
+        - Europe/Tiraspol
+        - GB
+        - GB-Eire
+        - GMT+0
+        - GMT-0
+        - GMT0
+        - Greenwich
+        - Hongkong
+        - Iceland
+        - Iran
+        - Israel
+        - Jamaica
+        - Japan
+        - Kwajalein
+        - Libya
+        - Mexico/BajaNorte
+        - Mexico/BajaSur
+        - Mexico/General
+        - NZ
+        - NZ-CHAT
+        - Navajo
+        - PRC
+        - Pacific/Johnston
+        - Pacific/Ponape
+        - Pacific/Samoa
+        - Pacific/Truk
+        - Pacific/Yap
+        - Poland
+        - Portugal
+        - ROC
+        - ROK
+        - Singapore
+        - Turkey
+        - UCT
+        - US/Alaska
+        - US/Aleutian
+        - US/Arizona
+        - US/Central
+        - US/East-Indiana
+        - US/Eastern
+        - US/Hawaii
+        - US/Indiana-Starke
+        - US/Michigan
+        - US/Mountain
+        - US/Pacific
+        - US/Samoa
+        - UTC
+        - Universal
+        - W-SU
+        - Zulu
+        - Etc/GMT
+        - Etc/UTC
+        - GMT
+        - Etc/Universal
+        - Etc/Zulu
+        - Etc/Greenwich
+        - Etc/GMT-0
+        - Etc/GMT+0
+        - Etc/GMT0
+        - Etc/GMT-14
+        - Etc/GMT-13
+        - Etc/GMT-12
+        - Etc/GMT-11
+        - Etc/GMT-10
+        - Etc/GMT-9
+        - Etc/GMT-8
+        - Etc/GMT-7
+        - Etc/GMT-6
+        - Etc/GMT-5
+        - Etc/GMT-4
+        - Etc/GMT-3
+        - Etc/GMT-2
+        - Etc/GMT-1
+        - Etc/GMT+1
+        - Etc/GMT+2
+        - Etc/GMT+3
+        - Etc/GMT+4
+        - Etc/GMT+5
+        - Etc/GMT+6
+        - Etc/GMT+7
+        - Etc/GMT+8
+        - Etc/GMT+9
+        - Etc/GMT+10
+        - Etc/GMT+11
+        - Etc/GMT+12
+        - Europe/London
+        - Europe/Jersey
+        - Europe/Guernsey
+        - Europe/Isle_of_Man
+        - Europe/Dublin
+        - WET
+        - CET
+        - MET
+        - EET
+        - Europe/Tirane
+        - Europe/Andorra
+        - Europe/Vienna
+        - Europe/Minsk
+        - Europe/Brussels
+        - Europe/Sofia
+        - Europe/Prague
+        - Europe/Copenhagen
+        - Atlantic/Faroe
+        - America/Danmarkshavn
+        - America/Scoresbysund
+        - America/Godthab
+        - America/Thule
+        - Europe/Tallinn
+        - Europe/Helsinki
+        - Europe/Mariehamn
+        - Europe/Paris
+        - Europe/Berlin
+        - Europe/Busingen
+        - Europe/Gibraltar
+        - Europe/Athens
+        - Europe/Budapest
+        - Atlantic/Reykjavik
+        - Europe/Rome
+        - Europe/Vatican
+        - Europe/San_Marino
+        - Europe/Riga
+        - Europe/Vaduz
+        - Europe/Vilnius
+        - Europe/Luxembourg
+        - Europe/Malta
+        - Europe/Chisinau
+        - Europe/Monaco
+        - Europe/Amsterdam
+        - Europe/Oslo
+        - Arctic/Longyearbyen
+        - Europe/Warsaw
+        - Europe/Lisbon
+        - Atlantic/Azores
+        - Atlantic/Madeira
+        - Europe/Bucharest
+        - Europe/Kaliningrad
+        - Europe/Moscow
+        - Europe/Simferopol
+        - Europe/Astrakhan
+        - Europe/Volgograd
+        - Europe/Saratov
+        - Europe/Kirov
+        - Europe/Samara
+        - Europe/Ulyanovsk
+        - Asia/Yekaterinburg
+        - Asia/Omsk
+        - Asia/Barnaul
+        - Asia/Novosibirsk
+        - Asia/Tomsk
+        - Asia/Novokuznetsk
+        - Asia/Krasnoyarsk
+        - Asia/Irkutsk
+        - Asia/Chita
+        - Asia/Yakutsk
+        - Asia/Vladivostok
+        - Asia/Khandyga
+        - Asia/Sakhalin
+        - Asia/Magadan
+        - Asia/Srednekolymsk
+        - Asia/Ust-Nera
+        - Asia/Kamchatka
+        - Asia/Anadyr
+        - Europe/Belgrade
+        - Europe/Ljubljana
+        - Europe/Podgorica
+        - Europe/Sarajevo
+        - Europe/Skopje
+        - Europe/Zagreb
+        - Europe/Bratislava
+        - Europe/Madrid
+        - Africa/Ceuta
+        - Atlantic/Canary
+        - Europe/Stockholm
+        - Europe/Zurich
+        - Europe/Istanbul
+        - Asia/Istanbul
+        - Europe/Kiev
+        - Europe/Uzhgorod
+        - Europe/Zaporozhye
+        - Factory
+        - EST
+        - MST
+        - HST
+        - EST5EDT
+        - CST6CDT
+        - MST7MDT
+        - PST8PDT
+        - America/New_York
+        - America/Chicago
+        - America/North_Dakota/Center
+        - America/North_Dakota/New_Salem
+        - America/North_Dakota/Beulah
+        - America/Denver
+        - America/Los_Angeles
+        - America/Juneau
+        - America/Sitka
+        - America/Metlakatla
+        - America/Yakutat
+        - America/Anchorage
+        - America/Nome
+        - America/Adak
+        - Pacific/Honolulu
+        - America/Phoenix
+        - America/Boise
+        - America/Indiana/Indianapolis
+        - America/Indiana/Marengo
+        - America/Indiana/Vincennes
+        - America/Indiana/Tell_City
+        - America/Indiana/Petersburg
+        - America/Indiana/Knox
+        - America/Indiana/Winamac
+        - America/Indiana/Vevay
+        - America/Kentucky/Louisville
+        - America/Kentucky/Monticello
+        - America/Detroit
+        - America/Menominee
+        - America/St_Johns
+        - America/Goose_Bay
+        - America/Halifax
+        - America/Glace_Bay
+        - America/Moncton
+        - America/Blanc-Sablon
+        - America/Toronto
+        - America/Thunder_Bay
+        - America/Nipigon
+        - America/Rainy_River
+        - America/Atikokan
+        - America/Winnipeg
+        - America/Regina
+        - America/Swift_Current
+        - America/Edmonton
+        - America/Vancouver
+        - America/Dawson_Creek
+        - America/Fort_Nelson
+        - America/Creston
+        - America/Pangnirtung
+        - America/Iqaluit
+        - America/Resolute
+        - America/Rankin_Inlet
+        - America/Cambridge_Bay
+        - America/Yellowknife
+        - America/Inuvik
+        - America/Whitehorse
+        - America/Dawson
+        - America/Cancun
+        - America/Merida
+        - America/Matamoros
+        - America/Monterrey
+        - America/Mexico_City
+        - America/Ojinaga
+        - America/Chihuahua
+        - America/Hermosillo
+        - America/Mazatlan
+        - America/Bahia_Banderas
+        - America/Tijuana
+        - America/Nassau
+        - America/Barbados
+        - America/Belize
+        - Atlantic/Bermuda
+        - America/Costa_Rica
+        - America/Havana
+        - America/Santo_Domingo
+        - America/El_Salvador
+        - America/Guatemala
+        - America/Port-au-Prince
+        - America/Tegucigalpa
+        - America/Jamaica
+        - America/Martinique
+        - America/Managua
+        - America/Panama
+        - America/Cayman
+        - America/Puerto_Rico
+        - America/Miquelon
+        - America/Grand_Turk
+        - US/Pacific-New
+        - America/Argentina/Buenos_Aires
+        - America/Argentina/Cordoba
+        - America/Argentina/Salta
+        - America/Argentina/Tucuman
+        - America/Argentina/La_Rioja
+        - America/Argentina/San_Juan
+        - America/Argentina/Jujuy
+        - America/Argentina/Catamarca
+        - America/Argentina/Mendoza
+        - America/Argentina/San_Luis
+        - America/Argentina/Rio_Gallegos
+        - America/Argentina/Ushuaia
+        - America/Aruba
+        - America/La_Paz
+        - America/Noronha
+        - America/Belem
+        - America/Santarem
+        - America/Fortaleza
+        - America/Recife
+        - America/Araguaina
+        - America/Maceio
+        - America/Bahia
+        - America/Sao_Paulo
+        - America/Campo_Grande
+        - America/Cuiaba
+        - America/Porto_Velho
+        - America/Boa_Vista
+        - America/Manaus
+        - America/Eirunepe
+        - America/Rio_Branco
+        - America/Santiago
+        - America/Punta_Arenas
+        - Pacific/Easter
+        - Antarctica/Palmer
+        - America/Bogota
+        - America/Curacao
+        - America/Lower_Princes
+        - America/Kralendijk
+        - America/Guayaquil
+        - Pacific/Galapagos
+        - Atlantic/Stanley
+        - America/Cayenne
+        - America/Guyana
+        - America/Asuncion
+        - America/Lima
+        - Atlantic/South_Georgia
+        - America/Paramaribo
+        - America/Port_of_Spain
+        - America/Anguilla
+        - America/Antigua
+        - America/Dominica
+        - America/Grenada
+        - America/Guadeloupe
+        - America/Marigot
+        - America/Montserrat
+        - America/St_Barthelemy
+        - America/St_Kitts
+        - America/St_Lucia
+        - America/St_Thomas
+        - America/St_Vincent
+        - America/Tortola
+        - America/Montevideo
+        - America/Caracas
+
     Error:
       type: object
       properties:
         error:
           type: string
+    
+    NFTEvent:
+      type: object
+      properties:
+        organizerId:
+          type: string
+        editors:
+          type: array
+          items:
+            type: string
+        projectId:
+          type: string
+        tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/NFTEventTierParam'
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Network'
+        collections:
+          type: array
+          items:
+            type: string
+        start:
+          type: number
+        end:
+          type: number
+        timezone:
+          $ref: '#/components/schemas/Timezone'
+        tags:
+          type: array
+          items:
+            type: string
+        info:
+          $ref: '#/components/schemas/Translation'
+        hidden:
+          type: boolean
+        version:
+          type: number
+        slug:
+          type: string
+        domain:
+          type: string
+        code:
+          type: string
+        currency:
+          $ref: '#/components/schemas/Currency'
+        paymentMethods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
+        transactionFee:
+          type: number
+        allowCrossTierPurchase:
+          type: boolean
+        published:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/EventStatus'
+
+    EventStatus:
+      type: string
+      enum:
+        - draft
+        - published
+        - deleted
+    
+  requestBodies:
+    NFTEventRequestBody:
+      content:
+        application/json: 
+          schema:
+            $ref: '#/components/schemas/NFTEventParam'
+      required: true
