@@ -762,11 +762,12 @@ paths:
       security:
         - BearerAuth: []
       summary: Create user
-      requestBodies:
+      requestBody:
         required: true 
         content: 
-          schema: 
-            $ref: '#/components/schemas/IUser'
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/IUser'
       responses:
         '200':
           description: Created user successfully
@@ -810,7 +811,7 @@ paths:
       tags: 
         - Users
       security: 
-        - BearerAuth:[]
+        - BearerAuth: []
       summary: Check user by email
       parameters:
         - name: email 
@@ -2128,7 +2129,7 @@ paths:
                       type: string
                       # type: any
 
-  /nfts/collections:
+  /nfts/collections/:
     get:
       tags:
         - Nfts
@@ -2503,7 +2504,7 @@ paths:
           description: network
           required: true
           schema:
-            $ref: "#/components/schemas/Network"
+            type: string
       summary: Get NFTs of wallet according to network
       responses:
         '200':
@@ -5852,31 +5853,31 @@ components:
         - lastActive 
 
     Wallet:
-      - type: object
-        properties:
-          network:
-            $ref: '#/components/schemas/Network'
-          address:
-            type: string
-          connectedAt:
-            type: number
-          nickname:
-            type: string
-          verified:
-            type: boolean
-          disconnected: 
-            type: boolean
-          provider:
-            $ref: '#/components/schemas/WalletProvider' 
-          web3auth:
-            type: boolean 
-        required:
-          - network
-          - address 
-          - connectedAt
-          - nickname 
-          - verified 
-          - disconnected 
+      type: object
+      properties:
+        network:
+          $ref: '#/components/schemas/Network'
+        address:
+          type: string
+        connectedAt:
+          type: number
+        nickname:
+          type: string
+        verified:
+          type: boolean
+        disconnected: 
+          type: boolean
+        provider:
+          $ref: '#/components/schemas/WalletProvider' 
+        web3auth:
+          type: boolean 
+      required:
+        - network
+        - address 
+        - connectedAt
+        - nickname 
+        - verified 
+        - disconnected 
 
     IWallet:
       type: object
