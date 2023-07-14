@@ -1,7 +1,12 @@
 openapi: '3.0.0'
 
+servers:
+  - url: "http://localhost:8080"
+    description: Production server
+
 info:
-  title: Moongate (1.0.0)
+  title: Moongate
+  version: 1.0.0
   termsOfService: 'http://swagger.io/terms/'
   contact:
     name: Official Site
@@ -132,9 +137,9 @@ paths:
         - name: eventId
           in: path
           required: true
-          description: eventId for discount check
+          description: Event ID to retrieve discounts for event 
           schema:
-            type: integer
+            type: string
       summary: Get discounts by eventId
       responses:
         '200':
@@ -142,8 +147,6 @@ paths:
           content:
             application/json: 
               schema:
-                type: array
-                items:  
                   $ref: '#/components/schemas/Discount'
   /discounts/used:
     patch:
@@ -255,7 +258,7 @@ paths:
         '200':
           description: Discount deleted by productId successfully
 
-  /jobs/:
+  /jobs:
     post:
       tags:
         - Jobs
@@ -306,7 +309,7 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Job'
-  /jobs/airdrop/:
+  /jobs/airdrop:
     post:
       tags:
         - Jobs
@@ -326,7 +329,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AirdropJob'
-  /moonpasses/:
+  /moonpasses:
     get:
       tags:
         - Moonpasses
@@ -422,7 +425,7 @@ paths:
         '200':
           description: Unset moonpass owner successfully
 
-  /organizers/:
+  /organizers:
     post:
       tags:
         - Organizers
@@ -700,7 +703,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /scheduler/trigger/:
+  /scheduler/trigger:
     post:
       security:
         - BearerAuth: []
@@ -709,7 +712,7 @@ paths:
         '200':
           description: Triggered scheduler successfully
 
-  /storage/upload-url/:
+  /storage/upload-url:
     get:
       security:
         - BearerAuth: []
@@ -738,7 +741,7 @@ paths:
           description: MISSING_PARAMETERS
         '401':
           description: UNAUTHORIZED        
-  /users/:      
+  /users:      
     post:
       tags:
         - Users
@@ -747,18 +750,29 @@ paths:
       summary: Create user
       responses:
         '200':
-          description: Created uesr successfully
+          description: Created user successfully
     get:
       tags:
         - Users
       security:
         - BearerAuth: []
       summary: Get user
+      parameters:
+        - name: wallet
+          in : query
+          description: User's wallet
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: User's email
+          schema: 
+            type: string
       responses:
         '200':
           description: Got user successfully
 
-  /users/auth/:
+  /users/auth:
     post:
       tags:
         - Users
@@ -1200,7 +1214,7 @@ paths:
         responses:
           '200':
             description: Update a published event
-  /events/:
+  /events:
     post:
       tags:
         - Events
@@ -1605,7 +1619,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTEventWhitelistParam'
+                $ref: '#/components/schemas/NFTEventWhitelist'
     get:
       tags:
         - Events
@@ -1750,10 +1764,7 @@ paths:
         content:
           application/json: 
             schema:
-              type: object
-              properties:
-                body:
-                    $ref: '#/components/schemas/INFTMetadataTemplate'
+              $ref: '#/components/schemas/INFTMetadataTemplate'
         required: true
       responses:
         '200':
@@ -1773,10 +1784,7 @@ paths:
         content:
           application/json: 
             schema:
-              type: object
-              properties:
-                body:
-                    $ref: '#/components/schemas/ISmartContract'
+              $ref: '#/components/schemas/ISmartContract'
         required: true
       responses:
         '200':
@@ -1995,7 +2003,7 @@ paths:
       responses:
         '200':
           description: Retry airdrop NFT successfully
-  /nfts/collections/:
+  /nfts/collections:
     get:
       tags:
         - Nfts
@@ -2071,12 +2079,13 @@ paths:
             type: string
       summary: Get NFT's metadata
       responses:
-        '200':
+        default:
           description: Get NFT's metadata successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTMetadataParam'
+                - $ref: '#/components/schemas/NFTMetadataParam'
+
     patch:
       tags:
         - Nfts
@@ -2258,13 +2267,7 @@ paths:
           description: network
           required: true
           schema:
-            type: string
-        - name: cursor
-          in: query
-          description: next cursor
-          required: true
-          schema:
-            type: string
+            $ref: "#/components/schemas/Network"
       summary: Get NFTs of user
       responses:
         '200':
@@ -2283,12 +2286,6 @@ paths:
         - name: userId
           in: path
           description: User ID
-          required: true
-          schema:
-            type: string
-        - name: network
-          in: query
-          description: network
           required: true
           schema:
             type: string
@@ -2340,7 +2337,7 @@ paths:
           description: network
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/Network"
       summary: Get NFTs of wallet according to network
       responses:
         '200':
@@ -2391,10 +2388,10 @@ paths:
       parameters:
         - name: chain
           in: path
-          description: Chain ID
+          description: network
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/Network"
         - name: contract
           in: path
           description: Contract address
@@ -2499,8 +2496,7 @@ paths:
                           type: string
                         projectId:
                           type: string
-
-  /transactions/:
+  /transactions:
     post:
       tags:
         - Transactions
@@ -2533,20 +2529,25 @@ paths:
       summary: Get transaction information
       security:
         - BearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                userId:
-                  type: string
-                eventId:
-                  type: string
-                productId:
-                  type: string
-
+      parameters:
+        - name: userId
+          description: User ID
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: eventId
+          description: Event ID
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: productId
+          description: Product ID
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Got transaction information successfully
@@ -2613,10 +2614,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                status:
-                  $ref: '#/components/schemas/TransactionStatus'
+              $ref: '#/components/schemas/TransactionStatus'
       responses:
         '200':
           description: Updated transaction's payment status successfully
@@ -2773,7 +2771,7 @@ paths:
           required: true
           schema: 
             type: string
-      response:
+      responses:
         '200':
           description: Got contract by contract ID successfully
           content:
@@ -2794,7 +2792,7 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Network'
-      response:
+      responses:
         '200':
           description: Got smart contract by network successfully
           content:
@@ -2822,7 +2820,7 @@ paths:
           required: true
           schema:
             type: string
-      response:
+      responses:
         '200':
           description: Got smart contract by address successfully
           content: 
@@ -2860,7 +2858,7 @@ paths:
                 params:
                   type: any
 
-      response:
+      responses:
         '200':
           description: Executed smart contract at address successfully
           content: 
@@ -3107,40 +3105,7 @@ components:
           nullable: true
         decimals:
           type: integer
-    SimplehashNFTContract:
-      type: object
-      properties:
-        address:
-          type: string
-        name:
-          type: string
-        symbol:
-          type: string
-        schema_name:
-          type: string
-        image_url:
-          type: string
-        description:
-          type: string
-        external_link:
-          type: string
-    SimplehashNFTCollection:
-      type: object
-      properties:
-        name:
-          type: string
-        slug:
-          type: string
-          nullable: true
-        banner_image_url:
-          type: string
-          nullable: true
-        description:
-          type: string
-          nullable: true
-        image_url:
-          type: string
-          nullable: true
+
     SimplehashNFTOwner:
       type: object
       properties:
@@ -3152,15 +3117,7 @@ components:
           type: string
         last_acquired_date:
           type: string
-    SimplehashNFTOwnerResponse:
-      allOf:
-        - $ref: '#/components/schemas/SimplehashNFTOwner'
-        - type: object
-          properties:
-            nft_id:
-              type: string
-            token_id:
-              type: string
+
     SimplehashNFT:
       type: object
       properties:
@@ -3310,19 +3267,6 @@ components:
         metaplex_mint:
           type: string
           nullable: true
-    SimplehashCollectionMarketplacePage:
-      type: object
-      properties:
-        marketplace_name:
-          type: string
-        marketplace_collection_id:
-          type: string
-        collection_url:
-          type: string
-        nft_url:
-          type: string
-        verified:
-          type: boolean
     SimplehashContract:
       type: object
       properties:
@@ -3333,32 +3277,6 @@ components:
         symbol:
           type: string
           nullable: true
-    SimplehashNFTResponse:
-      type: object
-      properties:
-        next:
-          type: string
-          nullable: true
-        previous:
-          type: string
-          nullable: true
-        nfts:
-          type: array
-          items:
-            $ref: '#/components/schemas/SimplehashNFT'
-    SimplehashOwnerResponse:
-      type: object
-      properties:
-        next:
-          type: string
-          nullable: true
-        previous:
-          type: string
-          nullable: true
-        owners:
-          type: array
-          items:
-            $ref: '#/components/schemas/SimplehashNFTOwnerResponse'  
 
     NFTStandard:
       type: string
@@ -3367,8 +3285,7 @@ components:
         - ERC1155
         - BEP721
         - BEP1155
-    toNFTId:
-      type: string
+
     missingMintRecords:
       type: object
       properties:
@@ -3421,33 +3338,26 @@ components:
     Network:
       type: string
       enum:
-        - EVM
-        - ETHEREUM
-        - BSC
-        - POLYGON
-        - AVALANCHE
-        - FANTOM
-        - CRONOS
-        - OPTIMISM
-        - ARBITRUM
-        - CELO
-        - HARMONY
-        - MOONBEAM
-        - MOONRIVER
-        - KLAYTN
-        - GNOSIS
-        - SOLANA
-        - EHTEREUM-GOERLI
-        - POLYGON-MUMBAI
-        - AVALANCHE-FUJI     
-    SUPPORTED_NETWORKS:
-      type: array
-      items:
-        $ref: '#/components/schemas/Network'
-    toMainnet:
-      type: string
-    normalizeAddress:
-      type: string
+        - evm
+        - ethereum
+        - bsc
+        - polygon
+        - avalanche
+        - fantom
+        - cronos
+        - optimism
+        - arbitrum
+        - celo
+        - harmony
+        - moonbeam
+        - moonriver
+        - klaytin
+        - gnosis
+        - solana
+        - ethereum-goerli
+        - polygon-mumbai
+        - avalanche-fuji     
+
     NFTAttribute:
       type: object
       properties:
@@ -3498,18 +3408,7 @@ components:
         imageUrl:
           type: string
           nullable: true
-    INFTCollection:
-      allOf:
-        - $ref: '#/components/schemas/NFTCollection'
-        - type: object
-          properties:
-            collectionId:
-              type: string
-            network:
-              type: string
-          required:
-            - collectionId
-            - network
+
     NFTOwner:
       type: object
       properties:
@@ -3533,67 +3432,8 @@ components:
         url:
           type: string
           nullable: true
-    NFTParams:
-      type: object
-      properties:
-        network:
-          type: string
-        collectionId:
-          type: string
-        tokenId:
-          type: string
-        collectionImageUrl:
-          type: string
-          nullable: true
-        standard:
-          type: string
-          nullable: true
-        owners:
-          type: array
-          items:
-            $ref: '#/components/schemas/NFTOwner'
-          nullable: true
-        name:
-          type: string
-          nullable: true
-        imageUrl:
-          type: string
-          nullable: true
-        videoUrl:
-          type: string
-          nullable: true
-        audioUrl:
-          type: string
-          nullable: true
-        modelUrl:
-          type: string
-          nullable: true
-        marketplaceUrl:
-          type: string
-          nullable: true
-        description:
-          type: string
-          nullable: true
-        animationUrl:
-          type: string
-          nullable: true
-        collection:
-          $ref: '#/components/schemas/NFTCollectionInfo'
-          nullable: true
-        attributes:
-          type: array
-          items:
-            $ref: '#/components/schemas/NFTAttribute'
-          nullable: true
-        updatedAt:
-          type: number
-          nullable: true
-        initial:
-          type: boolean
-          nullable: true
 
-    toJSON:
-      type: string
+
     NFT:
       type: object
       properties:
@@ -3645,8 +3485,7 @@ components:
           nullable: true
     Base:
       type: string
-    ISmartContractFactory:
-      type: string
+    
     NFTMetadata:
       type: object
       properties:
@@ -4043,17 +3882,7 @@ components:
         subtitle:
           type: string
       additionalProperties: false
-    NFTEventOrganizer:
-      type: object
-      properties:
-        name: 
-          type: string
-        url:
-          type: string
-        logo:
-          type: string
-        description:
-          type: string    
+   
     NFTEventTierParam:
       type: object
       properties:
@@ -5315,32 +5144,7 @@ components:
               type: number
             usageCount:
               type: number
-    IBaseIdOnly:
-      type: object
-      properties:
-        id:
-          type: string
-    BaseIdOnly:
-      type: object
-      properties:
-        id:
-          type: string
-      required:
-        - id
-    OmitId:
-      type: string
-      enum:
-        - id
-        - json
-    IBase:
-      allOf:
-        - $ref: '#/components/schemas/IBaseIdOnly'
-        - type: object
-          properties:
-            createdAt:
-              type: number
-            updatedAt:
-              type: number
+
 
     VerificationToken:
       type: object
