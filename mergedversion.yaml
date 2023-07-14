@@ -137,7 +137,7 @@ paths:
           required: true
           description: eventId for discount check
           schema:
-            type: integer
+            type: string
       summary: Get discounts by eventId
       responses:
         '200':
@@ -762,18 +762,76 @@ paths:
       security:
         - BearerAuth: []
       summary: Create user
+      requestBodies:
+        required: true 
+        content: 
+          schema: 
+            $ref: '#/components/schemas/IUser'
       responses:
         '200':
-          description: Created uesr successfully
+          description: Created user successfully
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
     get:
       tags:
         - Users
       security:
         - BearerAuth: []
       summary: Get user
+      parameters:
+        - name: wallet
+          in : query
+          description: User's wallet
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: User's email
+          schema: 
+            type: string
+        - name: authId
+          in: query 
+          schema:  
+            type: string 
       responses:
         '200':
           description: Got user successfully
+          content:
+            application/json:
+              schema:
+                type: array 
+                items: 
+                  $ref: '#/components/schemas/User'
+
+  /users/check:
+    get:  
+      tags: 
+        - Users
+      security: 
+        - BearerAuth:[]
+      summary: Check user by email
+      parameters:
+        - name: email 
+          in: query
+          schema: 
+            type: string
+        - name: authId 
+          in: query
+          schema:
+            type: string
+        - name: authIdToken
+          in: query
+          schema: 
+            type: string
+      responses:
+        '200':
+          description: Check user by email successfully
+          content:  
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/User'
 
   /users/auth/:
     post:
@@ -1618,7 +1676,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTEventWhitelistParam'
+                $ref: '#/components/schemas/NFTEventWhitelist'
 
     get:
       tags:
@@ -1639,7 +1697,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NFTEventWhitelistParam'
+                $ref: '#/components/schemas/NFTEventWhitelist'
 
   /events/{eventId}/whitelists/count:
     get:
@@ -1741,7 +1799,6 @@ paths:
                   type: string
                 image:
                   type: string
-              additionalProperties: true
         required: true
       responses:
         '200':
@@ -1889,7 +1946,47 @@ paths:
                   metadata: 
                     $ref: '#/components/schemas/NFTMetadata'
 
-  /nfts/airdrop/contract/{contractId}/airdrop/batch: #checked
+  /nfts/airdrop/contracts/{contractId}/airdrop:
+    post:
+      tags:
+        - Nfts
+      security:
+        - BearerAuth: []
+      summary: Airdrop NFT by template
+      parameters:
+        - name: contractId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json: 
+            schema:
+              type: object
+              properties:
+                tokenId: 
+                  type: string
+                metadataTemplateId:
+                  type: string
+                template: 
+                  type: string
+                metadataTemplateName:
+                  type: string
+                recipient:
+                  type: string
+                update: 
+                  $ref: '#/components/schemas/NFTMetadataUpdate'
+        required: true
+      responses:
+        '200':
+          description: 'Airdrop NFT by template successfully'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirdropResult'   
+
+  /nfts/airdrop/contract/{contractId}/airdrop/batch:
     post:
       tags:
         - Nfts
@@ -2031,7 +2128,7 @@ paths:
                       type: string
                       # type: any
 
-  /nfts/collections/: #checked
+  /nfts/collections:
     get:
       tags:
         - Nfts
@@ -2406,7 +2503,7 @@ paths:
           description: network
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/Network"
       summary: Get NFTs of wallet according to network
       responses:
         '200':
@@ -5672,6 +5769,42 @@ components:
         txHash:
           type: string
 
+    IUser:
+      type: object
+      properties:
+        authId:
+          type: string
+        identifiers:
+          type: array
+          items:
+            type: string
+        wallets:
+          type: array
+          items:
+            $ref: '#/components/schemas/IWallet'
+        walletAddresses:
+          type: array
+          items:
+            type: string
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Network'
+        events:
+          type: array
+          items:
+            type: string
+        moonpassIds:
+          type: array
+          items:
+            type: string
+        session:
+          type: string
+        source: 
+          type: string
+        lastActive:
+          type: number
+
     User:
       type: object
       properties:
@@ -5707,26 +5840,43 @@ components:
           type: string
         lastActive:
           type: number
+      required:
+        - authId 
+        - identifiers 
+        - wallets 
+        - walletAddresses 
+        - networks 
+        - events 
+        - moonpassIds 
+        - session 
+        - lastActive 
 
     Wallet:
-      allOf:
-        - $ref: '#/components/schemas/IWallet'
-        - type: object
-          properties:
-            network:
-              $ref: '#/components/schemas/Network'
-            address:
-              type: string
-            connectedAt:
-              type: number
-            nickname:
-              type: string
-            verified:
-              type: boolean
-            disconnected: 
-              type: boolean
-            provider:
-              $ref: '#/components/schemas/WalletProvider' 
+      - type: object
+        properties:
+          network:
+            $ref: '#/components/schemas/Network'
+          address:
+            type: string
+          connectedAt:
+            type: number
+          nickname:
+            type: string
+          verified:
+            type: boolean
+          disconnected: 
+            type: boolean
+          provider:
+            $ref: '#/components/schemas/WalletProvider' 
+          web3auth:
+            type: boolean 
+        required:
+          - network
+          - address 
+          - connectedAt
+          - nickname 
+          - verified 
+          - disconnected 
 
     IWallet:
       type: object
@@ -5736,7 +5886,10 @@ components:
         address:
           type: string
         web3auth:
-          type: boolean  
+          type: boolean
+      required: 
+        - network 
+        - address   
 
     WalletProvider:
       type: string
