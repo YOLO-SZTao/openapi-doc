@@ -2309,13 +2309,17 @@ paths:
         - name: network
           in: query
           description: network
-          required: true
           schema:
             type: string
+            enum: 
+              - evm
+              - ethereum
+              - polygon 
+              - avalanche 
+              - solana 
         - name: cursor
           in: query
           description: next cursor
-          required: true
           schema:
             type: string
       summary: Get NFTs of user
@@ -2324,8 +2328,15 @@ paths:
           description: Got user's NFTs successfully
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/NFT'
+              schema: 
+                type: object
+                properties:
+                  cursor:
+                    type: string
+                  nfts:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/NFT'
 
   /nfts/tickets/{userId}:
     get:
@@ -2448,10 +2459,10 @@ paths:
       parameters:
         - name: chain
           in: path
-          description: Chain ID
+          description: network
           required: true
           schema:
-            type: string
+            $ref: "#/components/schemas/Network"
         - name: contract
           in: path
           description: Contract address
@@ -4349,7 +4360,7 @@ components:
           type: number
         auto: 
           type: boolean 
-          
+
     AutoDiscountConfigParam:
       type: object
       properties:
