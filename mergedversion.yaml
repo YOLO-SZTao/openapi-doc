@@ -2531,6 +2531,10 @@ paths:
       responses:
         '200':
           description: Code existed and has been verified
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/AirdropJob'
     post:
       tags:
         - Nfts
