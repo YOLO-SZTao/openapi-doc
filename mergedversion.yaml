@@ -769,7 +769,7 @@ paths:
             schema: 
               $ref: '#/components/schemas/IUser'
       responses:
-        '200':
+        '201':
           description: Created user successfully
           content: 
             application/json:
@@ -971,7 +971,7 @@ paths:
       summary: Delete user
       responses:
         '200':
-          description: Deleted user successfully
+          description: Deleted user wallet successfully
 
   /users/{userId}/email:
     patch:
@@ -2547,6 +2547,17 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                  recipient:
+                    type: string
+                  userId:
+                    type: string
       summary: Redeem NFT by code
       responses:
         '200':
@@ -5664,28 +5675,16 @@ components:
     VerificationToken:
       type: object
       properties:
-        result:
+        results:
           type: array
           items:
             type: object
-            properties:
-              results:
-                type: object
-                additionalProperties:
-                  type: string
-              failed:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    failed:
-                      type: array
-                      items:
-                        type: string
-                    userIds:
-                      type: array
-                      items:
-                        type: string    
+            additionalProperties:
+              type: string
+        failed:
+          type: array
+          items:
+            type: string
 
     AirdropJobData:
       type: object
