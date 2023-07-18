@@ -35,6 +35,8 @@ tags:
     description: Everything related to NFT, including NFT generation, deployment, redemption, etc. 
   - name: Organizers
     description: Everything related to organizers, including create organizer, add organizer's wallet, etc. 
+  - name: Rewards
+    description: Everything related to NFT's reward, including get and post NFT reward.
   - name: Transactions
     description: Everything related to transactions handling, including create, update, etc.
   - name: Users
@@ -788,13 +790,17 @@ paths:
           description: User's wallet
           schema:
             type: string
+          required: true
         - name: email
           in: query
           description: User's email
           schema: 
             type: string
+          required: true
+
         - name: authId
           in: query 
+          description: User's authentication ID
           schema:  
             type: string 
       responses:
@@ -819,14 +825,18 @@ paths:
           in: query
           schema: 
             type: string
+          required: true
         - name: authId 
           in: query
           schema:
             type: string
+          required: true
         - name: authIdToken
           in: query
           schema: 
             type: string
+          required: true
+
       responses:
         '200':
           description: Check user by email successfully
@@ -936,6 +946,17 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network:
+                  $ref: '#/components/schemas/Network'
+                address:
+                  type: string
+
       summary: Add user wallets by ID
       responses:
         '200':
@@ -1394,6 +1415,11 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        content:
+          application/json: 
+            schema:
+              $ref: '#/components/schemas/NFTEvent'
       responses:
         '200':
           description: Updated event by eventId successfully
@@ -2292,6 +2318,11 @@ paths:
       security:
         - BearerAuth: []
       summary: Create new smart contract factory 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SmartContractFactory'
       responses:
         '200':
           description: Created new smart contract factory successfully
@@ -2541,6 +2572,18 @@ paths:
         - name: code
           in: path
           description: Code used for NFT redemption
+          required: true
+          schema:
+            type: string
+        - name: recipient
+          in: path
+          description: Account to receive NFT
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: path
+          description: User ID to redeem NFT
           required: true
           schema:
             type: string
@@ -3034,6 +3077,74 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExecutionResult'
+
+  /rewards/:
+    get:
+      tags:
+        - Rewards
+      summary: Get reward from collected NFT
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: transactionId
+          in: query
+          description: NFT transaction ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Got NFT reward successfully
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/NFTReward'  
+
+    post:
+      tags:
+        - Rewards
+      summary: Create rewards for NFT
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: The discount object to create
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/NFTRewardParam'
+      responses:
+        '200':
+          description: Create rewards for NFT successfully
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/NFTReward'  
+
+  /oauth/user:
+    get:
+      tags:
+        - Oauth
+      summary: Get user's data requested by client with an access token
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User data retrieved
+          content: 
+            application/json:
+              schema:
+                type: object
+                items:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                  username:
+                    type: string
+                  wallets:
+                    $ref: "#/components/schemas/Wallet"
+
 
 components:
   securitySchemes:
@@ -4220,28 +4331,18 @@ components:
           type: number
 
     NFTEventParam:
-      type: object
-      properties:
-        organizerId:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        start:
-          type: string
-          format: date-time
-        end:
-          type: string
-          format: date-time
-        timeZone:
-          type: string
-        info:
-          $ref: '#/components/schemas/NFTEventInfoParam'
-        tiers:
-          type: array
-          items:
-            $ref: '#/components/schemas/NFTEventTierParam'
+      allOf:
+        - $ref: '#/components/schemas/NFTEvent'
+        - type: object
+          properties:
+            organizerId:
+              type: string
+            tiers:
+              type: array
+              items:
+                $ref: '#/components/schemas/NFTEventTierParam'
+          required:
+            - organizerId
 
     NFTEventInfoParam:
       type: object
@@ -7213,11 +7314,38 @@ components:
         - draft
         - published
         - deleted
-    
+
+    NFTReward:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - text
+            - url
+      
+    NFTRewardParam:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/NFTReward"
+        content:
+          type: string
+
+ 
+
+
   requestBodies:
     NFTEventRequestBody:
       content:
         application/json: 
           schema:
-            $ref: '#/components/schemas/NFTEventParam'
+            type: object
+            properties:
+              organizerId:
+                type: string
+              event:
+                $ref: '#/components/schemas/NFTEventParam'
+              contract:
+                $ref: '#/components/schemas/SmartContract'
       required: true
