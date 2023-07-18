@@ -40,7 +40,9 @@ tags:
   - name: Users
     description: Everything related to users, including create, delete, modify, etc. 
   - name: Verification
-    description: Everything related to verifying resources, including token, event, ownership. 
+    description: Everything related to verifying resources, including token, event, ownership.
+  - name: Oauth
+    description: Everything related to 
   
 paths:
   /:
@@ -740,7 +742,6 @@ paths:
         - name: bucket
           in: query
           description: bucket
-          required: true
           schema:
             type: string
       responses:
@@ -3048,6 +3049,123 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExecutionResult'
+                
+  /oauth/clients:
+    post: 
+      tags: 
+        - Oauth 
+      summary: Create new client 
+      security: 
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object 
+              properties: 
+                redirectUris: 
+                  type: string
+              additionalProperties: true                
+              required: 
+                - redirectUris
+      responses:
+        '201':
+          description: Created new client successfully 
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Client'
+
+  /oauth/token:
+    post:
+      tags: 
+        - Oauth
+      summary: Exchange an authorization grant for an access token
+      # auth: 
+      requestBody: 
+        required: true
+        content: 
+          application/json:
+            schema: 
+              type: object
+              properties:
+                code_verifier: 
+                  type: string 
+                code: 
+                  type: string 
+      parameters: 
+        - name: code_verifier
+          in: query 
+          schema: 
+            type: string
+      responses:
+        default: 
+          description: Generate token successfully
+          content: 
+            application/json:
+              schema: 
+                type: object 
+                properties: 
+                  accessToken: 
+                    type: string
+                  accessTokenExpiresAt: 
+                    $ref: '#/components/schemas/Date'
+                  refreshToken: 
+                    type: string 
+                    nullable: true 
+                  refreshTokenExpiresAt: 
+                    $ref: '#/components/schemas/Date'
+                  scope: 
+                    oneOf:
+                      - type: string 
+                      - type: array
+                        items: 
+                          type: string 
+                    nullable: true 
+                  client: 
+                    $ref: '#/components/schemas/Client'
+                  user: 
+                    $ref: '#/components/schemas/User'
+                  additionalProperties:
+                    type: object                   
+        '500':
+          description: Internal Server error 
+
+  /oauth/authorize:
+    get: 
+      tags: 
+        - Oauth 
+      security: 
+        - BearerAuth: []
+      summary: Request user authorization for accessing protected resources
+      parameters:
+        - name: state 
+          schema: 
+            $ref: '#/components/schemas/ParsedQs'
+          in: query 
+        - name: code_challenge
+          in: query 
+          schema: 
+            $ref: '#/components/schemas/ParsedQs'
+        - name: code_challenge_method 
+          in: query 
+          schema: 
+            $ref: '#/components/schemas/ParsedQs'
+      responses:
+        '200': 
+          description: Get user authorization for accessing protected resources successfully
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ParsedQs'
+
+
+  
+  /oauth/user: 
+    get: 
+
+  
 
 components:
   securitySchemes:
@@ -3056,6 +3174,70 @@ components:
       scheme: bearer
 
   schemas:
+    ParsedQs:
+      type: object
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              oneOf:
+                - type: string
+                - $ref: '#/components/schemas/ParsedQs'
+          - $ref: '#/components/schemas/ParsedQs'
+
+    AuthorizationCode:
+      type: object
+      properties:
+        authorizationCode:
+          type: string
+        expiresAt:
+          $ref: '#/components/schemas/Date'
+        redirectUri:
+          type: string
+        scope:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+          nullable: true
+        client:
+          $ref: '#/components/schemas/Client'
+        user:
+          $ref: '#/components/schemas/User'
+      additionalProperties: true
+
+    Date:
+      type: string
+      format: date-time
+
+    Client: 
+      type: object 
+      properties: 
+        id: 
+          type: string 
+        redirectUris: 
+          anyOf: 
+            - type: string 
+            - type: array 
+              items: 
+                type: string 
+          nullable: true 
+        grants: 
+          anyOf: 
+            - type: string 
+            - type: array 
+              items: 
+                type: string
+        accessTokenLifeTime:
+          type: integer 
+          nullable: true
+        refreshTokenLifetime: 
+          type: integer
+          nullable: true 
+      additionalProperties: true
+
     ExecutionResult:
       type: object
       properties:
