@@ -3136,8 +3136,8 @@ paths:
               properties: 
                 redirectUris: 
                   type: array 
-                  items:
-                    schema: string
+                  items:  
+                    type: string
               additionalProperties: true                
               required: 
                 - redirectUris
@@ -3216,6 +3216,7 @@ paths:
           schema: 
             $ref: '#/components/schemas/ParsedQs'
           in: query 
+          required: true 
         - name: code_challenge
           in: query 
           schema: 
@@ -3249,7 +3250,7 @@ paths:
             application/json:
               schema:
                 type: object
-                items:
+                properties:
                   id:
                     type: string
                   email:
