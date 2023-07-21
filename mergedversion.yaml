@@ -1324,6 +1324,12 @@ paths:
         - Events
       security:
         - BearerAuth: []
+      parameters:
+        - name: organizerId
+          in: query
+          description: Organizer ID
+          schema:
+            type: string
       summary: Get ticket from ongoing events
       responses:
         '201':
